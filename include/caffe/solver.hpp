@@ -10,6 +10,9 @@
 
 namespace caffe {
 
+template <typename Dtype> class Solver;
+template <typename Dtype> class GANSolver;
+
 /**
   * @brief Enumeration of actions that a client of the Solver may request by
   * implementing the Solver's action request function, which a
@@ -18,14 +21,14 @@ namespace caffe {
   * mechanism is used to allow the snapshot to be saved when stopping
   * execution with a SIGINT (Ctrl-C).
   */
-  namespace SolverAction {
-    enum Enum {
-      NONE = 0,  // Take no special action.
-      STOP = 1,  // Stop training. snapshot_after_train controls whether a
-                 // snapshot is created.
-      SNAPSHOT = 2  // Take a snapshot, and keep training.
-    };
-  }
+namespace SolverAction {
+  enum Enum {
+    NONE = 0,  // Take no special action.
+    STOP = 1,  // Stop training. snapshot_after_train controls whether a
+                // snapshot is created.
+    SNAPSHOT = 2  // Take a snapshot, and keep training.
+  };
+}
 
 /**
  * @brief Type of a function that returns a Solver Action enumeration.
@@ -40,6 +43,7 @@ typedef boost::function<SolverAction::Enum()> ActionCallback;
  */
 template <typename Dtype>
 class Solver {
+ friend class GANSolver<Dtype>;
  public:
   explicit Solver(const SolverParameter& param);
   explicit Solver(const string& param_file);

@@ -1,5 +1,5 @@
 ## General
-
+log
 # Compiled Object files
 *.slo
 *.lo
@@ -63,6 +63,7 @@ Makefile.config
 # 2. custom, and live on their own unless they're deliberated contributed
 data/*
 models/*
+!models/gan
 *.caffemodel
 *.caffemodel.h5
 *.solverstate

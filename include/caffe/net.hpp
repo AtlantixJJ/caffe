@@ -51,6 +51,7 @@ class Net {
    * the middle may be incorrect if all of the layers of a fan-in are not
    * included.
    */
+  Dtype ForwardFromTo(const vector<Blob<Dtype>* > & bottom, int start, int end);
   Dtype ForwardFromTo(int start, int end);
   Dtype ForwardFrom(int start);
   Dtype ForwardTo(int end);
@@ -149,6 +150,12 @@ class Net {
   inline const vector<vector<Blob<Dtype>*> >& top_vecs() const {
     return top_vecs_;
   }
+  /**
+   * @brief returns the top vecs for each layer to modify gradient
+   */
+  inline const vector<vector<Blob<Dtype>*> >& mutable_top_vecs() {
+    return top_vecs_;
+  }
   /// @brief returns the ids of the top blobs of layer i
   inline const vector<int> & top_ids(int i) const {
     CHECK_GE(i, 0) << "Invalid layer id";
@@ -163,6 +170,10 @@ class Net {
   }
   inline const vector<vector<bool> >& bottom_need_backward() const {
     return bottom_need_backward_;
+  }
+  inline void set_bottom_need_backward(int ind, bool val) {
+    for(int i = 0; i < bottom_need_backward_[ind].size(); i++)
+      bottom_need_backward_[ind][i] = val;
   }
   inline const vector<Dtype>& blob_loss_weights() const {
     return blob_loss_weights_;
@@ -213,6 +224,13 @@ class Net {
   const shared_ptr<Blob<Dtype> > blob_by_name(const string& blob_name) const;
   bool has_layer(const string& layer_name) const;
   const shared_ptr<Layer<Dtype> > layer_by_name(const string& layer_name) const;
+  // Get the index of the first computational layer (e.g. conv1)
+  int base_layer_index() const {
+    for(int i = 0; i < layers_.size(); i ++)
+      if (layers_[i]->layer_param().type() != "Input" && layers_[i]->layer_param().type() != "Data")
+        return i;
+    return 0;
+  }
 
   void set_debug_info(const bool value) { debug_info_ = value; }
 
