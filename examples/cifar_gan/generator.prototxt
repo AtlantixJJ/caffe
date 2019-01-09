@@ -1,4 +1,3 @@
-force_backward: true
 name: "SimpleGenerator"
 layer {
   name: "noise"

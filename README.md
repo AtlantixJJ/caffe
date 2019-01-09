@@ -12,7 +12,12 @@ Currently, DCGAN on Cifar10 and MNIST is tested. After you have prepared the dat
 
 On some machines, you should make the log directory in previous, or there may be write permission errors. E.g. the `log/mnist_gan` directory for MNIST GAN experiment.
 
+### Results
 
+|Iter=1k|Iter=10k|Iter=100k|Iter=200k|Real|
+|:--|:--|:--|:--|:--|
+|![](docs/gan/mnist_fake_1000.png)|![](docs/gan/mnist_fake_10000.png)|![](docs/gan/mnist_fake_100000.png)|![](docs/gan/mnist_fake_200000.png)|![](docs/gan/mnist_real.png)|
+|![](docs/gan/cifar_fake_1000.png)|![](docs/gan/cifar_fake_10000.png)|![](docs/gan/cifar_fake_100000.png)|![](docs/gan/cifar_fake_200000.png)|![](docs/gan/cifar_real.png)|
 
 ## Functionality
 
