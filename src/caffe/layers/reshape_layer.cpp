@@ -110,8 +110,6 @@ void ReshapeLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
     CHECK_EQ(top[0]->count(), bottom[0]->count())
             << "output count must match input count";
   }
-
-
 }
 
 template <typename Dtype>

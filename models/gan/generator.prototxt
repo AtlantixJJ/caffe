@@ -90,7 +90,7 @@ layer {
 }
 layer {
   name: "deconv3"           
-  type: "Deconvolution"
+  type: "Convolution"
   bottom: "fc1_BN"
   top: "deconv3"
   convolution_param {
@@ -168,7 +168,7 @@ layer {
 }
 layer {
   name: "deconv2"           
-  type: "Deconvolution"
+  type: "Convolution"
   bottom: "deconv3_BN"
   top: "deconv2"
   convolution_param {
@@ -246,7 +246,7 @@ layer {
 }
 layer {
   name: "deconv1"           
-  type: "Deconvolution"
+  type: "Convolution"
   bottom: "deconv2_BN"
   top: "deconv1"
   convolution_param {
