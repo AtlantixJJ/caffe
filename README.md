@@ -14,10 +14,10 @@ On some machines, you should make the log directory in previous, or there may be
 
 ### Results
 
-|Iter=1k|Iter=10k|Real|
-|:--|:--|:--|
-|![](docs/gan/mnist_fake_1000.png)|![](docs/gan/mnist_fake_10000.png)|![](docs/gan/mnist_real.png)|
-|![](docs/gan/cifar_fake_1000.png)|![](docs/gan/cifar_fake_10000.png)|![](docs/gan/cifar_real.png)|
+|Iter=1k|Iter=10k|Iter=100k|Iter=200k|Real|
+|:--|:--|:--|:--|:--|
+|![](docs/gan/mnist_fake_1000.png)|![](docs/gan/mnist_fake_10000.png)|![](docs/gan/mnist_fake_100000.png)|![](docs/gan/mnist_fake_200000.png)|![](docs/gan/mnist_real.png)|
+|![](docs/gan/cifar_fake_1000.png)|![](docs/gan/cifar_fake_10000.png)|![](docs/gan/cifar_fake_100000.png)|![](docs/gan/cifar_fake_200000.png)|![](docs/gan/cifar_real.png)|
 
 ## Functionality
 
