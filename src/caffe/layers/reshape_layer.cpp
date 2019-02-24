@@ -142,16 +142,23 @@ void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     int new_c = 0;
     int new_h = 0;
     int new_w = 0;
+    int dw = 0, dh = 0; // depth to space offset
+    int example_start_index = 0, channel_start_index = 0, row_start_index = 0;
     for(int n = 0; n < bn; n++){
+      example_start_index = n * tc * th * tw;
       for(int c = 0; c < bc; c++){
+        new_c = c / (r * r);
+        dw = c % r;
+        dh = (c % (r * r)) / r;
+        channel_start_index = new_c * th * tw;
         for(int h = 0; h < bh; h++){
+          new_h = h * r + dh;
+          row_start_index = new_h * tw;
           for(int w = 0; w < bw; w++){
-              new_c = static_cast<int>(floor(c/(r*r)));
-              new_h = h*r + (static_cast<int>(floor(c/r)))%r;
-              new_w = w*r+ (c%(r*r))%r;
-              top_index =n*(tc*th*tw)+ new_c*(th*tw)+ new_h*tw+ new_w;
-              top_data[top_index] = bottom_data[bottom_index];
-              bottom_index++;
+            new_w = w*r + dw;
+            top_index = example_start_index + channel_start_index + row_start_index + new_w;
+            top_data[top_index] = bottom_data[bottom_index];
+            bottom_index++;
           }
         }
       }
@@ -164,7 +171,7 @@ template <typename Dtype>
 void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
       const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom){
   const int ps = this->layer_param_.reshape_param().pixelshuffler();
-  if( ps == 1){}
+  if(ps == 1){}
   else{
     vector<int> top_shape = top[0]->shape();
     const int tn = top_shape[0];    
@@ -185,19 +192,26 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
 
     int top_index = 0;
     int bottom_index = 0;
-    int old_c = 0;
-    int old_h = 0;
-    int old_w = 0;
+    int new_c = 0;
+    int new_h = 0;
+    int new_w = 0;
+    int dw = 0, dh = 0; // depth to space offset
+    int example_start_index = 0, channel_start_index = 0, row_start_index = 0;
     for(int n = 0; n < tn; n++){
-      for(int c = 0; c < tc; c++){
-        for(int h = 0; h < th; h++){
-          for(int w = 0; w < tw; w++){
-              old_c = c*r*r + (h%r)*r + w%r;
-              old_h = static_cast<int>(floor(h/r));
-              old_w = static_cast<int>(floor(w/r));
-              bottom_index = n*(bc*bh*bw)+ old_c*(bh*bw)+ old_h*bw+ old_w;
-              bottom_diff[bottom_index] = top_diff[top_index];
-              top_index++;
+      example_start_index = n * tc * th * tw;
+      for(int c = 0; c < bc; c++){
+        new_c = c / (r * r);
+        dw = c % r;
+        dh = (c % (r * r)) / r;
+        channel_start_index = new_c * th * tw;
+        for(int h = 0; h < bh; h++){
+          new_h = h * r + dh;
+          row_start_index = new_h * tw;
+          for(int w = 0; w < bw; w++){
+            new_w = w*r + dw;
+            top_index = example_start_index + channel_start_index + row_start_index + new_w;
+            bottom_diff[bottom_index] = top_diff[top_index];
+            bottom_index++;
           }
         }
       }
