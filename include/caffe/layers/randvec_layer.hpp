@@ -28,7 +28,7 @@ class RandVecLayer : public Layer<Dtype> {
   virtual void Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top);
   virtual void Backward_cpu(const vector<Blob<Dtype>*>& top,
-    const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom) {}
+    const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom);
 
 
   shared_ptr<Caffe::RNG> data_rng_;
