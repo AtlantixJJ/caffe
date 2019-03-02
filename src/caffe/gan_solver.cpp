@@ -299,19 +299,21 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 #endif
 
     // in this backward pass, gradient w.r.t. weight should not be computed
-    //d_solver->net_->set_param_propagate_down(false);
+    d_solver->net_->set_param_propagate_down(false);
     d_solver->net_->Backward(); // calculate gradient
-    //d_solver->net_->set_param_propagate_down(true);
+    d_solver->net_->set_param_propagate_down(true);
     
     Blob<Dtype>* d_bottom = d_solver->net_->bottom_vecs()[base_ind][0];
     // LOG_IF(INFO, Caffe::root_solver()) << "d bottom " << d_bottom->shape_string();
 
     // TODO: do not caculate gradient for weights
     Blob<Dtype>* g_output = g_solver->net_->mutable_top_vecs()[g_output_layer][0];
-    Dtype *g_output_diff = g_output->mutable_cpu_diff();
-    const Dtype *d_bottom_diff = d_bottom->cpu_diff();
-    for (int i = 0; i < g_output->count(); i ++) 
-      g_output_diff[i] = d_bottom_diff[i];
+    std::cout << g_solver->net_->layer_names_[g_output_layer] << std::endl;
+    g_output->CopyFrom(*d_bottom, true, false);
+    //Dtype *g_output_diff = g_output->mutable_cpu_diff();
+    //const Dtype *d_bottom_diff = d_bottom->cpu_diff();
+    //for (int i = 0; i < g_output->count(); i ++) 
+    //  g_output_diff[i] = d_bottom_diff[i];
     // LOG_IF(INFO, Caffe::root_solver()) << "g top    " << g_top->shape_string();
     //print_max_diff(g_top);
 
