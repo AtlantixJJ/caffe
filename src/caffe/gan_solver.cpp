@@ -311,7 +311,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     Dtype *g_output_diff = g_output->mutable_cpu_diff();
     const Dtype *d_bottom_diff = d_bottom->cpu_diff();
     for (int i = 0; i < g_output->count(); i ++) 
-      g_output_diff[i] += d_bottom_diff[i];
+      g_output_diff[i] = d_bottom_diff[i];
     // LOG_IF(INFO, Caffe::root_solver()) << "g top    " << g_top->shape_string();
     //print_max_diff(g_top);
 
