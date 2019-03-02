@@ -106,6 +106,7 @@ class GANSolver {
   SolverAction::Enum GetRequestedAction();
   
   void Step(int iters);
+  void Step_sw(int iters);
 
   virtual void Solve(const char* resume_file = NULL);
 
