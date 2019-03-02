@@ -1,14 +1,29 @@
 force_backward: true
 name: "SimpleGenerator"
-layer {
+#layer {
+#  name: "noise"
+#  type: "RandVec"
+#  top: "noise"
+#  randvec_param {
+#    batch_size: 256
+#    dim: 128
+#    lower: -1.0
+#    upper: 1.0
+#  }
+#}
+layer{
   name: "noise"
-  type: "RandVec"
+  type: "DummyData"
   top: "noise"
-  randvec_param {
-    batch_size: 64
-    dim: 128
-    lower: -1.0
-    upper: 1.0
+  dummy_data_param{
+    shape {
+      dim: 256 # train batch_size
+      dim: 128 # num z's
+    }
+    data_filler{
+      type: "gaussian"
+      std: 2.0
+    }
   }
 }
 layer {
@@ -193,8 +208,8 @@ layer {
   }
 }
 layer {
-  name: "conv1_tanh"
+  name: "output"
   type: "TanH"
   bottom: "conv1"
-  top: "conv1_tanh"
+  top: "output"
 } 
