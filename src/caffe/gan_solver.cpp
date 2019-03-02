@@ -299,9 +299,9 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 #endif
 
     // in this backward pass, gradient w.r.t. weight should not be computed
-    d_solver->net_->set_param_propagate_down(false);
+    //d_solver->net_->set_param_propagate_down(false);
     d_solver->net_->Backward(); // calculate gradient
-    d_solver->net_->set_param_propagate_down(true);
+    //d_solver->net_->set_param_propagate_down(true);
     
     Blob<Dtype>* d_bottom = d_solver->net_->bottom_vecs()[base_ind][0];
     // LOG_IF(INFO, Caffe::root_solver()) << "d bottom " << d_bottom->shape_string();
