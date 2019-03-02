@@ -309,7 +309,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 
     // TODO: do not caculate gradient for weights
     Blob<Dtype>* g_output = g_solver->net_->mutable_top_vecs()[g_output_layer][0];
-    std::cout << g_solver->net_->layer_names()[g_output_layer] << std::endl;
+    //std::cout << g_solver->net_->layer_names()[g_output_layer] << std::endl;
     g_output->CopyFrom(*d_bottom, true, false);
     //Dtype *g_output_diff = g_output->mutable_cpu_diff();
     //const Dtype *d_bottom_diff = d_bottom->cpu_diff();
