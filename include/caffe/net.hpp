@@ -75,6 +75,12 @@ class Net {
   void BackwardFrom(int start);
   void BackwardTo(int end);
 
+  /// set whether to compute gradient w.r.t parameters (by atlantix)
+  void set_param_propagate_down(bool value) {
+    for (int i = 0; i < layers_.size(); i ++)
+      layers_[i]->set_param_propagate_down(value);
+  }
+  
   /**
    * @brief Reshape all layers from bottom to top.
    *

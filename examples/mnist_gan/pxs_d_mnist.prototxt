@@ -18,7 +18,7 @@ layer {
     mean_value: 127.5
   }
   data_param {
-    source: "examples/mnist/mnist_train_lmdb"
+    source: "/home/export/online1/swyf/swdnn/atlantix/SWCaffev2.0/models/mnist/mnist_train_lmdb"
     batch_size: 256
     backend: LMDB
   }
@@ -98,7 +98,7 @@ layer {
   top: "conv3"
   convolution_param {
     num_output: 256
-    kernel_size: 3
+    kernel_size: 2
     stride: 1
     pad: 0
     weight_filler {
