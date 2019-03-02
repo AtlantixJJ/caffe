@@ -75,6 +75,12 @@ class Net {
   void BackwardFrom(int start);
   void BackwardTo(int end);
 
+  /// set whether to compute gradient w.r.t parameters (by atlantix)
+  void set_param_propagate_down(bool value) {
+    for (int i = 0; i < layers_.size(); i ++)
+      layers_[i]->set_param_propagate_down(value);
+  }
+  
   /**
    * @brief Reshape all layers from bottom to top.
    *
@@ -214,6 +220,9 @@ class Net {
   inline const vector<Blob<Dtype>*>& output_blobs() const {
     return net_output_blobs_;
   }
+  inline const vector<Blob<Dtype>*>* output_blobs_ptr() const {
+    return &net_output_blobs_;
+  }
   inline const vector<int>& input_blob_indices() const {
     return net_input_blob_indices_;
   }
@@ -224,6 +233,7 @@ class Net {
   const shared_ptr<Blob<Dtype> > blob_by_name(const string& blob_name) const;
   bool has_layer(const string& layer_name) const;
   const shared_ptr<Layer<Dtype> > layer_by_name(const string& layer_name) const;
+  int layerid_by_name(const string& layer_name) const;
   // Get the index of the first computational layer (e.g. conv1)
   int base_layer_index() const {
     for(int i = 0; i < layers_.size(); i ++)
