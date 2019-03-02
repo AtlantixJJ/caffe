@@ -220,6 +220,9 @@ class Net {
   inline const vector<Blob<Dtype>*>& output_blobs() const {
     return net_output_blobs_;
   }
+  inline const vector<Blob<Dtype>*>* output_blobs_ptr() const {
+    return &net_output_blobs_;
+  }
   inline const vector<int>& input_blob_indices() const {
     return net_input_blob_indices_;
   }
