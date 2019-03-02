@@ -1,31 +1,31 @@
 force_backward: true
 name: "SimpleGenerator"
-#layer {
-#  name: "noise"
-#  type: "RandVec"
-#  top: "noise"
-#  randvec_param {
-#    batch_size: 256
-#    dim: 128
-#    lower: -1.0
-#    upper: 1.0
-#  }
-#}
-layer{
+layer {
   name: "noise"
-  type: "DummyData"
+  type: "RandVec"
   top: "noise"
-  dummy_data_param{
-    shape {
-      dim: 256 # train batch_size
-      dim: 128 # num z's
-    }
-    data_filler{
-      type: "gaussian"
-      std: 2.0
-    }
+  randvec_param {
+    batch_size: 256
+    dim: 128
+    lower: -1.0
+    upper: 1.0
   }
 }
+#layer{
+#  name: "noise"
+#  type: "DummyData"
+#  top: "noise"
+#  dummy_data_param{
+#    shape {
+#      dim: 256 # train batch_size
+#      dim: 128 # num z's
+#    }
+#    data_filler{
+#      type: "gaussian"
+#      std: 2.0
+#    }
+#  }
+#}
 layer {
   name: "fc1"
   type: "InnerProduct"
