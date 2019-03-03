@@ -40,19 +40,21 @@ layer {
   }
 }
 layer {
-  name: "pxs_1"
-  type: "Reshape"
+  name: "pool1"
+  type: "Pooling"
   bottom: "conv1"
-  top: "pxs_1"
-  reshape_param {
-    pixelshuffler: -2
+  top: "pool1"
+  pooling_param {
+    pool: AVE
+    kernel_size: 2
+    stride: 2
   }
 } 
 layer {
   name: "lrelu1"
   type: "ReLU"
-  bottom: "pxs_1"
-  top: "lrelu1"
+  bottom: "pool1"
+  top: "pool1"
   relu_param {
     negative_slope: 0.2
   }
@@ -60,13 +62,13 @@ layer {
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "lrelu1"
+  bottom: "pool1"
   top: "conv2"
   convolution_param {
     num_output: 128
-    kernel_size: 1
+    kernel_size: 3
     stride: 1
-    pad: 0
+    pad: 1
     weight_filler {
       type: "gaussian"
       std: 0.02
@@ -74,19 +76,21 @@ layer {
   }
 }
 layer {
-  name: "pxs_2"
-  type: "Reshape"
+  name: "pool2"
+  type: "Pooling"
   bottom: "conv2"
-  top: "pxs_2"
-  reshape_param {
-    pixelshuffler: -2
+  top: "pool2"
+  pooling_param {
+    pool: AVE
+    kernel_size: 2
+    stride: 2
   }
-} 
+}
 layer {
   name: "lrelu2"
   type: "ReLU"
-  bottom: "pxs_2"
-  top: "lrelu2"
+  bottom: "pool2"
+  top: "pool2"
   relu_param {
     negative_slope: 0.2
   }
@@ -94,11 +98,11 @@ layer {
 layer {
   name: "conv3"
   type: "Convolution"
-  bottom: "lrelu2"
+  bottom: "pool2"
   top: "conv3"
   convolution_param {
     num_output: 256
-    kernel_size: 2
+    kernel_size: 3
     stride: 1
     pad: 0
     weight_filler {
@@ -108,19 +112,21 @@ layer {
   }
 } #6x6
 layer {
-  name: "pxs_3"
-  type: "Reshape"
+  name: "pool3"
+  type: "Pooling"
   bottom: "conv3"
-  top: "pxs_3"
-  reshape_param {
-    pixelshuffler: -2
+  top: "pool3"
+  pooling_param {
+    pool: AVE
+    kernel_size: 2
+    stride: 2
   }
-} 
+} #3x3
 layer {
   name: "lrelu3"
   type: "ReLU"
-  bottom: "pxs_3"
-  top: "lrelu3"
+  bottom: "pool3"
+  top: "pool3"
   relu_param {
     negative_slope: 0.2
   }
@@ -128,7 +134,7 @@ layer {
 layer {
   name: "conv4"
   type: "Convolution"
-  bottom: "lrelu3"
+  bottom: "pool3"
   top: "conv4"
   convolution_param {
     num_output: 1

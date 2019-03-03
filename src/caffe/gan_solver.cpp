@@ -256,9 +256,9 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     disc_label->CopyFrom(ones); //CHECK_EQ((int)disc_label->cpu_data()[23], 1);
     d_solver->net_->Forward(&_tmp); // D(real)
     disc_real_loss += _tmp;
-    std::cout << "disc_real: " << _tmp << std::endl;
 
 #ifdef DEBUG_VERBOSE_2
+    std::cout << "disc_real: " << _tmp << std::endl;
     LOG(INFO) << "Backward D(x_real) ";
 #endif
     d_solver->net_->Backward(); // accumulate gradient for D(real)
@@ -269,9 +269,9 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     disc_label->CopyFrom(zeros); //CHECK_EQ((int)disc_label->cpu_data()[19], 0);
     _tmp = d_solver->net_->ForwardFromTo(x_fake, base_ind, end_ind); // D(G(z))
     disc_fake_loss += _tmp;
-    std::cout << "disc_fake: " << _tmp << std::endl;
 
 #ifdef DEBUG_VERBOSE_2
+    std::cout << "disc_fake: " << _tmp << std::endl;
     LOG(INFO) << "Backward D(x_fake) ";
 #endif
 
@@ -292,9 +292,10 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 #endif
 
     _tmp = d_solver->net_->ForwardFromTo(x_fake, base_ind, end_ind); // D(G(z))
-    std::cout << "gen: " << _tmp << std::endl;
     gen_loss += _tmp;
+
 #ifdef DEBUG_VERBOSE_2
+    std::cout << "gen: " << _tmp << std::endl;
     LOG(INFO) << "Backward D(x_fake) ";
 #endif
 
@@ -308,10 +309,12 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 
     // TODO: do not caculate gradient for weights
     Blob<Dtype>* g_output = g_solver->net_->mutable_top_vecs()[g_output_layer][0];
-    Dtype *g_output_diff = g_output->mutable_cpu_diff();
-    const Dtype *d_bottom_diff = d_bottom->cpu_diff();
-    for (int i = 0; i < g_output->count(); i ++) 
-      g_output_diff[i] += d_bottom_diff[i];
+    //std::cout << g_solver->net_->layer_names()[g_output_layer] << std::endl;
+    g_output->CopyFrom(*d_bottom, true, false);
+    //Dtype *g_output_diff = g_output->mutable_cpu_diff();
+    //const Dtype *d_bottom_diff = d_bottom->cpu_diff();
+    //for (int i = 0; i < g_output->count(); i ++) 
+    //  g_output_diff[i] = d_bottom_diff[i];
     // LOG_IF(INFO, Caffe::root_solver()) << "g top    " << g_top->shape_string();
     //print_max_diff(g_top);
 

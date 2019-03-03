@@ -1,13 +1,11 @@
 net: "examples/mnist_gan/pxs_d_mnist.prototxt"
 test_interval: 500
-base_lr: 0.0002
+base_lr: 0.0004
 momentum: 0.0
 momentum2: 0.9
 weight_decay: 0.00001
 lr_policy: "multistep"
 gamma: 0.5
-stepvalue: 1000
-stepvalue: 2000
 stepvalue: 5000
 stepvalue: 10000
 max_iter: 20000
