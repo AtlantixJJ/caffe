@@ -18,7 +18,7 @@ layer {
     mean_value: 127.5
   }
   data_param {
-    source: "examples/cifar10/cifar10_train_lmdb"
+    source: "/home/export/online1/swyf/swdnn/atlantix/SWCaffev2.0/examples/cifar10/cifar10_train_lmdb"
     batch_size: 64
     backend: LMDB
   }
@@ -30,8 +30,8 @@ layer {
   top: "conv1"
   convolution_param {
     num_output: 64
-    kernel_size: 4
-    stride: 2
+    kernel_size: 3
+    stride: 1
     pad: 1
     weight_filler {
       type: "gaussian"
@@ -39,50 +39,68 @@ layer {
     }
   }
 }
+layer {
+  name: "pxs_1"
+  type: "Reshape"
+  bottom: "conv1"
+  top: "pxs_1"
+  reshape_param {
+    pixelshuffler: -2
+  }
+} 
 layer {
   name: "lrelu1"
   type: "ReLU"
-  bottom: "conv1"
-  top: "conv1"
+  bottom: "pxs_1"
+  top: "lrelu1"
   relu_param {
     negative_slope: 0.2
   }
-}
+} # 16x16
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "conv1"
+  bottom: "lrelu1"
   top: "conv2"
   convolution_param {
     num_output: 128
-    kernel_size: 4
-    stride: 2
-    pad: 1
+    kernel_size: 1
+    stride: 1
+    pad: 0
     weight_filler {
       type: "gaussian"
       std: 0.02
     }
   }
 }
+layer {
+  name: "pxs_2"
+  type: "Reshape"
+  bottom: "conv2"
+  top: "pxs_2"
+  reshape_param {
+    pixelshuffler: -2
+  }
+}  
 layer {
   name: "lrelu2"
   type: "ReLU"
-  bottom: "conv2"
-  top: "conv2"
+  bottom: "pxs_2"
+  top: "lrelu2"
   relu_param {
     negative_slope: 0.2
   }
-}
+} # 8x8
 layer {
   name: "conv3"
   type: "Convolution"
-  bottom: "conv2"
+  bottom: "lrelu2"
   top: "conv3"
   convolution_param {
     num_output: 256
-    kernel_size: 4
-    stride: 2
-    pad: 1
+    kernel_size: 1
+    stride: 1
+    pad: 0
     weight_filler {
       type: "gaussian"
       std: 0.02
@@ -90,10 +108,19 @@ layer {
   }
 }
 layer {
+  name: "pxs_3"
+  type: "Reshape"
+  bottom: "conv3"
+  top: "pxs_3"
+  reshape_param {
+    pixelshuffler: -2
+  }
+} # 4x4
+layer {
   name: "lrelu3"
   type: "ReLU"
-  bottom: "conv3"
-  top: "conv3"
+  bottom: "pxs_3"
+  top: "lrelu3"
   relu_param {
     negative_slope: 0.2
   }
@@ -101,7 +128,7 @@ layer {
 layer {
   name: "conv4"
   type: "Convolution"
-  bottom: "conv3"
+  bottom: "lrelu3"
   top: "conv4"
   convolution_param {
     num_output: 1

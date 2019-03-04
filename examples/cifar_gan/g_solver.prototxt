@@ -1,4 +1,4 @@
-net: "examples/cifar_gan/generator.prototxt"
+net: "examples/cifar10_gan/pxs_g.prototxt"
 display: 0
 # time_per_iter: 1
 base_lr: 0.0002
@@ -7,8 +7,8 @@ momentum2: 0.9
 weight_decay: 0.00001
 lr_policy: "multistep"
 gamma: 0.5
-stepvalue: 100000
-max_iter: 200000
-snapshot_prefix: "log/cifar_gan"
+stepvalue: 10000
+max_iter: 20000
+snapshot_prefix: "log/cifar_pxs"
 solver_mode: GPU
 solver_type: ADAM
