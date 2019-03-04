@@ -1,0 +1,157 @@
+name: "SimpleDiscriminator"
+layer {
+  name: "disc_label"
+  type: "Input"
+  top: "disc_label"
+  input_param { shape: { dim: 64 dim: 1} }
+}
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  top: "cls_label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    scale: 0.00784313
+    mean_value: 127.5
+  }
+  data_param {
+    source: "examples/cifar10/cifar10_train_lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  convolution_param {
+    num_output: 64
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.02
+    }
+  }
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    method: AVG    
+    kernel_size: 2
+    stride: 2
+  }
+} 
+layer {
+  name: "lrelu1"
+  type: "ReLU"
+  bottom: "pool1"
+  top: "lrelu1"
+  relu_param {
+    negative_slope: 0.2
+  }
+} # 16x16
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "lrelu1"
+  top: "conv2"
+  convolution_param {
+    num_output: 128
+    kernel_size: 1
+    stride: 1
+    pad: 0
+    weight_filler {
+      type: "gaussian"
+      std: 0.02
+    }
+  }
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    method: AVG    
+    kernel_size: 2
+    stride: 2
+  }
+} 
+layer {
+  name: "lrelu2"
+  type: "ReLU"
+  bottom: "pool2"
+  top: "lrelu2"
+  relu_param {
+    negative_slope: 0.2
+  }
+} # 8x8
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "lrelu2"
+  top: "conv3"
+  convolution_param {
+    num_output: 256
+    kernel_size: 1
+    stride: 1
+    pad: 0
+    weight_filler {
+      type: "gaussian"
+      std: 0.02
+    }
+  }
+}
+layer {
+  name: "pool3"
+  type: "Pooling"
+  bottom: "conv3"
+  top: "pool3"
+  pooling_param {
+    method: AVG    
+    kernel_size: 2
+    stride: 2
+  }
+} 
+layer {
+  name: "lrelu3"
+  type: "ReLU"
+  bottom: "pool3"
+  top: "lrelu3"
+  relu_param {
+    negative_slope: 0.2
+  }
+}
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "lrelu3"
+  top: "conv4"
+  convolution_param {
+    num_output: 1
+    kernel_size: 4
+    stride: 1
+    pad: 0
+    weight_filler {
+      type: "gaussian"
+      std: 0.02
+    }
+  }
+  # for 32x32, here is 1x1
+}
+layer {
+  name: "disc_loss"
+  type: "SigmoidCrossEntropyLoss"
+  bottom: "conv4"
+  bottom: "disc_label"
+  top: "discr_loss"
+}
