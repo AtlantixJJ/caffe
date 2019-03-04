@@ -42,18 +42,6 @@ layer {
   type: "BatchNorm" include {phase: TRAIN}
   bottom: "reshape_fc1"
   top: "fc1_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: false
     moving_average_fraction: 0.99
@@ -64,18 +52,6 @@ layer {
   type: "BatchNorm" include { phase: TEST}
   bottom: "reshape_fc1"
   top: "fc1_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: true
     moving_average_fraction: 0.99
@@ -114,24 +90,12 @@ layer {
   reshape_param {
     pixelshuffler: 2
   }
-}
+} # 8x8
 layer {
   name: "deconv3_BN"
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_3"
   top: "deconv3_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: false
     moving_average_fraction: 0.99
@@ -142,18 +106,6 @@ layer {
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_3"
   top: "deconv3_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: true
     moving_average_fraction: 0.99
@@ -165,10 +117,111 @@ layer {
   bottom: "deconv3_BN"
   top: "deconv3_BN"
 }
+# Residual Block
+layer {
+  name: "res1a_conv1"           
+  type: "Convolution"
+  bottom: "deconv3_BN"
+  top: "res1a_conv1"
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.02
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "res1a_bn1"
+  type: "BatchNorm" include { phase: TRAIN}
+  bottom: "res1a_conv1"
+  top: "res1a_bn1"
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.99
+  }
+}
+layer {
+  name: "res1a_bn1"
+  type: "BatchNorm" include { phase: TEST}
+  bottom: "res1a_conv1"
+  top: "res1a_bn1"
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.99
+  }
+}
+layer {
+  name: "res1a_relu1"
+  type: "ReLU"
+  bottom: "res1a_bn1"
+  top: "res1a_bn1"
+}
+layer {
+  name: "res1a_conv2"           
+  type: "Convolution"
+  bottom: "res1a_bn1"
+  top: "res1a_conv2"
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.02
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "res1a_bn2"
+  type: "BatchNorm" include { phase: TRAIN}
+  bottom: "res1a_conv2"
+  top: "res1a_bn2"
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.99
+  }
+}
+layer {
+  name: "res1a_bn2"
+  type: "BatchNorm" include { phase: TEST}
+  bottom: "res1a_conv2"
+  top: "res1a_bn2"
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.99
+  }
+}
+layer {
+  name: "res1"
+	bottom: "res1a_bn2"
+	bottom: "deconv3_BN"
+	top: "res1"
+	type: "Eltwise"
+  eltwise_param{
+    operation: SUM
+  }
+}
+layer {
+  name: "res1_relu"
+  type: "ReLU"
+  bottom: "res1"
+  top: "res1"
+}
 layer {
   name: "deconv2"           
   type: "Convolution"
-  bottom: "deconv3_BN"
+  bottom: "res1"
   top: "deconv2"
   convolution_param {
     num_output: 512#128 
@@ -198,18 +251,6 @@ layer {
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_2"
   top: "deconv2_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: false
     moving_average_fraction: 0.99
@@ -220,18 +261,6 @@ layer {
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_2"
   top: "deconv2_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: true
     moving_average_fraction: 0.99
@@ -276,18 +305,6 @@ layer {
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_1"
   top: "deconv1_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: false
     moving_average_fraction: 0.99
@@ -298,24 +315,11 @@ layer {
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_1"
   top: "deconv1_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: true
     moving_average_fraction: 0.99
   }
 }
-
 layer {
   name: "relu_deconv1"
   type: "ReLU"
