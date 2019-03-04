@@ -12,3 +12,5 @@ max_iter:  20000
 snapshot_prefix: "log/cifar_pxs/"
 solver_mode: GPU
 solver_type: ADAM
+d_step: 1
+g_step: 2

@@ -227,11 +227,13 @@ void GANSolver<Dtype>::Step_sw(int iters) {
   }
   
   Dtype disc_real_loss = 0, disc_fake_loss = 0, gen_loss = 0, _tmp = 0;
+  int d_iter = 0, g_iter = 0;
   while (++iter_ < stop_iter) {
     if (d_solver->param_.test_interval() && iter_ % d_solver->param_.test_interval() == 0) {
       LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen";
-      LOG(INFO) << "\t\t" << disc_real_loss / d_solver->param_.test_interval() << "\t" << disc_fake_loss / d_solver->param_.test_interval() << "\t" << gen_loss / d_solver->param_.test_interval();
+      LOG(INFO) << "\t\t" << disc_real_loss / d_iter << "\t" << disc_fake_loss / d_iter << "\t" << gen_loss / g_iter;
       disc_real_loss = disc_fake_loss = gen_loss = 0;
+      d_iter = g_iter = 0;
       if (Caffe::root_solver())
         TestAll();
       if (requested_early_exit_)
@@ -241,6 +243,8 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 #ifdef DEBUG_VERBOSE_2
     LOG(INFO) << "Iter " << iter_;
 #endif
+
+    for (int it_ = 0; it_ < d_solver->param_.d_step(); it_ ++) {
 
 #ifdef DEBUG_VERBOSE_2
     LOG(INFO) << "Forward x_fake ";
@@ -262,7 +266,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     LOG(INFO) << "Backward D(x_real) ";
 #endif
     d_solver->net_->Backward(); // accumulate gradient for D(real)
-
+    
 #ifdef DEBUG_VERBOSE_2
     LOG(INFO) << "Forward D(x_fake) ";
 #endif
@@ -277,7 +281,12 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 
     d_solver->net_->Backward(); // accumulate gradient for D(G(z))
     d_solver->ApplyUpdate();
+    d_solver->net_->ClearParamDiffs();
+    d_iter ++;
+    }
     
+    for(int it_ = 0; it_ < d_solver->param_.g_step(); it_ ++) {
+
     /// Train G
 #ifdef DEBUG_VERBOSE_2
     LOG(INFO) << "Forward x_fake ";
@@ -324,9 +333,9 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 
     g_solver->net_->Backward();
     g_solver->ApplyUpdate();
-
     g_solver->net_->ClearParamDiffs();
-    d_solver->net_->ClearParamDiffs();
+    g_step ++;
+    }
 
     SolverAction::Enum request = GetRequestedAction();
 
