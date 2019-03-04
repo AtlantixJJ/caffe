@@ -257,8 +257,8 @@ message SolverParameter {
   repeated string weights = 42;
 
   // GAN
-  optional int g_step = 44 [default = 1];
-  optional int d_step = 45 [default = 1];
+  optional int32 g_step = 44 [default = 1];
+  optional int32 d_step = 45 [default = 1];
 }
 
 // A message that stores the solver snapshots
