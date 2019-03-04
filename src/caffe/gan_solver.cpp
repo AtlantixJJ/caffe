@@ -245,7 +245,6 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 #endif
 
     for (int it_ = 0; it_ < d_solver->param_.d_step(); it_ ++) {
-
 #ifdef DEBUG_VERBOSE_2
     LOG(INFO) << "Forward x_fake ";
 #endif
@@ -284,10 +283,9 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     d_solver->net_->ClearParamDiffs();
     d_iter ++;
     }
-    
-    for(int it_ = 0; it_ < d_solver->param_.g_step(); it_ ++) {
 
     /// Train G
+    for(int it_ = 0; it_ < d_solver->param_.g_step(); it_ ++) {
 #ifdef DEBUG_VERBOSE_2
     LOG(INFO) << "Forward x_fake ";
 #endif
@@ -334,7 +332,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     g_solver->net_->Backward();
     g_solver->ApplyUpdate();
     g_solver->net_->ClearParamDiffs();
-    g_step ++;
+    g_iter ++;
     }
 
     SolverAction::Enum request = GetRequestedAction();
