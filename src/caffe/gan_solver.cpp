@@ -26,7 +26,7 @@ void GANSolver<Dtype>::Solve(const char* resume_file) {
   CHECK_EQ(d_solver->net_->num_inputs(), 1);
   LOG(INFO) << "Total iter: " << iter_ << " / " << d_solver->param_.max_iter();
   LOG(INFO) << "Solve\t\tGenerator\t\tDiscriminator";
-  LOG(INFO) << "Iter\t\tG=" << d_solver->g_step() << "\t\t\tD=" << d_solver->d_step();
+  LOG(INFO) << "Iter\t\tG=" << d_solver->param_.g_step() << "\t\t\tD=" << d_solver->param_.d_step();
   LOG(INFO) << "\t\t\t" << g_solver->net_->name() << "\t\t\t" << d_solver->net_->name();
   LOG(INFO) << "LR Policy\t\t" << g_solver->param_.lr_policy() << "\t\t" << d_solver->param_.lr_policy();
 
