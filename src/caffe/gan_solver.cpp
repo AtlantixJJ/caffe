@@ -25,10 +25,10 @@ void GANSolver<Dtype>::Solve(const char* resume_file) {
   CHECK(Caffe::root_solver());
   CHECK_EQ(d_solver->net_->num_inputs(), 1);
   LOG(INFO) << "Total iter: " << iter_ << " / " << d_solver->param_.max_iter();
-  LOG(INFO) << "Solve\t\tGenerator\t\tDiscriminator";
-  LOG(INFO) << "Iter\t\tG=" << d_solver->param_.g_step() << "\t\t\tD=" << d_solver->param_.d_step();
-  LOG(INFO) << "\t\t\t" << g_solver->net_->name() << "\t\t\t" << d_solver->net_->name();
-  LOG(INFO) << "LR Policy\t\t" << g_solver->param_.lr_policy() << "\t\t" << d_solver->param_.lr_policy();
+  LOG(INFO) << "Solve\tGenerator\tDiscriminator";
+  LOG(INFO) << "Iter\tG=" << d_solver->param_.g_step() << "\t\tD=" << d_solver->param_.d_step();
+  LOG(INFO) << "\t\t" << g_solver->net_->name() << "\t\t" << d_solver->net_->name();
+  LOG(INFO) << "LR Policy\t" << g_solver->param_.lr_policy() << "\t" << d_solver->param_.lr_policy();
 
   // Initialize to false every time we start solving.
   requested_early_exit_ = false;

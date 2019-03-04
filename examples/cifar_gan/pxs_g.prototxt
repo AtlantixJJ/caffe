@@ -124,7 +124,7 @@ layer {
   bottom: "deconv3_BN"
   top: "res1a_conv1"
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 1
     kernel_size: 3
     stride: 1
@@ -273,9 +273,109 @@ layer {
   top: "deconv2_BN"
 }
 layer {
-  name: "deconv1"           
+  name: "res2a_conv1"           
   type: "Convolution"
   bottom: "deconv2_BN"
+  top: "res2a_conv1"
+  convolution_param {
+    num_output: 64
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.02
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "res2a_bn1"
+  type: "BatchNorm" include { phase: TRAIN}
+  bottom: "res2a_conv1"
+  top: "res2a_bn1"
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.99
+  }
+}
+layer {
+  name: "res2a_bn1"
+  type: "BatchNorm" include { phase: TEST}
+  bottom: "res2a_conv1"
+  top: "res2a_bn1"
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.99
+  }
+}
+layer {
+  name: "res2a_relu1"
+  type: "ReLU"
+  bottom: "res2a_bn1"
+  top: "res2a_bn1"
+}
+layer {
+  name: "res2a_conv2"           
+  type: "Convolution"
+  bottom: "res2a_bn1"
+  top: "res2a_conv2"
+  convolution_param {
+    num_output: 128
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.02
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "res2a_bn2"
+  type: "BatchNorm" include { phase: TRAIN}
+  bottom: "res2a_conv2"
+  top: "res2a_bn2"
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.99
+  }
+}
+layer {
+  name: "res2a_bn2"
+  type: "BatchNorm" include { phase: TEST}
+  bottom: "res2a_conv2"
+  top: "res2a_bn2"
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.99
+  }
+}
+layer {
+  name: "res2"
+	bottom: "res2a_bn2"
+	bottom: "deconv2_BN"
+	top: "res2"
+	type: "Eltwise"
+  eltwise_param{
+    operation: SUM
+  }
+}
+layer {
+  name: "res2_relu"
+  type: "ReLU"
+  bottom: "res2"
+  top: "res2"
+}
+layer {
+  name: "deconv1"           
+  type: "Convolution"
+  bottom: "res2"
   top: "deconv1"
   convolution_param {
     num_output: 256#64
