@@ -325,6 +325,29 @@ void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
         }
       }
     }
+
+    top_index = 0;
+    bottom_index = 0;
+    new_c = 0;
+    new_h = 0;
+    new_w = 0;
+    for(int n = 0; n < bn; n++){
+      for(int c = 0; c < bc; c++){
+        for(int h = 0; h < bh; h++){
+          for(int w = 0; w < bw; w++){
+              new_c = static_cast<int>(floor(c/(r*r)));
+              new_h = h*r + (static_cast<int>(floor(c/r)))%r;
+              new_w = w*r+ (c%(r*r))%r;
+              top_index =n*(tc*th*tw)+ new_c*(th*tw)+ new_h*tw+ new_w;
+              if(abs(top_data[top_index] - bottom_data[bottom_index]) > 1e-5)
+                std::cout << "[BIC]" << std::endl;
+              bottom_index++;
+          }
+        }
+      }
+    }
+  
+
   } else if (ps < -1) {
     int test_r1 = tc / bc;
     const int r = bh / th;
