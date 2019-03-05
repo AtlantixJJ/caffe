@@ -1,6 +1,7 @@
 #include <vector>
 
 #include "caffe/layers/reshape_layer.hpp"
+#include <math.h>
 
 namespace caffe {
 
@@ -399,6 +400,29 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
         }
       }
     }
+
+    top_index = 0;
+    bottom_index = 0;
+    int old_c = 0;
+    int old_h = 0;
+    int old_w = 0;
+    for(int n = 0; n < tn; n++){
+      for(int c = 0; c < tc; c++){
+        for(int h = 0; h < th; h++){
+          for(int w = 0; w < tw; w++){
+              old_c = c*r*r + (h%r)*r + w%r;
+              old_h = static_cast<int>(floor(h/r));
+              old_w = static_cast<int>(floor(w/r));
+              bottom_index = n*(bc*bh*bw)+ old_c*(bh*bw)+ old_h*bw+ old_w;
+              if(abs(bottom_diff[bottom_index] - top_diff[top_index]) > 1e-5)
+                std::cout << "[FIC]" << std::endl;
+              top_index++;
+          }
+        }
+      }
+    }
+
+
   } else if (ps < -1) { // Has bug when transforming (a, a) -> (a*a,)
     const int r = bh / th;
     int r2 = r * r;
