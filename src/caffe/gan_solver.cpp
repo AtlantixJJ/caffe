@@ -306,7 +306,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     LOG(INFO) << "Forward D(x_fake) ";
 #endif
 
-    _tmp = d_solver->net_->ForwardFromTo(x_fake, base_ind, end_ind); // D(G(z))
+    _tmp = d_solver->net_->ForwardFromBlob(x_fake, base_ind, end_ind); // D(G(z))
     gen_loss += _tmp;
 
 #ifdef DEBUG_VERBOSE_2
