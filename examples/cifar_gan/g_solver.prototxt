@@ -1,4 +1,4 @@
-net: "examples/cifar_gan/deconv_g.prototxt"
+net: "examples/cifar_gan/pxs_g.prototxt"
 display: 0
 # time_per_iter: 1
 base_lr: 0.0002

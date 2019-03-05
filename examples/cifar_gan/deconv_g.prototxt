@@ -316,10 +316,10 @@ layer {
   }
 }
 layer {
-  name: "conv1_tanh"
+  name: "output"
   type: "TanH"
   bottom: "conv1"
-  top: "conv1_tanh"
+  top: "output"
 }
 
 #layer {
