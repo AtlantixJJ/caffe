@@ -18,6 +18,7 @@
 #include "caffe/util/insert_splits.hpp"
 #include "caffe/util/math_functions.hpp"
 #include "caffe/util/upgrade_proto.hpp"
+#include "caffe/layers/relu_layer.hpp"
 
 namespace caffe {
 
@@ -1029,7 +1030,7 @@ template <typename Dtype>
 void Net<Dtype>::set_relu_slope(Dtype val) {
   for (int i = 0; i < layers_.size(); i ++) {
     if (layers_[i]->type() == "ReLU")
-      layers_[i]->negative_slope = val;
+      (dynamic_cast<ReLULayer<Dtype>*>(layers_[i]))->negative_slope = val;
   }
 }
 
