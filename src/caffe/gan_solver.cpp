@@ -147,7 +147,7 @@ void GANSolver<Dtype>::Step(int iters) {
     d_solver->net_->Backward(); // accumulate gradient for D(real)
 
     disc_label->CopyFrom(zeros); //CHECK_EQ((int)disc_label->cpu_data()[19], 0);
-    disc_fake_loss += d_solver->net_->ForwardFromTo(x_fake, base_ind, end_ind); // D(G(z))
+    disc_fake_loss += d_solver->net_->ForwardFromBlob(x_fake, base_ind, end_ind); // D(G(z))
 
     d_solver->net_->Backward(); // accumulate gradient for D(G(z))
     d_solver->ApplyUpdate();
@@ -157,7 +157,7 @@ void GANSolver<Dtype>::Step(int iters) {
     x_fake = g_solver->net_->Forward(); // G(z)
 
     disc_label->CopyFrom(ones); //CHECK_EQ((int)disc_label->cpu_data()[49], 1);
-    gen_loss += d_solver->net_->ForwardFromTo(x_fake, base_ind, end_ind); // D(G(z))
+    gen_loss += d_solver->net_->ForwardFromBlob(x_fake, base_ind, end_ind); // D(G(z))
     d_solver->net_->Backward(); // calculate gradient
     auto d_bottom = d_solver->net_->bottom_vecs()[base_ind][0];
     // LOG_IF(INFO, Caffe::root_solver()) << "d bottom " << d_bottom->shape_string();
@@ -277,7 +277,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     LOG(INFO) << "Forward D(x_fake) ";
 #endif
     disc_label->CopyFrom(zeros); //CHECK_EQ((int)disc_label->cpu_data()[19], 0);
-    _tmp = d_solver->net_->ForwardFromTo(x_fake, base_ind, end_ind); // D(G(z))
+    _tmp = d_solver->net_->ForwardFromBlob(x_fake, base_ind, end_ind); // D(G(z))
     disc_fake_loss += _tmp;
 
 #ifdef DEBUG_VERBOSE_2

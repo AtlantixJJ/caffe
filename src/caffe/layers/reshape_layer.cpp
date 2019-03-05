@@ -326,6 +326,7 @@ void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       }
     }
 
+    /*
     top_index = 0;
     bottom_index = 0;
     new_c = 0;
@@ -346,8 +347,7 @@ void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
         }
       }
     }
-  
-
+    */
   } else if (ps < -1) {
     int test_r1 = tc / bc;
     const int r = bh / th;
@@ -424,6 +424,7 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
       }
     }
 
+    /*
     top_index = 0;
     bottom_index = 0;
     int old_c = 0;
@@ -444,8 +445,7 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
         }
       }
     }
-
-
+    */
   } else if (ps < -1) { // Has bug when transforming (a, a) -> (a*a,)
     const int r = bh / th;
     int r2 = r * r;
