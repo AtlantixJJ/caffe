@@ -242,8 +242,11 @@ void GANSolver<Dtype>::Step_sw(int iters) {
         break;
     }
     progress = iter_ / (float)stop_iter;
+
     /// Trick
-    g_solver->net_->set_relu_slope(max(1-progress*2 , 0));
+    float tmp_ = 1 - progress * 2;
+    tmp_ = tmp_ < 0 ? 0 : tmp_;
+    g_solver->net_->set_relu_slope(tmp_);
 
 #ifdef DEBUG_VERBOSE_2
     LOG(INFO) << "Iter " << iter_;
