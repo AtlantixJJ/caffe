@@ -415,7 +415,7 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
               old_w = static_cast<int>(floor(w/r));
               bottom_index = n*(bc*bh*bw)+ old_c*(bh*bw)+ old_h*bw+ old_w;
               if(abs(bottom_diff[bottom_index] - top_diff[top_index]) > 1e-5)
-                std::cout << "[FIC]" << std::endl;
+                std::cout << "[BIC]" << std::endl;
               top_index++;
           }
         }
