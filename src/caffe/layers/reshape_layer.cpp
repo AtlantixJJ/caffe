@@ -121,6 +121,7 @@ void ReshapeLayer<Dtype>::Reshape(const vector<Blob<Dtype>*>& bottom,
   }
 }
 
+/*
 template <typename Dtype>
 void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top){
@@ -256,6 +257,158 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
         new_c = c / (r * r);
         dw = c % r;
         dh = (c % (r * r)) / r;
+        channel_start_index = new_c * bh * bw;
+        for(int h = 0; h < th; h++){
+          new_h = h * r + dh;
+          row_start_index = new_h * bw;
+          for(int w = 0; w < tw; w++){
+            new_w = w * r + dw;
+            bottom_index = example_start_index + channel_start_index + row_start_index + new_w;
+            bottom_diff[bottom_index] = top_diff[top_index];
+            top_index++;
+          }
+        }
+      }
+    }
+  }
+}
+*/
+
+template <typename Dtype>
+void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
+      const vector<Blob<Dtype>*>& top){
+  const int ps = this->layer_param_.reshape_param().pixelshuffler();
+  vector<int> bottom_shape = bottom[0]->shape();
+  const int bn = bottom_shape[0];
+  const int bc = bottom_shape[1];
+  const int bh = bottom_shape[2];
+  const int bw = bottom_shape[3];
+  //const int tn = top_shape[0];
+  vector<int> top_shape = top[0]->shape();
+  const int tn = top_shape[0];
+  const int tc = top_shape[1];
+  const int th = top_shape[2];
+  const int tw = top_shape[3];
+  int bottom_index = 0, top_index = 0;
+  int new_c = 0;
+  int new_h = 0;
+  int new_w = 0;
+  int dw = 0, dh = 0; // depth to space offset
+  int example_start_index = 0, channel_start_index = 0, row_start_index = 0;
+  const Dtype* bottom_data = bottom[0]->cpu_data();
+  Dtype* top_data = top[0]->mutable_cpu_data();
+  
+  if( ps == 1){}
+  else if (ps > 1){
+    int test_r1 = bc / tc;
+    const int r = th / bh;
+    int test_r2 = r * r;
+    CHECK_EQ(test_r1, test_r2) << "Pixelshuffler output is illegal";
+    
+    for(int n = 0; n < bn; n++){
+      example_start_index = n * tc * th * tw;
+      for(int c = 0; c < bc; c++){
+        new_c = c / (r * r);
+        dw = (c % (r * r)) % r;
+        dh = (c / r) % r;
+        channel_start_index = new_c * th * tw;
+        for(int h = 0; h < bh; h++){
+          new_h = h * r + dh;
+          row_start_index = new_h * tw;
+          for(int w = 0; w < bw; w++){
+            new_w = w*r + dw;
+            top_index = example_start_index + channel_start_index + row_start_index + new_w;
+            top_data[top_index] = bottom_data[bottom_index];
+            bottom_index++;
+          }
+        }
+      }
+    }
+  } else if (ps < -1) {
+    int test_r1 = tc / bc;
+    const int r = bh / th;
+    int r2 = r * r;
+    CHECK_EQ(test_r1, r2) << "Pixelshuffler output is illegal";
+
+    for(int n = 0; n < tn; n++){
+      example_start_index = n * bc * bh * bw;
+      for(int c = 0; c < tc; c++){
+        new_c = c / (r * r);
+        dw = (c % (r * r)) % r;
+        dh = (c / r) % r;
+        channel_start_index = new_c * bh * bw;
+        for(int h = 0; h < th; h++){
+          new_h = h * r + dh;
+          row_start_index = new_h * bw;
+          for(int w = 0; w < tw; w++){
+            new_w = w * r + dw;
+            bottom_index = example_start_index + channel_start_index + row_start_index + new_w;
+            top_data[top_index] = bottom_data[bottom_index];
+            top_index++;
+          }
+        }
+      }
+    }
+  }
+}
+
+template <typename Dtype>
+void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
+      const vector<bool>& propagate_down, const vector<Blob<Dtype>*>& bottom){
+  const int ps = this->layer_param_.reshape_param().pixelshuffler();
+  vector<int> top_shape = top[0]->shape();
+  const int tn = top_shape[0];    
+  const int tc = top_shape[1];
+  const int th = top_shape[2];
+  const int tw = top_shape[3];
+  vector<int> bottom_shape = bottom[0]->shape();
+  const int bn = bottom_shape[0];
+  const int bc = bottom_shape[1];
+  const int bh = bottom_shape[2];
+  const int bw = bottom_shape[3];
+  Dtype* bottom_diff = bottom[0]->mutable_cpu_diff();
+  const Dtype* top_diff = top[0]->cpu_diff();
+  int top_index = 0, bottom_index = 0;
+  int new_c = 0;
+  int new_h = 0;
+  int new_w = 0;
+  int dw = 0, dh = 0; // depth to space offset
+  int example_start_index = 0, channel_start_index = 0, row_start_index = 0;
+
+  if(ps == 1){}
+  else if (ps > 1){
+    const int r = th / bh;
+    int test_r2 = r * r;
+ 
+    for(int n = 0; n < bn; n++){
+      example_start_index = n * tc * th * tw;
+      for(int c = 0; c < bc; c++){
+        new_c = c / (r * r);
+        dw = (c % (r * r)) % r;
+        dh = (c / r) % r;
+        channel_start_index = new_c * th * tw;
+        for(int h = 0; h < bh; h++){
+          new_h = h * r + dh;
+          row_start_index = new_h * tw;
+          for(int w = 0; w < bw; w++){
+            new_w = w*r + dw;
+            top_index = example_start_index + channel_start_index + row_start_index + new_w;
+            bottom_diff[bottom_index] = top_diff[top_index];
+            bottom_index++;
+          }
+        }
+      }
+    }
+  } else if (ps < -1) { // Has bug when transforming (a, a) -> (a*a,)
+    const int r = bh / th;
+    int r2 = r * r;
+
+    for(int n = 0; n < tn; n++){
+      example_start_index = n * tc * th * tw;
+      for(int c = 0; c < tc; c++){
+        new_c = c / (r * r);
+        dw = (c % (r * r)) % r;
+        dh = (c / r) % r;
         channel_start_index = new_c * bh * bw;
         for(int h = 0; h < th; h++){
           new_h = h * r + dh;
