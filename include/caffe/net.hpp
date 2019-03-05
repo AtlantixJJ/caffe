@@ -84,7 +84,7 @@ class Net {
   void set_relu_slope(Dtype val) {
     for (int i = 0; i < layers_.size(); i ++) {
       if (layers_[i]->type() == "ReLU")
-        layers_[i]->set_negative_slope(val);
+        ((ReLULayer<Dtype>*)layers_[i])->set_negative_slope(val);
     }
   }
   
