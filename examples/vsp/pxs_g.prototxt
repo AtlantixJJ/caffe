@@ -438,6 +438,7 @@ layer {
     stride: 1
     weight_filler {
       type: "xavier"
+      
     }
     bias_filler {
       type: "constant"
