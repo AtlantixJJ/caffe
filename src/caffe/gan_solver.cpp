@@ -229,6 +229,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
   
   Dtype disc_real_loss = 0, disc_fake_loss = 0, gen_loss = 0, _tmp = 0;
   int d_iter = 0, g_iter = 0;
+  float progress = 0.0;
   while (++iter_ < stop_iter) {
     if (d_solver->param_.test_interval() && iter_ % d_solver->param_.test_interval() == 0) {
       LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen";
@@ -240,6 +241,9 @@ void GANSolver<Dtype>::Step_sw(int iters) {
       if (requested_early_exit_)
         break;
     }
+    progress = iter_ / (float)stop_iter;
+    /// Trick
+    g_solver->net_->set_relu_slope(max(1-progress*2 , 0));
 
 #ifdef DEBUG_VERBOSE_2
     LOG(INFO) << "Iter " << iter_;

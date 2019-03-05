@@ -25,11 +25,15 @@ class ReLULayer : public NeuronLayer<Dtype> {
    *     the value @f$ \nu @f$ by which negative values are multiplied.
    */
   explicit ReLULayer(const LayerParameter& param)
-      : NeuronLayer<Dtype>(param) {}
-
+      : NeuronLayer<Dtype>(param) {
+          negative_slope = layer_param_.relu_param().negative_slope();
+      }
+  void set_negative_slope(Dtype val) {}
   virtual inline const char* type() const { return "ReLU"; }
 
  protected:
+  /// Atlantix
+  Dtype negative_slope;
   /**
    * @param bottom input Blob vector (length 1)
    *   -# @f$ (N \times C \times H \times W) @f$
