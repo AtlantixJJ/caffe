@@ -28,7 +28,7 @@ class ReLULayer : public NeuronLayer<Dtype> {
       : NeuronLayer<Dtype>(param) {
           negative_slope = param.relu_param().negative_slope();
       }
-  void set_negative_slope(Dtype val) {}
+  void set_negative_slope(Dtype val) {negative_slope = val;}
   virtual inline const char* type() const { return "ReLU"; }
 
  protected:
