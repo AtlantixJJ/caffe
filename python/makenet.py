@@ -2,35 +2,52 @@ import sys
 import caffe
 from caffe import layers as cl
 
-def create_neural_net(input_file, batch_size=128):
+cifar_lmda_dir = "examples/cifar10/cifar10_train_lmdb"
+
+def create_cifar10_ae(input_file, batch_size=128):
     net = caffe.NetSpec()
 
-    net.data, net.label = cl.HDF5Data(batch_size=batch_size, source=input_file,
-            ntop=2, include=dict(phase=caffe.TRAIN))
+    net.data = cl.Data(batch_size=batch_size, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN))
 
     ## Convolutional Layer 1
-    net.conv1 = cl.Convolution(net.data, num_output=64, kernel_size=9, stride=1,
-            pad=0, weight_filler=dict(type='gaussian', std=0.001),
-            param=[{'lr_mult':1},{'lr_mult':0.1}],
-            bias_filler=dict(type='constant', value=0))
-    net.relu1 = cl.ReLU(net.conv1, in_place=True)
+    net.conv1 = cl.Convolution(net.data, num_output=64, kernel_size=4, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu1 = cl.ReLU(net.conv1, in_place=True, negative_slope=0.2)
+    # 16x16
 
     ## Convolutional Layer 2
-    net.conv2 = cl.Convolution(net.relu1, num_output=32, kernel_size=1, stride=1,
-            pad=0, weight_filler=dict(type='gaussian', std=0.001),
-            param=[{'lr_mult':1},{'lr_mult':0.1}],
-            bias_filler=dict(type='constant', value=0))
-    net.relu2 = cl.ReLU(net.conv2, in_place=True)
+    net.conv2 = cl.Convolution(net.relu1, num_output=128, kernel_size=4, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu2 = cl.ReLU(net.conv2, in_place=True, negative_slope=0.2)
+    # 8x8
 
     ## Convolutional Layer 3
-    net.conv3 = cl.Convolution(net.relu2, num_output=1, kernel_size=5, stride=1,
-            pad=0, weight_filler=dict(type='gaussian', std=0.001),
-            param=[{'lr_mult':0.1},{'lr_mult':0.1}],
-            bias_filler=dict(type='constant', value=0))
-    net.relu3 = cl.ReLU(net.conv3, in_place=True)
+    net.conv3 = cl.Convolution(net.relu2, num_output=256, kernel_size=4, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu3 = cl.ReLU(net.conv3, in_place=True, negative_slope=0.2)
+    # 4x4
+
+    net.deconv3 = cl.Deconvolution(net.relu2, num_output=256, kernel_size=3, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu3 = cl.ReLU(net.deconv3, in_place=True)
+    # 8x8
+
+    net.deconv2 = cl.Deconvolution(net.relu3, num_output=128, kernel_size=3, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu2 = cl.ReLU(net.deconv2, in_place=True)
+    # 16x16
+
+    net.deconv1 = cl.Deconvolution(net.relu2, num_output=64, kernel_size=3, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu1 = cl.ReLU(net.deconv2, in_place=True)
+    # 32x32
+
+    net.conv_output = cl.Convolution(net.relu1, num_output=3, kernel_size=3, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.output = cl.TanH(net.conv_output)
 
     ## Euclidean Loss
-    net.loss = cl.EuclideanLoss(net.conv3, net.label)
+    net.loss = cl.EuclideanLoss(net.output, net.data)
 
     return net.to_proto()
 
