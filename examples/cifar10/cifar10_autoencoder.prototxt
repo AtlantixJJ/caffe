@@ -163,7 +163,7 @@ layer {
   bottom: "deconv1"
   top: "conv_output"
   convolution_param {
-    num_output: 64
+    num_output: 3
     pad: 1
     kernel_size: 3
     stride: 1
