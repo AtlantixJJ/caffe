@@ -1,4 +1,6 @@
+# examples/cifar_gan/run.sh pool
 rm -r log/cifar_deconv_$1
+
 mkdir log
 mkdir log/cifar_deconv_$1
 echo net: \"examples/cifar_gan/$1_d.prototxt\" > examples/cifar_gan/d_solver.prototxt
