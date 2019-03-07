@@ -1,10 +1,5 @@
 net: "examples/cifar10/cifar10_autoencoder.prototxt"
-test_state: { stage: 'test-on-train' }
-test_iter: 500
-test_state: { stage: 'test-on-test' }
-test_iter: 100
 test_interval: 500
-test_compute_loss: true
 base_lr: 0.001
 lr_policy: "step"
 gamma: 0.2

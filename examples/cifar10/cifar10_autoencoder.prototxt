@@ -17,23 +17,6 @@ layer {
   }
 }
 layer {
-  name: "cifar"
-  type: "Data"
-  top: "data"
-  include {
-    phase: TEST
-  }
-  transform_param {
-    scale: 0.0078125
-    mean_value: 127.5
-  }
-  data_param {
-    source: "examples/cifar10/cifar10_test_lmdb"
-    batch_size: 64
-    backend: LMDB
-  }
-}
-layer {
   name: "conv1"
   type: "Convolution"
   bottom: "data"
