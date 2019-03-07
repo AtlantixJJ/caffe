@@ -94,7 +94,7 @@ class GANSolver {
   void TestAll() {
     int g_output_layer = g_solver->net_->layerid_by_name("output");
     // Must be float
-    cv::Mat *x_fake_grid = blob2cvgrid(g_solver->net_->output_blobs()[g_output_layer]);
+    cv::Mat *x_fake_grid = blob2cvgrid(g_solver->net_->top_vecs()[g_output_layer]);
     
     string name = d_solver->param_.snapshot_prefix() + "x_fake_" + caffe::format_int(iter_) + ".png";
     cv::imwrite(name.c_str(), *x_fake_grid);

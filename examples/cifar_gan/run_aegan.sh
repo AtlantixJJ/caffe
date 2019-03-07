@@ -1,3 +1,4 @@
+# examples/cifar_gan/run_aegan.sh pool
 rm -r log/cifar_aegan_$1
 mkdir log
 mkdir log/cifar_aegan_$1
