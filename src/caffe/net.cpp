@@ -18,8 +18,6 @@
 #include "caffe/util/insert_splits.hpp"
 #include "caffe/util/math_functions.hpp"
 #include "caffe/util/upgrade_proto.hpp"
-/// Atlantix, quite dirty
-#include "caffe/layers/relu_layer.hpp"
 
 namespace caffe {
 
@@ -525,6 +523,7 @@ Dtype Net<Dtype>::ForwardFromTo(int start, int end) {
     for (int c = 0; c < before_forward_.size(); ++c) {
       before_forward_[c]->run(i);
     }
+    if (debug > 0) LOG(INFO) << "Forward: On layer " << i << " " << layer_names_[i];
     Dtype layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
     loss += layer_loss;
     if (debug_info_) { ForwardDebugInfo(i); }
@@ -546,6 +545,7 @@ Dtype Net<Dtype>::ForwardFromBlob(const vector<Blob<Dtype>* > & bottom, int star
       before_forward_[c]->run(i);
     }
 
+    if (debug > 0) LOG(INFO) << "Forward: On layer " << i << " " << layer_names_[i];
     Dtype layer_loss = 0;
     if (i == start) layer_loss = layers_[i]->Forward(bottom, top_vecs_[i]);
     else layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
@@ -601,6 +601,7 @@ void Net<Dtype>::BackwardFromTo(int start, int end) {
       before_backward_[c]->run(i);
     }
     if (layer_need_backward_[i]) {
+      if (debug > 0) LOG(INFO) << "Backward: On layer " << i << " " << layer_names_[i];
       layers_[i]->Backward(
           top_vecs_[i], bottom_need_backward_[i], bottom_vecs_[i]);
       if (debug_info_) { BackwardDebugInfo(i); }
@@ -1027,6 +1028,7 @@ int Net<Dtype>::layerid_by_name(
   }
 }
 
+/*
 template <typename Dtype>
 void Net<Dtype>::set_relu_slope(Dtype val) {
   for (int i = 0; i < layers_.size(); i ++) {
@@ -1034,6 +1036,7 @@ void Net<Dtype>::set_relu_slope(Dtype val) {
       boost::dynamic_pointer_cast<ReLULayer<Dtype>>(layers_[i])->negative_slope = val;
   }
 }
+*/
 
 INSTANTIATE_CLASS(Net);
 

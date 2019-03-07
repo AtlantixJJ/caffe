@@ -41,6 +41,13 @@ class GANSolver {
     // TODO
   }
 
+  /// Atlantix: set the debug verbose level
+  void set_debug(int val) {
+    debug = val;
+    d_solver->net_->set_debug(val);
+    g_solver->net_->set_debug(val);
+  }
+
   void tile(const vector<cv::Mat> &src, cv::Mat &dst, int grid_x, int grid_y) {
     // patch size
     int width  = dst.cols/grid_x;
@@ -111,6 +118,8 @@ class GANSolver {
   virtual void Solve(const char* resume_file = NULL);
 
  private:
+  int debug;
+
   shared_ptr<caffe::Solver<Dtype> > g_solver, d_solver;
 
   int iter_;

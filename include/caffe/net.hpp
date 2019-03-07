@@ -81,7 +81,8 @@ class Net {
       layers_[i]->set_param_propagate_down(value);
   }
   /// Trick
-  void set_relu_slope(Dtype val);
+  /// void set_relu_slope(Dtype val);
+  void set_debug(int val) {debug = val;}
   
   /**
    * @brief Reshape all layers from bottom to top.
@@ -302,6 +303,9 @@ class Net {
   void BackwardDebugInfo(const int layer_id);
   /// @brief Helper for displaying debug info in Update.
   void UpdateDebugInfo(const int param_id);
+
+  /// debug verbose level
+  int debug;
 
   /// @brief The network name
   string name_;

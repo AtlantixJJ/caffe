@@ -247,43 +247,39 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     float tmp_ = 1 - progress * 2;
     //g_solver->net_->set_relu_slope(tmp_ < 0 ? 0 : tmp_);
 
-#ifdef DEBUG_VERBOSE_2
-    LOG(INFO) << "Iter " << iter_;
-#endif
+    if (debug > 0) LOG(INFO) << "Iter " << iter_;
 
     for (int it_ = 0; it_ < d_solver->param_.d_step(); it_ ++) {
-#ifdef DEBUG_VERBOSE_2
-    LOG(INFO) << "Forward x_fake ";
-#endif
+
+    if (debug > 0) LOG(INFO) << "Forward x_fake ";
+
     /// Train D
     g_solver->net_->Forward(); // G(z)
     x_fake[0]->CopyFrom(*((*gen)[0]));
 
-#ifdef DEBUG_VERBOSE_2
-    LOG(INFO) << "Forward D(x_real) ";
-#endif
+    if (debug > 0) LOG(INFO) << "Forward D(x_real) ";
 
     disc_label->CopyFrom(ones); //CHECK_EQ((int)disc_label->cpu_data()[23], 1);
     d_solver->net_->Forward(&_tmp); // D(real)
     disc_real_loss += _tmp;
 
-#ifdef DEBUG_VERBOSE_2
-    std::cout << "disc_real: " << _tmp << std::endl;
-    LOG(INFO) << "Backward D(x_real) ";
-#endif
+    if (debug > 0) {
+      std::cout << "disc_real: " << _tmp << std::endl;
+      LOG(INFO) << "Backward D(x_real) ";
+    }
+
     d_solver->net_->Backward(); // accumulate gradient for D(real)
     
-#ifdef DEBUG_VERBOSE_2
-    LOG(INFO) << "Forward D(x_fake) ";
-#endif
+    if (debug > 0) LOG(INFO) << "Forward D(x_fake) ";
+
     disc_label->CopyFrom(zeros); //CHECK_EQ((int)disc_label->cpu_data()[19], 0);
     _tmp = d_solver->net_->ForwardFromBlob(x_fake, base_ind, end_ind); // D(G(z))
     disc_fake_loss += _tmp;
 
-#ifdef DEBUG_VERBOSE_2
-    std::cout << "disc_fake: " << _tmp << std::endl;
-    LOG(INFO) << "Backward D(x_fake) ";
-#endif
+    if (debug > 0) {
+      std::cout << "disc_fake: " << _tmp << std::endl;
+      LOG(INFO) << "Backward D(x_fake) ";
+    }
 
     d_solver->net_->Backward(); // accumulate gradient for D(G(z))
     d_solver->ApplyUpdate();
@@ -294,25 +290,22 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     /// Train G
     d_solver->net_->set_param_propagate_down(false);
     for(int it_ = 0; it_ < d_solver->param_.g_step(); it_ ++) {
-#ifdef DEBUG_VERBOSE_2
-    LOG(INFO) << "Forward x_fake ";
-#endif
+    if (debug > 0) LOG(INFO) << "Forward x_fake ";
+
     g_solver->net_->Forward(); // G(z)
     x_fake[0]->CopyFrom(*((*gen)[0]));
 
     disc_label->CopyFrom(ones); //CHECK_EQ((int)disc_label->cpu_data()[49], 1);
 
-#ifdef DEBUG_VERBOSE_2
-    LOG(INFO) << "Forward D(x_fake) ";
-#endif
+    if (debug > 0) LOG(INFO) << "Forward D(x_fake) ";
 
     _tmp = d_solver->net_->ForwardFromBlob(x_fake, base_ind, end_ind); // D(G(z))
     gen_loss += _tmp;
 
-#ifdef DEBUG_VERBOSE_2
-    std::cout << "gen: " << _tmp << std::endl;
-    LOG(INFO) << "Backward D(x_fake) ";
-#endif
+    if (debug > 0) {
+      std::cout << "gen: " << _tmp << std::endl;
+      LOG(INFO) << "Backward D(x_fake) ";
+    }
 
     // in this backward pass, gradient w.r.t. weight should not be compute
     d_solver->net_->Backward();
@@ -320,9 +313,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     Blob<Dtype>* g_output = g_solver->net_->mutable_top_vecs()[g_output_layer][0];
     g_output->CopyFrom(*d_bottom, true, false);
 
-#ifdef DEBUG_VERBOSE_2
-    LOG(INFO) << "Backward G ";
-#endif
+    if (debug > 0) LOG(INFO) << "Backward G ";
 
     g_solver->net_->Backward();
     g_solver->ApplyUpdate();

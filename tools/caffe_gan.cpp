@@ -43,6 +43,8 @@ DEFINE_string(phase, "",
     "Optional; network phase (TRAIN or TEST). Only used for 'time'.");
 DEFINE_int32(level, 0,
     "Optional; network level.");
+DEFINE_int32(debug, 0,
+    "Show debug message: 0 for non; >= 1 for debug verbose level");
 DEFINE_string(stage, "",
     "Optional; network stages (not to be confused with phase), "
     "separated by ','.");
@@ -236,6 +238,7 @@ int train() {
 
   shared_ptr<caffe::GANSolver<float> >
       solver(caffe::SolverRegistry<float>::CreateGANSolver(g_solver_param, d_solver_param));
+  solver->set_debug(FLAGS_debug);
 
   solver->SetActionFunction(signal_handler.GetActionFunction());
 
