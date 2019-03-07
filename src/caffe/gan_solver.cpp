@@ -211,8 +211,9 @@ void GANSolver<Dtype>::Step_sw(int iters) {
   // x_fake buffer
   vector<Blob<Dtype>*> x_fake;
   g_solver->net_->Forward(); // G(z)
-  const vector<Blob<Dtype>*> *gen = g_solver->net_->output_blobs_ptr();
-  x_fake.push_back(new Blob<Dtype>((*gen)[0]->shape()));
+  const vector<Blob<Dtype>*> &gen = g_solver->net_->top_vecs()[g_output_layer];
+  if (debug > 0) LOG(INFO) << "G output shape: " << gen[0]->shape_string();
+  x_fake.push_back(new Blob<Dtype>(gen[0]->shape()));
   // [TODO] this new has no delete
 
   // label placeholder
@@ -255,7 +256,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
 
     /// Train D
     g_solver->net_->Forward(); // G(z)
-    x_fake[0]->CopyFrom(*((*gen)[0]));
+    x_fake[0]->CopyFrom(*gen[0]);
 
     if (debug > 0) LOG(INFO) << "Forward D(x_real) ";
 
@@ -293,7 +294,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     if (debug > 0) LOG(INFO) << "Forward x_fake ";
 
     g_solver->net_->Forward(); // G(z)
-    x_fake[0]->CopyFrom(*((*gen)[0]));
+    x_fake[0]->CopyFrom(*gen[0]);
 
     disc_label->CopyFrom(ones); //CHECK_EQ((int)disc_label->cpu_data()[49], 1);
 

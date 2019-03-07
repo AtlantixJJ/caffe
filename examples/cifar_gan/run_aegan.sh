@@ -8,4 +8,4 @@ cat examples/cifar_gan/d_solver >> examples/cifar_gan/d_solver.prototxt
 
 build/tools/caffe_gan train \
     --g_solver=examples/cifar10/cifar10_autoencoder_solver.prototxt \
-    --d_solver=examples/cifar_gan/d_solver.prototxt
+    --d_solver=examples/cifar_gan/d_solver.prototxt $2
