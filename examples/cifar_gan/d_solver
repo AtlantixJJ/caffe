@@ -1,4 +1,4 @@
-test_interval: 100
+test_interval: 500
 base_lr: 0.001
 momentum: 0.0
 momentum2: 0.9
@@ -11,5 +11,5 @@ stepvalue: 15000
 max_iter:  20000
 solver_mode: GPU
 solver_type: ADAM
-d_step: 1
+d_step: 2
 g_step: 1
