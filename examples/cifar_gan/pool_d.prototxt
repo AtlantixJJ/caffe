@@ -29,7 +29,7 @@ layer {
   bottom: "data"
   top: "conv1"
   convolution_param {
-    num_output: 64
+    num_output: 128
     kernel_size: 3
     stride: 1
     pad: 1
@@ -65,10 +65,10 @@ layer {
   bottom: "lrelu1"
   top: "conv2"
   convolution_param {
-    num_output: 128
-    kernel_size: 1
+    num_output: 256
+    kernel_size: 3
     stride: 1
-    pad: 0
+    pad: 1
     weight_filler {
       type: "xavier"
       
@@ -101,10 +101,10 @@ layer {
   bottom: "lrelu2"
   top: "conv3"
   convolution_param {
-    num_output: 256
-    kernel_size: 1
+    num_output: 512
+    kernel_size: 3
     stride: 1
-    pad: 0
+    pad: 1
     weight_filler {
       type: "xavier"
       
@@ -121,7 +121,7 @@ layer {
     kernel_size: 2
     stride: 2
   }
-} 
+} # 4x4
 layer {
   name: "lrelu3"
   type: "ReLU"
