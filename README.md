@@ -56,4 +56,3 @@ This GAN edition only conducted minimal modification of GAN. Modified files is l
 - M: `src/caffe/net.cpp`, `include/caffe/net.hpp`. Modified the interface of `Net` class to expose more `Forward` and `Backward` functionality.
 
 In summary, no aggressive modification is done.
-
