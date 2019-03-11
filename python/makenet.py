@@ -82,7 +82,8 @@ def create_cifar10_res_g(batch_size=128):
 def create_cifar10_res_d(batch_size=128):
     net = caffe.NetSpec()
 
-    net.data, net.label = L.Data(batch_size=batch_size, backend=caffe.params.Data.LMDB, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN), transform_param=dict(scale=1/128,mean_value=127.5), ntop=2)
+    net.data = L.Data(batch_size=batch_size, backend=caffe.params.Data.LMDB, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN), transform_param=dict(scale=1/128,mean_value=127.5), ntop=2)
+    net.disc_label = L.Input(input_param={'dim': [batch_size, 1]})
 
     net.conv1 = L.Convolution(net.data, num_output=128, kernel_size=3, stride=1,
             pad=1, weight_filler=dict(type='gaussian', std=0.02))
@@ -109,7 +110,7 @@ def create_cifar10_res_d(batch_size=128):
     net.conv5 = L.Convolution(net.relu6, num_output=1, kernel_size=4, stride=1,
             pad=0, weight_filler=dict(type='gaussian', std=0.02))
 
-    net.disc_loss = L.SigmoidCrossEntropyLoss(net.conv5, net.label)
+    net.disc_loss = L.SigmoidCrossEntropyLoss(net.conv5, net.disc_label)
     return net.to_proto()
 
 def create_cifar10_ae(batch_size=128):

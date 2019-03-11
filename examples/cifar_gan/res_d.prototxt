@@ -1,8 +1,14 @@
+name: "ResidualDiscriminator"
+layer {
+  name: "disc_label"
+  type: "Input"
+  top: "disc_label"
+  input_param { shape: { dim: 128 dim: 1} }
+}
 layer {
   name: "data"
   type: "Data"
   top: "data"
-  top: "label"
   include {
     phase: TRAIN
   }
@@ -241,6 +247,6 @@ layer {
   name: "disc_loss"
   type: "SigmoidCrossEntropyLoss"
   bottom: "conv5"
-  bottom: "label"
+  bottom: "disc_label"
   top: "disc_loss"
 }

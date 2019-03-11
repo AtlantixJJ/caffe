@@ -1,4 +1,4 @@
-name: "SimpleDiscriminator"
+name: "SD_Pool"
 layer {
   name: "disc_label"
   type: "Input"
