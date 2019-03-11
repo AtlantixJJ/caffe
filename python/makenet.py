@@ -25,10 +25,13 @@ def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
     if use_bn:
         bn2 = L.BatchNorm(conv2)
         add = L.Eltwise(x, bn2)
+        names = ['conv1', 'bn1', 'relu1', 'conv2', 'bn2', 'add']
+        layers = [conv1, bn1, relu1, conv2, bn2, add]
     else:
         add = L.Eltwise(x, conv2)
-    names = ['conv1', 'bn1', 'relu1', 'conv2', 'bn2', 'add']
-    layers = [conv1, bn1, relu1, conv2, bn2, add]
+        names = ['conv1', 'relu1', 'conv2', 'add']
+        layers = [conv1, relu1, conv2, add]
+    
     for n,l in zip(names, layers):
         setattr(net, name + "_" + n, l)
     return add
@@ -161,4 +164,4 @@ def create_cifar10_ae(batch_size=128):
 output_file = sys.argv[1]
 # batch_size = 50
 with open(output_file, 'w') as f:
-    f.write(str(create_cifar10_res_g()))
+    f.write(str(create_cifar10_res_d()))
