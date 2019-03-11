@@ -30,13 +30,12 @@ def simple_residual_block(name, net, x, dim, activation_fn):
 def create_cifar10_res_g(batch_size=128):
     net = caffe.NetSpec()
 
-    net.data = L.RandVec(randvec_param= {
+    net.data = L.RandVec(randvec_param={
         'batch_size': 64,
         'dim': 128,
         'lower': -1.0,
         'upper': 1.0})
-    #net.data = L.Data(batch_size=batch_size, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN),
-        transform_param=dict(scale=1/128,mean_value=127.5))
+    #net.data = L.Data(batch_size=batch_size, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN), transform_param=dict(scale=1/128,mean_value=127.5))
 
     net.fc = L.InnerProduct(net.data, num_output=4*4*1024, weight_filler=dict(type='gaussian', std=0.02))
     net.reshape = L.Reshape(net.fc, reshape_param=dict(shape={'dim': [batch_size, 1024, 4, 4]}))
