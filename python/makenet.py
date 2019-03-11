@@ -33,14 +33,14 @@ def create_cifar10_res_g(batch_size=128):
     net.data = L.DummyData(batch_size=batch_size, dummy_data_param=dict(shape=(256, 128), data_filler=dict(type="gaussian", std=2.0)))
 
     net.fc = L.InnerProduct(net.data, num_output=4*4*1024, weight_filler=dict(type='gaussian', std=0.02))
-    net.reshape = L.Reshape(net.fc1, shape=(batch_size, 1024, 4, 4))
+    net.reshape = L.Reshape(net.fc, shape=(batch_size, 1024, 4, 4))
     net.bn = L.BatchNorm(net.reshape)
     net.relu = L.RelU(net.reshape, in_place=True)
 
     net.deconv1 = L.Deconvolution(net.data, num_output=512, kernel_size=4, stride=2, pad=1,
         weight_filler=dict(type='gaussian', std=0.02))
     net.bn1 = L.BatchNorm(net.deconv1)
-    net.relu1 = L.RelU(net.bn2, in_place=True) # 8x8
+    net.relu1 = L.RelU(net.bn1, in_place=True) # 8x8
 
     net.deconv2 = L.Deconvolution(net.deconv1, num_output=256, kernel_size=4, stride=2, pad=1,
         weight_filler=dict(type='gaussian', std=0.02))
