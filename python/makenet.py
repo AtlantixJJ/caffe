@@ -40,7 +40,7 @@ def create_cifar10_res_g(batch_size=128):
     net = caffe.NetSpec()
 
     net.data = L.RandVec(randvec_param={
-        'batch_size': 64,
+        'batch_size': batch_size,
         'dim': 128,
         'lower': -1.0,
         'upper': 1.0})
@@ -50,12 +50,12 @@ def create_cifar10_res_g(batch_size=128):
     net.bn = L.BatchNorm(net.reshape)
     net.relu = L.ReLU(net.bn, in_place=True)
 
-    net.deconv1 = L.Deconvolution(net.relu, convolution_param=dict(num_output=512, kernel_size=3, stride=2,
+    net.deconv1 = L.Deconvolution(net.relu, convolution_param=dict(num_output=512, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='gaussian', std=0.02)))
     net.bn1 = L.BatchNorm(net.deconv1)
     net.relu1 = L.ReLU(net.bn1, in_place=True) # 8x8
 
-    net.deconv2 = L.Deconvolution(net.relu1, convolution_param=dict(num_output=256, kernel_size=3, stride=2,
+    net.deconv2 = L.Deconvolution(net.relu1, convolution_param=dict(num_output=256, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='gaussian', std=0.02)))
     net.bn2 = L.BatchNorm(net.deconv2)
     net.relu2 = L.ReLU(net.bn2, in_place=True) # 16x16
@@ -68,7 +68,7 @@ def create_cifar10_res_g(batch_size=128):
     net.bn4 = L.BatchNorm(net.res2_out)
     net.relu4 = L.ReLU(net.bn4, in_place=True)
 
-    net.deconv3 = L.Deconvolution(net.relu4, convolution_param=dict(num_output=128, kernel_size=3, stride=2,
+    net.deconv3 = L.Deconvolution(net.relu4, convolution_param=dict(num_output=128, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='gaussian', std=0.02)))
     net.bn5 = L.BatchNorm(net.deconv3)
     net.relu5 = L.ReLU(net.bn5, in_place=True) # 32x32
