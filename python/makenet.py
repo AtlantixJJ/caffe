@@ -83,7 +83,7 @@ def create_cifar10_res_d(batch_size=128):
     net = caffe.NetSpec()
 
     net.data = L.Data(batch_size=batch_size, backend=caffe.params.Data.LMDB, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN), transform_param=dict(scale=1/128,mean_value=127.5))
-    net.disc_label = L.Input(input_param={'dim': [batch_size, 1]})
+    net.disc_label = L.Input(input_param=dict(shape={'dim': [batch_size, 1]}))
 
     net.conv1 = L.Convolution(net.data, num_output=128, kernel_size=3, stride=1,
             pad=1, weight_filler=dict(type='gaussian', std=0.02))
