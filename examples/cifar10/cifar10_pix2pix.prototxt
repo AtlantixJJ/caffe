@@ -17,9 +17,20 @@ layer {
   }
 }
 layer {
+  name: "slice_data"
+  type: "Slice"
+  bottom: "data"
+  top: "data_A"
+  top: "data_B"
+  slice_param {
+    axis: 1
+    slice_point: 3
+  }
+}
+layer {
   name: "conv1"
   type: "Convolution"
-  bottom: "data"
+  bottom: "data_A"
   top: "conv1"
   convolution_param {
     num_output: 64
@@ -141,7 +152,7 @@ layer {
   bottom: "deconv2"
   top: "deconv1"
   convolution_param {
-    num_output: 128
+    num_output: 64
     pad: 1
     kernel_size: 4
     stride: 2
@@ -183,6 +194,6 @@ layer {
   name: "loss"
   type: "L1Loss"
   bottom: "output"
-  bottom: "data"
+  bottom: "data_B"
   top: "loss"
 }
