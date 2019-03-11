@@ -84,18 +84,17 @@ def create_cifar10_res_d(batch_size=128):
 
     net.conv1 = L.Convolution(net.data, num_output=128, kernel_size=3, stride=1,
             pad=1, weight_filler=dict(type='gaussian', std=0.02))
-    net.relu1 = L.RelU(net.conv1, in_place=True) # 32x32
+    net.relu1 = L.RelU(net.conv1, in_place=True, negative_slope=0.2) # 32x32
 
     net.conv2 = L.Convolution(net.relu1, num_output=256, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='gaussian', std=0.02))
-    net.relu2 = L.RelU(net.conv2, in_place=True) # 16x16
+    net.relu2 = L.RelU(net.conv2, in_place=True, negative_slope=0.2) # 16x16
 
-    net.res1_out = simple_residual_block("res1", net, net.relu2, 256, relu, use_bn=False)
-    net.relu3 = L.RelU(net.bn3, in_place=True)
+    net.res1_out = simple_residual_block("res1", net, net.relu2, 256, lrelu, use_bn=False)
+    net.relu3 = L.RelU(net.res1_out, in_place=True, negative_slope=0.2)
 
-    net.res2_out = simple_residual_block("res2", net, net.relu3, 256, relu, use_bn=False)
-    net.bn4 = L.BatchNorm(net.res2_out)
-    net.relu4 = L.RelU(net.bn4, in_place=True)
+    net.res2_out = simple_residual_block("res2", net, net.relu3, 256, lrelu, use_bn=False)
+    net.relu4 = L.RelU(net.res2_out, in_place=True)
 
     net.conv3 = L.Convolution(net.relu4, num_output=512, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='gaussian', std=0.02))
