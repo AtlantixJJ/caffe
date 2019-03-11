@@ -19,7 +19,7 @@ def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
         bn1 = L.BatchNorm(conv1)
         relu1 = activation_fn(bn1)
     else:
-        relu1 = activation_fn(conv1)  
+        relu1 = activation_fn(conv1)
     conv2 = L.Convolution(relu1, num_output=dim, kernel_size=3, stride=1, pad=1,
         weight_filler=dict(type="gaussian", std=0.02))
     if use_bn:
@@ -31,7 +31,7 @@ def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
         add = L.Eltwise(x, conv2)
         names = ['conv1', 'act1', 'conv2', 'add']
         layers = [conv1, relu1, conv2, add]
-    
+
     for n,l in zip(names, layers):
         setattr(net, name + "_" + n, l)
     return add
@@ -108,7 +108,7 @@ def create_cifar10_res_d(batch_size=128):
 
     net.conv5 = L.Convolution(net.relu6, num_output=1, kernel_size=4, stride=1,
             pad=0, weight_filler=dict(type='gaussian', std=0.02))
-    
+
     net.disc_loss = L.SigmoidCrossEntropyLoss(net.conv5, net.label)
     return net.to_proto()
 
@@ -163,4 +163,4 @@ def create_cifar10_ae(batch_size=128):
 output_file = sys.argv[1]
 # batch_size = 50
 with open(output_file, 'w') as f:
-    f.write(str(create_cifar10_res_d()))
+    f.write(str(create_cifar10_res_g()))

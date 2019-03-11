@@ -3,7 +3,7 @@ layer {
   type: "RandVec"
   top: "data"
   randvec_param {
-    batch_size: 128
+    batch_size: 64
     dim: 128
     lower: -1.0
     upper: 1.0
@@ -44,7 +44,7 @@ layer {
 }
 layer {
   name: "relu"
-  type: "RelU"
+  type: "ReLU"
   bottom: "bn"
   top: "bn"
 }
@@ -72,7 +72,7 @@ layer {
 }
 layer {
   name: "relu1"
-  type: "RelU"
+  type: "ReLU"
   bottom: "bn1"
   top: "bn1"
 }
@@ -100,7 +100,7 @@ layer {
 }
 layer {
   name: "relu2"
-  type: "RelU"
+  type: "ReLU"
   bottom: "bn2"
   top: "bn2"
 }
@@ -127,7 +127,7 @@ layer {
   top: "res1_bn1"
 }
 layer {
-  name: "res1_relu1"
+  name: "res1_act1"
   type: "ReLU"
   bottom: "res1_bn1"
   top: "res1_bn1"
@@ -169,7 +169,7 @@ layer {
 }
 layer {
   name: "relu3"
-  type: "RelU"
+  type: "ReLU"
   bottom: "bn3"
   top: "bn3"
 }
@@ -196,7 +196,7 @@ layer {
   top: "res2_bn1"
 }
 layer {
-  name: "res2_relu1"
+  name: "res2_act1"
   type: "ReLU"
   bottom: "res2_bn1"
   top: "res2_bn1"
@@ -238,7 +238,7 @@ layer {
 }
 layer {
   name: "relu4"
-  type: "RelU"
+  type: "ReLU"
   bottom: "bn4"
   top: "bn4"
 }
@@ -266,7 +266,7 @@ layer {
 }
 layer {
   name: "relu5"
-  type: "RelU"
+  type: "ReLU"
   bottom: "bn5"
   top: "bn5"
 }
