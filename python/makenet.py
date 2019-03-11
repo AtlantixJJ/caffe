@@ -161,7 +161,9 @@ def create_cifar10_ae(batch_size=128):
 
     return net.to_proto()
 
-output_file = sys.argv[1]
+func = sys.argv[1]
+output_file = sys.argv[2]
+batch_size = sys.argv[3]
 # batch_size = 50
 with open(output_file, 'w') as f:
-    f.write(str(create_cifar10_res_g()))
+    f.write(str(locals()[func](int(batch_size))))
