@@ -47,9 +47,9 @@ def create_cifar10_res_g(batch_size=128):
     net.bn1 = L.BatchNorm(net.deconv1)
     net.relu1 = L.RelU(net.bn1, in_place=True) # 8x8
 
-    net.deconv2 = L.Deconvolution(net.deconv1, convolution_param=dict(num_output=256, kernel_size=3, stride=2,
+    net.deconv2 = L.Deconvolution(net.relu1, convolution_param=dict(num_output=256, kernel_size=3, stride=2,
             pad=1, weight_filler=dict(type='gaussian', std=0.02)))
-    net.bn2 = L.BatchNorm(net.deconv1)
+    net.bn2 = L.BatchNorm(net.deconv2)
     net.relu2 = L.RelU(net.bn2, in_place=True) # 16x16
 
     net.res1_out = simple_residual_block("res1", net, net.relu2, 256, relu)
