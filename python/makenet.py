@@ -35,7 +35,7 @@ def create_cifar10_res_g(batch_size=128):
         transform_param=dict(scale=1/128,mean_value=127.5))
 
     net.fc = L.InnerProduct(net.data, num_output=4*4*1024, weight_filler=dict(type='gaussian', std=0.02))
-    net.reshape = L.Reshape(net.fc, reshape_param=dict(dim=(batch_size, 1024, 4, 4)))
+    net.reshape = L.Reshape(net.fc, dim=(batch_size, 1024, 4, 4))
     net.bn = L.BatchNorm(net.reshape)
     net.relu = L.RelU(net.reshape, in_place=True)
 
