@@ -97,13 +97,16 @@ def create_cifar10_res_d(batch_size=128):
     net.bn4 = L.BatchNorm(net.res2_out)
     net.relu4 = L.RelU(net.bn4, in_place=True)
 
-    net.deconv3 = L.Deconvolution(net.relu4, convolution_param=dict(num_output=128, kernel_size=3, stride=2,
-            pad=1, weight_filler=dict(type='gaussian', std=0.02)))
-    net.bn5 = L.BatchNorm(net.deconv3)
-    net.relu5 = L.RelU(net.bn5, in_place=True) # 32x32
-
-    net.conv_output = L.Convolution(net.relu5, num_output=3, kernel_size=3, stride=1,
+    net.conv3 = L.Convolution(net.relu4, num_output=512, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu5 = L.RelU(net.conv3, in_place=True) # 8x8
+
+    net.conv4 = L.Convolution(net.relu5, num_output=1024, kernel_size=4, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu6 = L.RelU(net.conv4, in_place=True) # 4x4
+
+    net.conv_output = L.Convolution(net.relu6, num_output=1, kernel_size=4, stride=1,
+            pad=0, weight_filler=dict(type='gaussian', std=0.02))
     net.output = L.TanH(net.conv_output)
 
     return net.to_proto()
