@@ -31,8 +31,10 @@ def create_cifar10_res_g(batch_size=128):
     net = caffe.NetSpec()
 
     #net.data = L.DummyData(shape=(batch_size, 128), data_filler=dict(type="gaussian", std=2.0))
-    net.data = L.DummyData(batch_size=batch_size)
-    
+    net.data = L.Data(batch_size=batch_size, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN),
+        transform_param=dict(scale=1/128,mean_value=127.5))
+
+
     net.fc = L.InnerProduct(net.data, num_output=4*4*1024, weight_filler=dict(type='gaussian', std=0.02))
     net.reshape = L.Reshape(net.fc, shape=(batch_size, 1024, 4, 4))
     net.bn = L.BatchNorm(net.reshape)
