@@ -12,15 +12,21 @@ def relu(x):
 def lrelu(x):
     return L.ReLU(x, in_place=True, negative_slope=0.2)
 
-def simple_residual_block(name, net, x, dim, activation_fn):
+def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
     conv1 = L.Convolution(x, num_output=dim, kernel_size=3, stride=1, pad=1,
         weight_filler=dict(type="gaussian", std=0.02))
-    bn1 = L.BatchNorm(conv1)
-    relu1 = activation_fn(bn1)
+    if use_bn:
+        bn1 = L.BatchNorm(conv1)
+        relu1 = activation_fn(bn1)
+    else:
+        relu1 = activation_fn(conv1)  
     conv2 = L.Convolution(relu1, num_output=dim, kernel_size=3, stride=1, pad=1,
         weight_filler=dict(type="gaussian", std=0.02))
-    bn2 = L.BatchNorm(conv2)
-    add = L.Eltwise(x, bn2)
+    if use_bn:
+        bn2 = L.BatchNorm(conv2)
+        add = L.Eltwise(x, bn2)
+    else:
+        add = L.Eltwise(x, conv2)
     names = ['conv1', 'bn1', 'relu1', 'conv2', 'bn2', 'add']
     layers = [conv1, bn1, relu1, conv2, bn2, add]
     for n,l in zip(names, layers):
@@ -35,7 +41,6 @@ def create_cifar10_res_g(batch_size=128):
         'dim': 128,
         'lower': -1.0,
         'upper': 1.0})
-    #net.data = L.Data(batch_size=batch_size, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN), transform_param=dict(scale=1/128,mean_value=127.5))
 
     net.fc = L.InnerProduct(net.data, num_output=4*4*1024, weight_filler=dict(type='gaussian', std=0.02))
     net.reshape = L.Reshape(net.fc, reshape_param=dict(shape={'dim': [batch_size, 1024, 4, 4]}))
@@ -57,6 +62,38 @@ def create_cifar10_res_g(batch_size=128):
     net.relu3 = L.RelU(net.bn3, in_place=True)
 
     net.res2_out = simple_residual_block("res2", net, net.relu3, 256, relu)
+    net.bn4 = L.BatchNorm(net.res2_out)
+    net.relu4 = L.RelU(net.bn4, in_place=True)
+
+    net.deconv3 = L.Deconvolution(net.relu4, convolution_param=dict(num_output=128, kernel_size=3, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02)))
+    net.bn5 = L.BatchNorm(net.deconv3)
+    net.relu5 = L.RelU(net.bn5, in_place=True) # 32x32
+
+    net.conv_output = L.Convolution(net.relu5, num_output=3, kernel_size=3, stride=1,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.output = L.TanH(net.conv_output)
+
+    return net.to_proto()
+
+def create_cifar10_res_d(batch_size=128):
+    net = caffe.NetSpec()
+
+    net.data = L.Data(batch_size=batch_size, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN),
+        transform_param=dict(scale=1/128,mean_value=127.5))
+
+    net.conv1 = L.Convolution(net.data, num_output=128, kernel_size=3, stride=1,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu1 = L.RelU(net.conv1, in_place=True) # 32x32
+
+    net.conv2 = L.Convolution(net.relu1, num_output=256, kernel_size=4, stride=2,
+            pad=1, weight_filler=dict(type='gaussian', std=0.02))
+    net.relu2 = L.RelU(net.conv2, in_place=True) # 16x16
+
+    net.res1_out = simple_residual_block("res1", net, net.relu2, 256, relu, use_bn=False)
+    net.relu3 = L.RelU(net.bn3, in_place=True)
+
+    net.res2_out = simple_residual_block("res2", net, net.relu3, 256, relu, use_bn=False)
     net.bn4 = L.BatchNorm(net.res2_out)
     net.relu4 = L.RelU(net.bn4, in_place=True)
 
