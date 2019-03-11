@@ -7,7 +7,7 @@ echo net: \"examples/cifar_gan/$1_d.prototxt\" > examples/cifar_gan/d_solver.pro
 echo snapshot_prefix: \"log/cifar_$1_$2\" >> examples/cifar_gan/d_solver.prototxt
 cat examples/cifar_gan/d_solver >> examples/cifar_gan/d_solver.prototxt
 # make g solver prototxt
-echo net: \"examples/cifar_gan/$1_d.prototxt\" > examples/cifar_gan/g_solver.prototxt
+echo net: \"examples/cifar_gan/$1_g.prototxt\" > examples/cifar_gan/g_solver.prototxt
 cat examples/cifar_gan/g_solver >> examples/cifar_gan/g_solver.prototxt
 
 build/tools/caffe_gan train \
