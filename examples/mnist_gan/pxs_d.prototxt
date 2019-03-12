@@ -3,7 +3,7 @@ layer {
   name: "disc_label"
   type: "Input"
   top: "disc_label"
-  input_param { shape: { dim: 64 dim: 1} }
+  input_param { shape: { dim: 128 dim: 1} }
 }
 layer {
   name: "data"
@@ -19,7 +19,7 @@ layer {
   }
   data_param {
     source: "examples/mnist/mnist_train_lmdb"
-    batch_size: 64
+    batch_size: 128
     backend: LMDB
   }
 }
@@ -40,21 +40,19 @@ layer {
   }
 }
 layer {
-  name: "pool1"
-  type: "Pooling"
+  name: "pxs_1"
+  type: "Reshape"
   bottom: "conv1"
-  top: "pool1"
-  pooling_param {
-    pool: AVE
-    kernel_size: 2
-    stride: 2
+  top: "pxs_1"
+  reshape_param {
+    pixelshuffler: -2
   }
 } 
 layer {
   name: "lrelu1"
   type: "ReLU"
-  bottom: "pool1"
-  top: "pool1"
+  bottom: "pxs_1"
+  top: "lrelu1"
   relu_param {
     negative_slope: 0.2
   }
@@ -62,13 +60,13 @@ layer {
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "pool1"
+  bottom: "lrelu1"
   top: "conv2"
   convolution_param {
     num_output: 128
-    kernel_size: 3
+    kernel_size: 1
     stride: 1
-    pad: 1
+    pad: 0
     weight_filler {
       type: "gaussian"
       std: 0.02
@@ -76,21 +74,19 @@ layer {
   }
 }
 layer {
-  name: "pool2"
-  type: "Pooling"
+  name: "pxs_2"
+  type: "Reshape"
   bottom: "conv2"
-  top: "pool2"
-  pooling_param {
-    pool: AVE
-    kernel_size: 2
-    stride: 2
+  top: "pxs_2"
+  reshape_param {
+    pixelshuffler: -2
   }
-}
+} 
 layer {
   name: "lrelu2"
   type: "ReLU"
-  bottom: "pool2"
-  top: "pool2"
+  bottom: "pxs_2"
+  top: "lrelu2"
   relu_param {
     negative_slope: 0.2
   }
@@ -98,11 +94,11 @@ layer {
 layer {
   name: "conv3"
   type: "Convolution"
-  bottom: "pool2"
+  bottom: "lrelu2"
   top: "conv3"
   convolution_param {
     num_output: 256
-    kernel_size: 3
+    kernel_size: 2
     stride: 1
     pad: 0
     weight_filler {
@@ -112,21 +108,19 @@ layer {
   }
 } #6x6
 layer {
-  name: "pool3"
-  type: "Pooling"
+  name: "pxs_3"
+  type: "Reshape"
   bottom: "conv3"
-  top: "pool3"
-  pooling_param {
-    pool: AVE
-    kernel_size: 2
-    stride: 2
+  top: "pxs_3"
+  reshape_param {
+    pixelshuffler: -2
   }
-} #3x3
+} 
 layer {
   name: "lrelu3"
   type: "ReLU"
-  bottom: "pool3"
-  top: "pool3"
+  bottom: "pxs_3"
+  top: "lrelu3"
   relu_param {
     negative_slope: 0.2
   }
@@ -134,7 +128,7 @@ layer {
 layer {
   name: "conv4"
   type: "Convolution"
-  bottom: "pool3"
+  bottom: "lrelu3"
   top: "conv4"
   convolution_param {
     num_output: 1
