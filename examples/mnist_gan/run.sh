@@ -10,7 +10,7 @@ echo net: \"examples/mnist_gan/$1_d.prototxt\" >> $1_$2_d_solver.prototxt
 echo snapshot_prefix: \"log/mnist_$1_$2/\" >> $1_$2_d_solver.prototxt
 
 # make g solver
-cat examples/mnist_gan/g_solver > $1_$2_g_solver.prototxt
+cat examples/mnist_gan/g_solver > examples/mnist_gan/$1_$2_g_solver.prototxt
 echo "" >> $1_$2_g_solver.prototxt
 echo net: \"examples/mnist_gan/$2_g.prototxt\" >> $1_$2_g_solver.prototxt
 echo snapshot_prefix: \"log/mnist_$1_$2/\" >> $1_$2_g_solver.prototxt
