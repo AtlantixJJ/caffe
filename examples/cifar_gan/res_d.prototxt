@@ -11,7 +11,7 @@ layer {
   }
   data_param {
     source: "examples/cifar10/cifar10_train_lmdb"
-    batch_size: 128
+    batch_size: 256
     backend: LMDB
   }
 }
@@ -21,7 +21,7 @@ layer {
   top: "disc_label"
   input_param {
     shape {
-      dim: 128
+      dim: 256
       dim: 1
     }
   }
