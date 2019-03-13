@@ -43,12 +43,18 @@ def create_cifar10_upsample_g32x32(batch_size=128):
         ind = i + 2
         x = L.Deconvolution(x, convolution_param=dict(bias_term=False, num_output=lower_dim[i], kernel_size=2, stride=2, pad=0, weight_filler=dict(type='bilinear')), param=dict(lr_mult=0, decay_mult=0))
         layers.append(x); layer_names.append("upsample%d"%ind)
-        x = L.Convolution(x, num_output=upper_dim[i], kernel_size=3, stride=1, pad=1, weight_filler=dict(type='xavier'))
+        x = L.Convolution(x, num_output=upper_dim[i], kernel_size=3, stride=1, pad=1, weight_filler=dict(type='xavier'), bias_filler=dict(type='constant'))
         layers.append(x); layer_names.append("conv%d"%ind)
         x = L.BatchNorm(x)
         layers.append(x); layer_names.append("bn%d"%ind)
         x = L.ReLU(x, in_place=True)
         layers.append(x); layer_names.append("relu%d"%ind)
+
+    x = L.Convolution(x, num_output=3, kernel_size=3, stride=1,
+            pad=1, weight_filler=dict(type='xavier'), bias_filler=dict(type='constant'))
+    layers.append(x); layer_names.append("conv_out")
+    x = L.TanH(x)
+    layers.append(x); layer_names.append("output")
 
     add_layers(net, layers, layer_names)
     return net.to_proto()
