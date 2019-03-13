@@ -1,4 +1,4 @@
-name: "SD_Pool"
+name: "SimpleDiscriminator"
 layer {
   name: "disc_label"
   type: "Input"
@@ -54,7 +54,7 @@ layer {
   name: "lrelu1"
   type: "ReLU"
   bottom: "pool1"
-  top: "lrelu1"
+  top: "pool1"
   relu_param {
     negative_slope: 0.2
   }
@@ -62,7 +62,7 @@ layer {
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "lrelu1"
+  bottom: "pool1"
   top: "conv2"
   convolution_param {
     num_output: 256
@@ -90,7 +90,7 @@ layer {
   name: "lrelu2"
   type: "ReLU"
   bottom: "pool2"
-  top: "lrelu2"
+  top: "pool2"
   relu_param {
     negative_slope: 0.2
   }
@@ -98,7 +98,7 @@ layer {
 layer {
   name: "conv3"
   type: "Convolution"
-  bottom: "lrelu2"
+  bottom: "pool2"
   top: "conv3"
   convolution_param {
     num_output: 512
@@ -121,37 +121,42 @@ layer {
     kernel_size: 2
     stride: 2
   }
-} # 4x4
+} 
 layer {
   name: "lrelu3"
   type: "ReLU"
   bottom: "pool3"
-  top: "lrelu3"
+  top: "pool3"
   relu_param {
     negative_slope: 0.2
   }
 }
 layer {
-  name: "conv4"
-  type: "Convolution"
-  bottom: "lrelu3"
-  top: "conv4"
-  convolution_param {
+  name: "reshape"
+  type: "Reshape"
+  bottom: "pool3"
+  top: "reshape"
+  shape {
+    dim: -1
+    dim: 8192 #4x4x512
+  }
+}
+layer {
+  name: "fc"
+  type: "InnerProduct"
+  bottom: "reshape"
+  top: "fc"
+  inner_product_param {
     num_output: 1
-    kernel_size: 4
-    stride: 1
-    pad: 0
     weight_filler {
       type: "xavier"
-      
     }
   }
-  # for 32x32, here is 1x1
 }
 layer {
   name: "disc_loss"
   type: "SigmoidCrossEntropyLoss"
-  bottom: "conv4"
+  bottom: "fc"
   bottom: "disc_label"
   top: "discr_loss"
 }

@@ -3,7 +3,7 @@ layer {
   type: "RandVec"
   top: "data"
   randvec_param {
-    batch_size: 256
+    batch_size: 128
     dim: 128
     lower: -1.0
     upper: 1.0
@@ -31,7 +31,7 @@ layer {
   top: "reshape1"
   reshape_param {
     shape {
-      dim: 256
+      dim: -1
       dim: 512
       dim: 4
       dim: 4
