@@ -1,0 +1,176 @@
+layer {
+  name: "data"
+  type: "RandVec"
+  top: "data"
+  randvec_param {
+    batch_size: 256
+    dim: 128
+    lower: -1.0
+    upper: 1.0
+  }
+}
+layer {
+  name: "fc1"
+  type: "InnerProduct"
+  bottom: "data"
+  top: "fc1"
+  inner_product_param {
+    num_output: 25088
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "reshape1"
+  type: "Reshape"
+  bottom: "fc1"
+  top: "reshape1"
+  reshape_param {
+    shape {
+      dim: -1
+      dim: 512
+      dim: 7
+      dim: 7
+    }
+  }
+}
+layer {
+  name: "bn1"
+  type: "BatchNorm"
+  bottom: "reshape1"
+  top: "bn1"
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "bn1"
+  top: "bn1"
+}
+layer {
+  name: "upsample2"
+  type: "Deconvolution"
+  bottom: "bn1"
+  top: "upsample2"
+  param {
+    lr_mult: 0.0
+    decay_mult: 0.0
+  }
+  convolution_param {
+    num_output: 512
+    bias_term: false
+    pad: 0
+    kernel_size: 2
+    stride: 2
+    weight_filler {
+      type: "bilinear"
+    }
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "upsample2"
+  top: "conv2"
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "bn2"
+  type: "BatchNorm"
+  bottom: "conv2"
+  top: "bn2"
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "bn2"
+  top: "bn2"
+}
+layer {
+  name: "upsample3"
+  type: "Deconvolution"
+  bottom: "bn2"
+  top: "upsample3"
+  param {
+    lr_mult: 0.0
+    decay_mult: 0.0
+  }
+  convolution_param {
+    num_output: 256
+    bias_term: false
+    pad: 0
+    kernel_size: 2
+    stride: 2
+    weight_filler {
+      type: "bilinear"
+    }
+  }
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "upsample3"
+  top: "conv3"
+  convolution_param {
+    num_output: 128
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "bn3"
+  type: "BatchNorm"
+  bottom: "conv3"
+  top: "bn3"
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "bn3"
+  top: "bn3"
+}
+layer {
+  name: "conv_out"
+  type: "Convolution"
+  bottom: "bn3"
+  top: "conv_out"
+  convolution_param {
+    num_output: 3
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "output"
+  type: "TanH"
+  bottom: "conv_out"
+  top: "output"
+}
