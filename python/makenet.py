@@ -16,7 +16,7 @@ def add_layers(net, layers, layer_names):
     for n,l in zip(layer_names, layers):
         setattr(net, n, l)
 
-def create_cifar10_upsample_g32x32(batch_size=128):
+def create_cifar10_upsample_g(batch_size=256):
     net = caffe.NetSpec()
 
     x = L.RandVec(randvec_param={
@@ -39,6 +39,50 @@ def create_cifar10_upsample_g32x32(batch_size=128):
     
     lower_dim = [1024, 512, 256] # 8x upsample
     upper_dim = lower_dim[1:] + [128] # from 4x4 to 32x32
+    for i in range(len(lower_dim)):
+        ind = i + 2
+        x = L.Deconvolution(x, convolution_param=dict(bias_term=False, num_output=lower_dim[i], kernel_size=2, stride=2, pad=0, weight_filler=dict(type='bilinear')), param=dict(lr_mult=0, decay_mult=0))
+        layers.append(x); layer_names.append("upsample%d"%ind)
+        x = L.Convolution(x, num_output=upper_dim[i], kernel_size=3, stride=1, pad=1, weight_filler=dict(type='xavier'), bias_filler=dict(type='constant'))
+        layers.append(x); layer_names.append("conv%d"%ind)
+        x = L.BatchNorm(x)
+        layers.append(x); layer_names.append("bn%d"%ind)
+        x = L.ReLU(x, in_place=True)
+        layers.append(x); layer_names.append("relu%d"%ind)
+
+    x = L.Convolution(x, num_output=3, kernel_size=3, stride=1,
+            pad=1, weight_filler=dict(type='xavier'), bias_filler=dict(type='constant'))
+    layers.append(x); layer_names.append("conv_out")
+    x = L.TanH(x)
+    layers.append(x); layer_names.append("output")
+
+    add_layers(net, layers, layer_names)
+    return net.to_proto()
+
+
+def create_mnist_upsample_g(batch_size=256):
+    net = caffe.NetSpec()
+
+    x = L.RandVec(randvec_param={
+        'batch_size': batch_size,
+        'dim': 128,
+        'lower': -1.0,
+        'upper': 1.0})
+
+    layers = [x]
+    layer_names = ["data"]
+
+    x = L.InnerProduct(x, num_output=7*7*512, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+    layers.append(x); layer_names.append("fc1")
+    x = L.Reshape(x, reshape_param=dict(shape={'dim': [-1, 512, 7, 7]}))
+    layers.append(x); layer_names.append("reshape1")
+    x = L.BatchNorm(x)
+    layers.append(x); layer_names.append("bn1")
+    x = L.ReLU(x, in_place=True)
+    layers.append(x); layer_names.append("relu1")
+    
+    lower_dim = [512, 256] # 4x upsample
+    upper_dim = lower_dim[1:] + [128] # from 7x7 to 28x28
     for i in range(len(lower_dim)):
         ind = i + 2
         x = L.Deconvolution(x, convolution_param=dict(bias_term=False, num_output=lower_dim[i], kernel_size=2, stride=2, pad=0, weight_filler=dict(type='bilinear')), param=dict(lr_mult=0, decay_mult=0))
