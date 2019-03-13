@@ -43,6 +43,18 @@ layer {
   type: "BatchNorm"
   bottom: "reshape1"
   top: "bn1"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
 }
 layer {
   name: "relu1"
@@ -93,6 +105,18 @@ layer {
   type: "BatchNorm"
   bottom: "conv2"
   top: "bn2"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
 }
 layer {
   name: "relu2"
@@ -143,6 +167,18 @@ layer {
   type: "BatchNorm"
   bottom: "conv3"
   top: "bn3"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
 }
 layer {
   name: "relu3"
@@ -193,6 +229,18 @@ layer {
   type: "BatchNorm"
   bottom: "conv4"
   top: "bn4"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
 }
 layer {
   name: "relu4"

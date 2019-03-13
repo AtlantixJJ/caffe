@@ -40,46 +40,20 @@ layer {
 }
 layer {
   name: "fc1_BN"
-  type: "BatchNorm" include {phase: TRAIN}
+  type: "BatchNorm"
   bottom: "reshape_fc1"
   top: "fc1_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  batch_norm_param {
-    use_global_stats: false
-    moving_average_fraction: 0.99
-  }
-}
-layer {
-  name: "fc1_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "reshape_fc1"
-  top: "fc1_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  batch_norm_param {
-    use_global_stats: true
-    moving_average_fraction: 0.99
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
   }
 }
 layer {
@@ -93,18 +67,6 @@ layer {
   type: "BatchNorm" include { phase: TEST}
   bottom: "fc1_BN"
   top: "deconv3_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
   batch_norm_param {
     use_global_stats: true
     moving_average_fraction: 0.99
@@ -131,46 +93,20 @@ layer {
 }
 layer {
   name: "deconv2_BN"
-  type: "BatchNorm" include { phase: TRAIN}
+  type: "BatchNorm"
   bottom: "deconv2"
   top: "deconv2_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  batch_norm_param {
-    use_global_stats: false
-    moving_average_fraction: 0.99
-  }
-}
-layer {
-  name: "deconv2_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "deconv2"
-  top: "deconv2_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  batch_norm_param {
-    use_global_stats: true
-    moving_average_fraction: 0.99
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
   }
 }
 layer {
@@ -200,49 +136,22 @@ layer {
 }
 layer {
   name: "deconv1_BN"
-  type: "BatchNorm" include { phase: TRAIN}
+  type: "BatchNorm"
   bottom: "deconv1"
   top: "deconv1_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  batch_norm_param {
-    use_global_stats: false
-    moving_average_fraction: 0.99
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
   }
 }
-layer {
-  name: "deconv1_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "deconv1"
-  top: "deconv1_BN"
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  param {
-    lr_mult: 0
-    decay_mult: 0
-  }
-  batch_norm_param {
-    use_global_stats: true
-    moving_average_fraction: 0.99
-  }
-}
-
 layer {
   name: "relu_deconv1"
   type: "ReLU"

@@ -17,7 +17,7 @@ layer {
   bottom: "noise"
   top: "fc1"
   inner_product_param {
-    num_output: 16384
+    num_output: 8192
     weight_filler {
       type: "gaussian"
       std: 0.02
@@ -40,20 +40,20 @@ layer {
 }
 layer {
   name: "fc1_BN"
-  type: "BatchNorm" include {phase: TRAIN}
+  type: "BatchNorm"
   bottom: "reshape_fc1"
   top: "fc1_BN"
-  batch_norm_param {
-    use_global_stats: false
-  }
-}
-layer {
-  name: "fc1_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "reshape_fc1"
-  top: "fc1_BN"
-  batch_norm_param {
-    use_global_stats: true
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
   }
 }
 layer {
@@ -83,20 +83,20 @@ layer {
 }
 layer {
   name: "deconv3_BN"
-  type: "BatchNorm" include { phase: TRAIN}
+  type: "BatchNorm"
   bottom: "deconv3"
   top: "deconv3_BN"
-  batch_norm_param {
-    use_global_stats: false
-  }
-}
-layer {
-  name: "deconv3_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "deconv3"
-  top: "deconv3_BN"
-  batch_norm_param {
-    use_global_stats: true
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
   }
 }
 layer {
@@ -126,11 +126,20 @@ layer {
 }
 layer {
   name: "deconv2_BN"
-  type: "BatchNorm" include { phase: TRAIN}
+  type: "BatchNorm"
   bottom: "deconv2"
   top: "deconv2_BN"
-  batch_norm_param {
-    use_global_stats: false
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
   }
 }
 layer {
@@ -140,6 +149,7 @@ layer {
   top: "deconv2_BN"
   batch_norm_param {
     use_global_stats: true
+    moving_average_fraction: 0.99
   }
 }
 layer {
@@ -169,23 +179,22 @@ layer {
 }
 layer {
   name: "deconv1_BN"
-  type: "BatchNorm" include { phase: TRAIN}
+  type: "BatchNorm"
   bottom: "deconv1"
   top: "deconv1_BN"
-  batch_norm_param {
-    use_global_stats: false
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
   }
 }
-layer {
-  name: "deconv1_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "deconv1"
-  top: "deconv1_BN"
-  batch_norm_param {
-    use_global_stats: true
-  }
-}
-
 layer {
   name: "relu_deconv1"
   type: "ReLU"
@@ -217,3 +226,20 @@ layer {
   bottom: "conv1"
   top: "output"
 }
+
+#layer {
+#  name: "deconv0_crop"
+#  type: "CropSimple"
+#  bottom: "deconv3"
+#  top: "deconv0_crop"
+#  crop_param {
+#     crop_height: 64
+#     crop_width: 64
+#  }
+#}
+#layer {
+#  name: "generated"
+#  type: "Eltwise"
+#  bottom: "deconv3"
+#  top: "generated"
+#}
