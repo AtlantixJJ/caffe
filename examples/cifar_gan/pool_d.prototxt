@@ -19,7 +19,7 @@ layer {
   }
   data_param {
     source: "examples/cifar10/cifar10_train_lmdb"
-    batch_size: 256
+    batch_size: 128
     backend: LMDB
   }
 }
@@ -131,16 +131,12 @@ layer {
     negative_slope: 0.2
   }
 }
-layer {
-  name: "reshape"
-  type: "Reshape"
-  bottom: "pool3"
-  top: "reshape"
-  shape {
-    dim: -1
-    dim: 8192 #4x4x512
+  reshape_param {
+    shape {
+      dim: -1
+      dim: 8192
+    }
   }
-}
 layer {
   name: "fc"
   type: "InnerProduct"

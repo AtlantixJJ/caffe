@@ -136,9 +136,11 @@ layer {
   type: "Reshape"
   bottom: "pool3"
   top: "reshape"
-  shape {
-    dim: -1
-    dim: 4608 #3x3x512
+  reshape_param {
+    shape {
+      dim: -1
+      dim: 4608 #3x3x512
+    }
   }
 }
 layer {
