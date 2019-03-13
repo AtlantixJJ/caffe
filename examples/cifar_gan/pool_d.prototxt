@@ -131,12 +131,18 @@ layer {
     negative_slope: 0.2
   }
 }
+layer {
+  name: "reshape"
+  type: "Reshape"
+  bottom: "pool3"
+  top: "reshape"
   reshape_param {
     shape {
       dim: -1
       dim: 8192
     }
   }
+}
 layer {
   name: "fc"
   type: "InnerProduct"
