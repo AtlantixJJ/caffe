@@ -156,7 +156,7 @@ layer {
   bottom: "bn3"
   top: "conv_out"
   convolution_param {
-    num_output: 3
+    num_output: 1
     pad: 1
     kernel_size: 3
     stride: 1

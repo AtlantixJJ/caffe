@@ -59,7 +59,6 @@ def create_cifar10_upsample_g(batch_size=256):
     add_layers(net, layers, layer_names)
     return net.to_proto()
 
-
 def create_mnist_upsample_g(batch_size=256):
     net = caffe.NetSpec()
 
@@ -94,7 +93,7 @@ def create_mnist_upsample_g(batch_size=256):
         x = L.ReLU(x, in_place=True)
         layers.append(x); layer_names.append("relu%d"%ind)
 
-    x = L.Convolution(x, num_output=3, kernel_size=3, stride=1,
+    x = L.Convolution(x, num_output=1, kernel_size=3, stride=1,
             pad=1, weight_filler=dict(type='xavier'), bias_filler=dict(type='constant'))
     layers.append(x); layer_names.append("conv_out")
     x = L.TanH(x)
