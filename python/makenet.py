@@ -12,6 +12,23 @@ def relu(x):
 def lrelu(x):
     return L.ReLU(x, in_place=True, negative_slope=0.2)
 
+def create_cifar10_upsample_g(batch_size=128):
+    net = caffe.NetSpec()
+
+    net.data = L.RandVec(randvec_param={
+        'batch_size': batch_size,
+        'dim': 128,
+        'lower': -1.0,
+        'upper': 1.0})
+
+    net.fc = L.InnerProduct(net.data, num_output=4*4*1024, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+    net.reshape = L.Reshape(net.fc, reshape_param=dict(shape={'dim': [batch_size, 1024, 4, 4]}))
+    net.bn = L.BatchNorm(net.reshape)
+    net.relu = L.ReLU(net.bn, in_place=True)
+
+    net.upsample1 = L.Deconvolution(net.relu, convolution_param=dict(bias_term=False, num_output=1024, kernel_size=2, stride=2, pad=0, weight_filler=dict(type='bilinear')), param=dict(lr_mult=0, decay_mult=0))
+    return net.to_proto()
+
 def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
     conv1 = L.Convolution(x, num_output=dim, kernel_size=3, stride=1, pad=1,
         weight_filler=dict(type="gaussian", std=0.02))
