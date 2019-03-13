@@ -71,16 +71,16 @@ def create_mnist_upsample_g(batch_size=256):
     layers = [x]
     layer_names = ["data"]
 
-    x = L.InnerProduct(x, num_output=7*7*512, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+    x = L.InnerProduct(x, num_output=7*7*256, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
     layers.append(x); layer_names.append("fc1")
-    x = L.Reshape(x, reshape_param=dict(shape={'dim': [-1, 512, 7, 7]}))
+    x = L.Reshape(x, reshape_param=dict(shape={'dim': [-1, 256, 7, 7]}))
     layers.append(x); layer_names.append("reshape1")
     x = L.BatchNorm(x)
     layers.append(x); layer_names.append("bn1")
     x = L.ReLU(x, in_place=True)
     layers.append(x); layer_names.append("relu1")
     
-    lower_dim = [512, 256] # 4x upsample
+    lower_dim = [256, 256] # 4x upsample
     upper_dim = lower_dim[1:] + [128] # from 7x7 to 28x28
     for i in range(len(lower_dim)):
         ind = i + 2

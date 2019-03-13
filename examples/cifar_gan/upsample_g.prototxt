@@ -15,7 +15,7 @@ layer {
   bottom: "data"
   top: "fc1"
   inner_product_param {
-    num_output: 16384
+    num_output: 8192
     weight_filler {
       type: "xavier"
     }
@@ -32,7 +32,7 @@ layer {
   reshape_param {
     shape {
       dim: 256
-      dim: 1024
+      dim: 512
       dim: 4
       dim: 4
     }
@@ -60,7 +60,7 @@ layer {
     decay_mult: 0.0
   }
   convolution_param {
-    num_output: 1024
+    num_output: 512
     bias_term: false
     pad: 0
     kernel_size: 2
