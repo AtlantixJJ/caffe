@@ -12,21 +12,45 @@ def relu(x):
 def lrelu(x):
     return L.ReLU(x, in_place=True, negative_slope=0.2)
 
-def create_cifar10_upsample_g(batch_size=128):
+def add_layers(net, layers, layer_names):
+    for n,l in zip(layer_names, layers):
+        setattr(net, n, l)
+
+def create_cifar10_upsample_g32x32(batch_size=128):
     net = caffe.NetSpec()
 
-    net.data = L.RandVec(randvec_param={
+    x = L.RandVec(randvec_param={
         'batch_size': batch_size,
         'dim': 128,
         'lower': -1.0,
         'upper': 1.0})
 
-    net.fc = L.InnerProduct(net.data, num_output=4*4*1024, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
-    net.reshape = L.Reshape(net.fc, reshape_param=dict(shape={'dim': [batch_size, 1024, 4, 4]}))
-    net.bn = L.BatchNorm(net.reshape)
-    net.relu = L.ReLU(net.bn, in_place=True)
+    layers = [x]
+    layer_names = ["data"]
 
-    net.upsample1 = L.Deconvolution(net.relu, convolution_param=dict(bias_term=False, num_output=1024, kernel_size=2, stride=2, pad=0, weight_filler=dict(type='bilinear')), param=dict(lr_mult=0, decay_mult=0))
+    x = L.InnerProduct(x, num_output=4*4*1024, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+    layers.append(x); layer_names.append("fc1")
+    x = L.Reshape(x, reshape_param=dict(shape={'dim': [batch_size, 1024, 4, 4]}))
+    layers.append(x); layer_names.append("reshape1")
+    x = L.BatchNorm(x)
+    layers.append(x); layer_names.append("bn1")
+    x = L.ReLU(x, in_place=True)
+    layers.append(x); layer_names.append("relu1")
+    
+    lower_dim = [1024, 512, 256] # 8x upsample
+    upper_dim = lower_dim[1:] + [128] # from 4x4 to 32x32
+    for i in range(len(lower_dim)):
+        ind = i + 2
+        x = L.Deconvolution(x, convolution_param=dict(bias_term=False, num_output=lower_dim[i], kernel_size=2, stride=2, pad=0, weight_filler=dict(type='bilinear')), param=dict(lr_mult=0, decay_mult=0))
+        layers.append(x); layer_names.append("upsample%d"%ind)
+        x = L.Convolution(x, num_output=upper_dim[i], kernel_size=3, stride=1, pad=1, weight_filler=dict(type='xavier'))
+        layers.append(x); layer_names.append("conv%d"%ind)
+        x = L.BatchNorm(x)
+        layers.append(x); layer_names.append("bn%d"%ind)
+        x = L.ReLU(x, in_place=True)
+        layers.append(x); layer_names.append("relu%d"%ind)
+
+    add_layers(net, layers, layer_names)
     return net.to_proto()
 
 def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
@@ -49,9 +73,8 @@ def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
         names = ['conv1', 'act1', 'conv2', 'add']
         layers = [conv1, relu1, conv2, add]
 
-    for n,l in zip(names, layers):
-        setattr(net, name + "_" + n, l)
-    return add
+    names = [name + i_ for i_ in names]
+    add_layers(net, layers, names)
 
 def create_cifar10_res_g(batch_size=128):
     net = caffe.NetSpec()
