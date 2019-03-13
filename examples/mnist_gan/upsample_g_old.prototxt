@@ -67,6 +67,10 @@ layer {
   type: "Deconvolution"
   bottom: "bn1"
   top: "upsample2"
+  param {
+    lr_mult: 0.0
+    decay_mult: 0.0
+  }
   convolution_param {
     num_output: 256
     bias_term: false
@@ -125,6 +129,10 @@ layer {
   type: "Deconvolution"
   bottom: "bn2"
   top: "upsample3"
+  param {
+    lr_mult: 0.0
+    decay_mult: 0.0
+  }
   convolution_param {
     num_output: 256
     bias_term: false

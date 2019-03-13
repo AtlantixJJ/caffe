@@ -75,7 +75,7 @@ def create_mnist_upsample_g(batch_size=256):
     layers.append(x); layer_names.append("fc1")
     x = L.Reshape(x, reshape_param=dict(shape={'dim': [-1, 256, 7, 7]}))
     layers.append(x); layer_names.append("reshape1")
-    x = L.BatchNorm(x)
+    x = L.BatchNorm(x, [dict()])
     layers.append(x); layer_names.append("bn1")
     x = L.ReLU(x, in_place=True)
     layers.append(x); layer_names.append("relu1")
