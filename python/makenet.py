@@ -259,40 +259,47 @@ def create_cifar10_ae256x256(batch_size=128):
     ## Convolutional Layer 1
     net.conv1 = L.Convolution(net.data, num_output=64, kernel_size=5, stride=1,
             pad=2, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
-    net.relu1 = L.ReLU(net.conv1, in_place=True)
+    net.bn1   = L.BatchNorm(net.conv1)
+    net.relu1 = L.ReLU(net.bn1, in_place=True)
     # 256x256
 
     ## Convolutional Layer 2
     net.conv2 = L.Convolution(net.relu1, num_output=128, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
-    net.relu2 = L.ReLU(net.conv2, in_place=True)
+    net.bn2   = L.BatchNorm(net.conv2)
+    net.relu2 = L.ReLU(net.bn2, in_place=True)
     # 128x128
 
     ## Convolutional Layer 3
     net.conv3 = L.Convolution(net.relu2, num_output=256, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
-    net.relu3 = L.ReLU(net.conv3, in_place=True)
+    net.bn3   = L.BatchNorm(net.conv3)
+    net.relu3 = L.ReLU(net.bn3, in_place=True)
     # 64x64
 
     ## Convolutional Layer 4
     net.conv4 = L.Convolution(net.relu3, num_output=512, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
-    net.relu4 = L.ReLU(net.conv4, in_place=True)
+    net.bn4   = L.BatchNorm(net.conv4)
+    net.relu4 = L.ReLU(net.bn4, in_place=True)
     # 32x32
 
     net.deconv3 = L.Deconvolution(net.relu5, convolution_param=dict(num_output=256, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
-    net.relu5= L.ReLU(net.deconv3, in_place=True)
+    net.bn5   = L.BatchNorm(net.deconv3)
+    net.relu5 = L.ReLU(net.bn5, in_place=True)
     # 64x64
 
     net.deconv2 = L.Deconvolution(net.relu5, convolution_param=dict(num_output=128, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
-    net.relu6 = L.ReLU(net.deconv2, in_place=True)
+    net.bn6   = L.BatchNorm(net.deconv2)
+    net.relu6 = L.ReLU(net.bn6, in_place=True)
     # 128x128
 
     net.deconv1 = L.Deconvolution(net.relu6, convolution_param=dict(num_output=64, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
-    net.relu7 = L.ReLU(net.deconv1, in_place=True)
+    net.bn7   = L.BatchNorm(net.deconv1)
+    net.relu7 = L.ReLU(net.bn7, in_place=True)
     # 256x256
 
     net.conv_output = L.Convolution(net.relu7, num_output=3, kernel_size=5, stride=1,
