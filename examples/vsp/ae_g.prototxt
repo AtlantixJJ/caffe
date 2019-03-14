@@ -12,6 +12,7 @@ layer {
   data_param {
     source: "/home/wyw/workspace/SC-2019/intel_firstTest/new-3-3/caffe/examples/vsp/layer2_2channel256-4590-float_train_lmdb"
     batch_size: 128
+    backend: LMDB
   }
 }
 layer {
