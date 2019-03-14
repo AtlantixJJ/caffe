@@ -242,7 +242,7 @@ layer {
   bottom: "bn7"
   top: "conv_output"
   convolution_param {
-    num_output: 3
+    num_output: 1
     pad: 2
     kernel_size: 5
     stride: 1
