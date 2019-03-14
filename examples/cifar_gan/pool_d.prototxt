@@ -143,10 +143,10 @@ layer {
   }
 }
 layer {
-  name: "fc"
+  name: "disc"
   type: "InnerProduct"
   bottom: "reshape"
-  top: "fc"
+  top: "disc"
   inner_product_param {
     num_output: 1
     weight_filler {
@@ -157,7 +157,7 @@ layer {
 layer {
   name: "disc_loss"
   type: "SigmoidCrossEntropyLoss"
-  bottom: "fc"
+  bottom: "disc"
   bottom: "disc_label"
   top: "discr_loss"
 }
