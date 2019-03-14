@@ -5,26 +5,24 @@ layer {
   include {
     phase: TRAIN
   }
-# not needed for (-1, 1) float data
-# transform_param {
-#   scale: 0.0078125
-#   mean_value: 127.5
-# }
+  transform_param {
+    scale: 0.0078125
+    mean_value: 127.5
+  }
   data_param {
-    source: "examples/vsp/layer2_2channel256-4590-float_train_lmdb"
-    batch_size: 128
-    backend: LMDB
+    source: "examples/cifar10/cifar10_train_lmdb"
+    batch_size: 64
   }
 }
 layer {
-  name: "slice_data"
+  name: "data_A"
   type: "Slice"
   bottom: "data"
   top: "data_A"
   top: "data_B"
   slice_param {
-    axis: 1
     slice_point: 1
+    axis: 1
   }
 }
 layer {
@@ -243,7 +241,7 @@ layer {
   bottom: "bn7"
   top: "conv_output"
   convolution_param {
-    num_output: 1
+    num_output: 3
     pad: 2
     kernel_size: 5
     stride: 1
