@@ -131,10 +131,10 @@ layer {
   }
 }
 layer {
-  name: "conv4"
+  name: "disc"
   type: "Convolution"
   bottom: "pool3"
-  top: "conv4"
+  top: "disc"
   convolution_param {
     num_output: 1
     weight_filler {
@@ -145,7 +145,7 @@ layer {
 layer {
   name: "disc_loss"
   type: "SigmoidCrossEntropyLoss"
-  bottom: "fc"
+  bottom: "disc"
   bottom: "disc_label"
   top: "discr_loss"
 }
