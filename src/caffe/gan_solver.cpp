@@ -224,6 +224,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
   // label placeholder
   Blob<Dtype>* disc_label = d_solver->net_->input_blobs()[0];
   disc_label->ReshapeLike(*disc[0]);
+  
   // ones, zeros
   Blob<Dtype> ones, zeros;
   ones.ReshapeLike(*disc_label);

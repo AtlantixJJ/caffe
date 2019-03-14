@@ -18,9 +18,6 @@ files = files[1:]
 label = np.load(npy_path)
 class_num = label.shape[-1]
 
-# open lmdb
-env = lmdb.open(lmdb_output, map_size=map_size)
-
 def datum_from_image(img, label):
     # for uint8 image data
     datum = caffe.proto.caffe_pb2.Datum()
@@ -33,6 +30,8 @@ def datum_from_image(img, label):
     return datum
 
 # normal celeba
+# open lmdb
+env = lmdb.open(lmdb_output, map_size=map_size)
 with env.begin(write=True) as txn:
     for idx in range(len(files)):
         if use_zip:
