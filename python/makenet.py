@@ -284,7 +284,7 @@ def create_cifar10_ae256x256(batch_size=128):
     net.relu4 = L.ReLU(net.bn4, in_place=True)
     # 32x32
 
-    net.deconv3 = L.Deconvolution(net.relu5, convolution_param=dict(num_output=256, kernel_size=4, stride=2,
+    net.deconv3 = L.Deconvolution(net.relu4, convolution_param=dict(num_output=256, kernel_size=4, stride=2,
             pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
     net.bn5   = L.BatchNorm(net.deconv3)
     net.relu5 = L.ReLU(net.bn5, in_place=True)
