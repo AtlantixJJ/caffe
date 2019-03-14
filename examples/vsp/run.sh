@@ -1,11 +1,21 @@
-rm -r log/vsp_$1
+# ./run.sh <pool/pxs> <deconv/pxs>
 mkdir log
-mkdir log/vsp_$1
-echo net: \"examples/vsp/$1_d.prototxt\" > examples/cifar_gan/d_solver.prototxt
-echo snapshot_prefix: \"log/cifar_pxs\" >> examples/cifar_gan/d_solver.prototxt
+rm -rf log/vsp_pool_ae
+mkdir log/vsp_pool_ae
 
-cat examples/cifar_gan/d_solver >> examples/cifar_gan/d_solver.prototxt
+# make d solver
+cat examples/vsp/d_solver > examples/vsp/pool_ae_d_solver.prototxt
+echo "" >> examples/vsp/pool_ae_d_solver.prototxt
+echo net: \"examples/vsp/pool_d.prototxt\" >> examples/vsp/pool_ae_d_solver.prototxt
+echo snapshot_prefix: \"log/vsp_pool_ae/\" >> examples/vsp/pool_ae_d_solver.prototxt
+
+# make g solver
+cat examples/vsp/d_solver > examples/vsp/pool_ae_g_solver.prototxt
+echo "" >> examples/vsp/pool_ae_g_solver.prototxt
+echo net: \"examples/vsp/ae_g.prototxt\" >> examples/vsp/pool_ae_g_solver.prototxt
+echo snapshot_prefix: \"log/vsp_pool_ae/\" >> examples/vsp/pool_ae_g_solver.prototxt
 
 build/tools/caffe_gan train \
-    --g_solver=examples/cifar_gan/g_solver.prototxt \
-    --d_solver=examples/cifar_gan/d_solver.prototxt
+    --d_solver=examples/vsp/pool_ae_d_solver.prototxt \
+    --g_solver=examples/vsp/pool_ae_g_solver.prototxt \
+    2>&1 | tee log/vsp_pool_ae/train.log
