@@ -315,7 +315,7 @@ def cifar10_ae256x256(batch_size=128):
 def vsp(batch_size=128):
     net = caffe.NetSpec()
 
-    net.data = L.Data(batch_size=batch_size, source=vsp_lmdb_dir, include=dict(phase=caffe.TRAIN),
+    net.data = L.Data(batch_size=batch_size, backend="LMDB", source=vsp_lmdb_dir, include=dict(phase=caffe.TRAIN),
         transform_param=dict(scale=1/128,mean_value=127.5))
 
     net.data_A, net.data_B = L.Slice(net.data, ntop=2, slice_param=dict(axis=1, slice_point=1))
