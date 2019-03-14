@@ -138,6 +138,9 @@ layer {
   top: "disc"
   convolution_param {
     num_output: 1
+    kernel_size: 3
+    stride: 1
+    pad: 1
     weight_filler {
       type: "xavier"
     }
