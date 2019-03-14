@@ -12,7 +12,6 @@ layer {
   data_param {
     source: "examples/vsp/layer2_2channel256-4590-float_train_lmdb"
     batch_size: 64
-    backend: LMDB
   }
 }
 layer {
@@ -48,18 +47,18 @@ layer {
   name: "bn1"
   type: "BatchNorm"
   bottom: "conv1"
-  top: "bn1"
+  top: "conv1"
 }
 layer {
   name: "relu1"
   type: "ReLU"
-  bottom: "bn1"
-  top: "bn1"
+  bottom: "conv1"
+  top: "conv1"
 }
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "bn1"
+  bottom: "conv1"
   top: "conv2"
   convolution_param {
     num_output: 128
@@ -78,18 +77,18 @@ layer {
   name: "bn2"
   type: "BatchNorm"
   bottom: "conv2"
-  top: "bn2"
+  top: "conv2"
 }
 layer {
   name: "relu2"
   type: "ReLU"
-  bottom: "bn2"
-  top: "bn2"
+  bottom: "conv2"
+  top: "conv2"
 }
 layer {
   name: "conv3"
   type: "Convolution"
-  bottom: "bn2"
+  bottom: "conv2"
   top: "conv3"
   convolution_param {
     num_output: 256
@@ -108,18 +107,18 @@ layer {
   name: "bn3"
   type: "BatchNorm"
   bottom: "conv3"
-  top: "bn3"
+  top: "conv3"
 }
 layer {
   name: "relu3"
   type: "ReLU"
-  bottom: "bn3"
-  top: "bn3"
+  bottom: "conv3"
+  top: "conv3"
 }
 layer {
   name: "conv4"
   type: "Convolution"
-  bottom: "bn3"
+  bottom: "conv3"
   top: "conv4"
   convolution_param {
     num_output: 512
@@ -138,18 +137,18 @@ layer {
   name: "bn4"
   type: "BatchNorm"
   bottom: "conv4"
-  top: "bn4"
+  top: "conv4"
 }
 layer {
   name: "relu4"
   type: "ReLU"
-  bottom: "bn4"
-  top: "bn4"
+  bottom: "conv4"
+  top: "conv4"
 }
 layer {
   name: "deconv3"
   type: "Deconvolution"
-  bottom: "bn4"
+  bottom: "conv4"
   top: "deconv3"
   convolution_param {
     num_output: 256
@@ -168,18 +167,18 @@ layer {
   name: "bn5"
   type: "BatchNorm"
   bottom: "deconv3"
-  top: "bn5"
+  top: "deconv3"
 }
 layer {
   name: "relu5"
   type: "ReLU"
-  bottom: "bn5"
-  top: "bn5"
+  bottom: "deconv3"
+  top: "deconv3"
 }
 layer {
   name: "deconv2"
   type: "Deconvolution"
-  bottom: "bn5"
+  bottom: "deconv3"
   top: "deconv2"
   convolution_param {
     num_output: 128
@@ -198,18 +197,18 @@ layer {
   name: "bn6"
   type: "BatchNorm"
   bottom: "deconv2"
-  top: "bn6"
+  top: "deconv2"
 }
 layer {
   name: "relu6"
   type: "ReLU"
-  bottom: "bn6"
-  top: "bn6"
+  bottom: "deconv2"
+  top: "deconv2"
 }
 layer {
   name: "deconv1"
   type: "Deconvolution"
-  bottom: "bn6"
+  bottom: "deconv2"
   top: "deconv1"
   convolution_param {
     num_output: 64
@@ -228,18 +227,18 @@ layer {
   name: "bn7"
   type: "BatchNorm"
   bottom: "deconv1"
-  top: "bn7"
+  top: "deconv1"
 }
 layer {
   name: "relu7"
   type: "ReLU"
-  bottom: "bn7"
-  top: "bn7"
+  bottom: "deconv1"
+  top: "deconv1"
 }
 layer {
   name: "conv_output"
   type: "Convolution"
-  bottom: "bn7"
+  bottom: "deconv1"
   top: "conv_output"
   convolution_param {
     num_output: 1
