@@ -3,7 +3,8 @@ layer {
   name: "disc_label"
   type: "Input"
   top: "disc_label"
-  input_param { shape: { dim: 128 dim: 1} }
+  # the output map size for 256x256 input
+  input_param { shape: { dim: 128 dim: 1 dim: 32 dim: 32} }
 }
 layer {
   name: "data"

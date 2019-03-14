@@ -198,7 +198,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
   int base_ind = d_solver->net_->base_layer_index();
   int end_ind = d_solver->net_->layers().size() - 1;
   int g_output_layer = g_solver->net_->layerid_by_name("output");
-  int d_disc_layer = g_solver->net_->layerid_by_name("disc");
+  //int d_disc_layer = g_solver->net_->layerid_by_name("disc");
   
   d_solver->losses_.clear();
   g_solver->losses_.clear();
@@ -217,13 +217,13 @@ void GANSolver<Dtype>::Step_sw(int iters) {
   x_fake.push_back(new Blob<Dtype>(gen[0]->shape()));
   // [TODO] this new has no delete
 
-  d_solver->net_->Forward();
-  const vector<Blob<Dtype>*> &disc = g_solver->net_->top_vecs()[d_disc_layer];
-  if (debug > 0) LOG(INFO) << "D output shape: " << disc[0]->shape_string();
+  //d_solver->net_->Forward();
+  //const vector<Blob<Dtype>*> &disc = g_solver->net_->top_vecs()[d_disc_layer];
+  //if (debug > 0) LOG(INFO) << "D output shape: " << disc[0]->shape_string();
 
   // label placeholder
   Blob<Dtype>* disc_label = d_solver->net_->input_blobs()[0];
-  disc_label->ReshapeLike(*disc[0]);
+  //disc_label->ReshapeLike(*disc[0]);
   
   // ones, zeros
   Blob<Dtype> ones, zeros;
