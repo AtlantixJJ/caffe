@@ -11,4 +11,4 @@ max_iter: 20000
 solver_mode: GPU
 solver_type: ADAM
 g_step: 1
-d_step: 1
+d_step: 2

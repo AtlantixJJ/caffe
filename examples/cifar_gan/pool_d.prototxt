@@ -107,7 +107,6 @@ layer {
     pad: 1
     weight_filler {
       type: "xavier"
-      
     }
   }
 }

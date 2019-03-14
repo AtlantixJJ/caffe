@@ -39,22 +39,20 @@ layer {
 }
 layer {
   name: "fc1_BN"
-  type: "BatchNorm" include {phase: TRAIN}
+  type: "BatchNorm"
   bottom: "reshape_fc1"
   top: "fc1_BN"
-  batch_norm_param {
-    use_global_stats: false
-    moving_average_fraction: 0.99
-  }
-}
-layer {
-  name: "fc1_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "reshape_fc1"
-  top: "fc1_BN"
-  batch_norm_param {
-    use_global_stats: true
-    moving_average_fraction: 0.99
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
   }
 }
 layer {
