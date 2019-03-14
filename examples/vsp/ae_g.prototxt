@@ -261,6 +261,7 @@ layer {
   top: "output"
 }
 layer {
+  loss_weight: 0.000152587890625 # 10/256/256
   name: "loss"
   type: "EuclideanLoss"
   bottom: "output"
