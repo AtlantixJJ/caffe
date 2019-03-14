@@ -9,5 +9,3 @@ stepvalue: 10000
 max_iter:  20000
 solver_mode: GPU
 solver_type: ADAM
-d_step: 2
-g_step: 1

@@ -148,6 +148,7 @@ layer {
   }
 }
 layer {
+  loss_weight: 0.0009765625 # 1/(32*32), average on feature map
   name: "disc_loss"
   type: "SigmoidCrossEntropyLoss"
   bottom: "disc"

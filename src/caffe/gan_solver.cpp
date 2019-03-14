@@ -235,14 +235,14 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     zeros_data[i] = 0.0;
   }
   
-  Dtype disc_real_loss = 0, disc_fake_loss = 0, gen_loss = 0, _tmp = 0;
+  Dtype disc_real_loss = 0, disc_fake_loss = 0, gen_loss = 0, _tmp = 0, gen_other_loss = 0;
   int d_iter = 0, g_iter = 0;
   float progress = 0.0;
   while (++iter_ < stop_iter) {
     if (d_solver->param_.test_interval() && iter_ % d_solver->param_.test_interval() == 0) {
-      LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen";
-      LOG(INFO) << "\t\t" << disc_real_loss / d_iter << "\t" << disc_fake_loss / d_iter << "\t" << gen_loss / g_iter;
-      disc_real_loss = disc_fake_loss = gen_loss = 0;
+      LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen\t" << "Gen Other";
+      LOG(INFO) << "\t\t" << disc_real_loss / d_iter << "\t" << disc_fake_loss / d_iter << "\t" << gen_loss / g_iter << "\t" << gen_other_loss / g_iter;
+      disc_real_loss = disc_fake_loss = gen_loss = gen_other_loss = 0;
       d_iter = g_iter = 0;
       if (Caffe::root_solver())
         TestAll();
@@ -300,7 +300,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     for(int it_ = 0; it_ < d_solver->param_.g_step(); it_ ++) {
     if (debug > 0) LOG(INFO) << "Forward x_fake ";
 
-    g_solver->net_->Forward(); // G(z)
+    gen_other_loss += g_solver->net_->Forward(); // G(z)
     x_fake[0]->CopyFrom(*gen[0]);
 
     disc_label->CopyFrom(ones); //CHECK_EQ((int)disc_label->cpu_data()[49], 1);
