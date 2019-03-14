@@ -197,6 +197,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
   int stop_iter = iter_ + iters;
   int base_ind = d_solver->net_->base_layer_index();
   int end_ind = d_solver->net_->layers().size() - 1;
+  int g_layers = g_solver->net_->layers().size();
   int g_output_layer = g_solver->net_->layerid_by_name("output");
   //int d_disc_layer = g_solver->net_->layerid_by_name("disc");
   
@@ -300,7 +301,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     for(int it_ = 0; it_ < d_solver->param_.g_step(); it_ ++) {
     if (debug > 0) LOG(INFO) << "Forward x_fake ";
 
-    gen_other_loss += g_solver->net_->Forward(); // G(z)
+    gen_other_loss += g_solver->net_->ForwardFromTo(0, g_layers - 1); // G(z)
     x_fake[0]->CopyFrom(*gen[0]);
 
     disc_label->CopyFrom(ones); //CHECK_EQ((int)disc_label->cpu_data()[49], 1);
