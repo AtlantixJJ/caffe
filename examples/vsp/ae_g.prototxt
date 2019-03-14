@@ -5,10 +5,6 @@ layer {
   include {
     phase: TRAIN
   }
-  transform_param {
-    scale: 0.0078125
-    mean_value: 127.5
-  }
   data_param {
     source: "examples/vsp/layer2_2channel256-4590-float_train_lmdb"
     batch_size: 64
