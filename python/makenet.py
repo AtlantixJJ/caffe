@@ -365,7 +365,7 @@ def vsp(batch_size=128):
     net.relu7 = L.ReLU(net.bn7, in_place=True)
     # 256x256
 
-    net.conv_output = L.Convolution(net.relu7, num_output=3, kernel_size=5, stride=1,
+    net.conv_output = L.Convolution(net.relu7, num_output=1, kernel_size=5, stride=1,
             pad=2, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
     net.output = L.TanH(net.conv_output)
 
