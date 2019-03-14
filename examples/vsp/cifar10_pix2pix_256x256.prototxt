@@ -10,7 +10,7 @@ layer {
     mean_value: 127.5
   }
   data_param {
-    source: "examples/cifar10/cifar10_train_lmdb"
+    source: "/home/wyw/workspace/SC-2019/intel_firstTest/new-3-3/caffe/examples/vsp/layer2_2channel256-4590-float_train_lmdb"
     batch_size: 128
   }
 }
@@ -22,7 +22,7 @@ layer {
   top: "data_B"
   slice_param {
     axis: 1
-    slice_point: 3
+    slice_point: 1
   }
 }
 layer {
@@ -241,7 +241,7 @@ layer {
   bottom: "bn7"
   top: "conv_output"
   convolution_param {
-    num_output: 3
+    num_output: 1
     pad: 2
     kernel_size: 5
     stride: 1
