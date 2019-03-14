@@ -37,7 +37,6 @@ layer {
     pad: 1
     weight_filler {
       type: "xavier"
-      
     }
   }
 }
@@ -51,7 +50,7 @@ layer {
     kernel_size: 2
     stride: 2
   }
-} 
+}
 layer {
   name: "lrelu1"
   type: "ReLU"
@@ -73,7 +72,6 @@ layer {
     pad: 1
     weight_filler {
       type: "xavier"
-      
     }
   }
 }

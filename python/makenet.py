@@ -374,7 +374,8 @@ def vsp(batch_size=128):
 
     return net.to_proto()
 
-
+def vsp_unet(batch_size=128):
+        
 
 func = sys.argv[1]
 output_file = sys.argv[2]
