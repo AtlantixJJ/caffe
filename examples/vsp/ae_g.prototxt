@@ -5,12 +5,13 @@ layer {
   include {
     phase: TRAIN
   }
-  transform_param {
-    scale: 0.0078125
-    mean_value: 127.5
-  }
+# not needed for (-1, 1) float data
+# transform_param {
+#   scale: 0.0078125
+#   mean_value: 127.5
+# }
   data_param {
-    source: "/home/wyw/workspace/SC-2019/intel_firstTest/new-3-3/caffe/examples/vsp/layer2_2channel256-4590-float_train_lmdb"
+    source: "examples/vsp/layer2_2channel256-4590-float_train_lmdb"
     batch_size: 128
     backend: LMDB
   }
