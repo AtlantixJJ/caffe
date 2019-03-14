@@ -264,6 +264,19 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     /// Train D
     g_solver->net_->Forward(); // G(z)
     x_fake[0]->CopyFrom(*gen[0]);
+    
+    if (debug > 0) LOG(INFO) << "Forward D(x_fake) ";
+
+    disc_label->CopyFrom(zeros); //CHECK_EQ((int)disc_label->cpu_data()[19], 0);
+    _tmp = d_solver->net_->ForwardFromBlob(x_fake, base_ind, end_ind); // D(G(z))
+    disc_fake_loss += _tmp;
+
+    if (debug > 0) {
+      std::cout << "disc_fake: " << _tmp << std::endl;
+      LOG(INFO) << "Backward D(x_fake) ";
+    }
+
+    d_solver->net_->Backward(); // accumulate gradient for D(fake)
 
     if (debug > 0) LOG(INFO) << "Forward D(x_real) ";
 
@@ -277,19 +290,6 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     }
 
     d_solver->net_->Backward(); // accumulate gradient for D(real)
-    
-    if (debug > 0) LOG(INFO) << "Forward D(x_fake) ";
-
-    disc_label->CopyFrom(zeros); //CHECK_EQ((int)disc_label->cpu_data()[19], 0);
-    _tmp = d_solver->net_->ForwardFromBlob(x_fake, base_ind, end_ind); // D(G(z))
-    disc_fake_loss += _tmp;
-
-    if (debug > 0) {
-      std::cout << "disc_fake: " << _tmp << std::endl;
-      LOG(INFO) << "Backward D(x_fake) ";
-    }
-
-    d_solver->net_->Backward(); // accumulate gradient for D(G(z))
     d_solver->ApplyUpdate();
     d_solver->net_->ClearParamDiffs();
     d_iter ++;
