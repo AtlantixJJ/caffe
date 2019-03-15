@@ -320,7 +320,7 @@ def cifar10_ae256x256(batch_size=128):
 def vsp(batch_size=128):
     net = caffe.NetSpec()
 
-    net.data = L.Data(batch_size=batch_size, backend="LMDB", source=vsp_lmdb_dir, include=dict(phase=caffe.TRAIN))
+    net.data = L.Data(batch_size=batch_size, backend=caffe.params.Data.LMDB, source=vsp_lmdb_dir, include=dict(phase=caffe.TRAIN))
 
     net.data_A, net.data_B = L.Slice(net.data, ntop=2, slice_param=dict(axis=1, slice_point=1))
 
@@ -399,7 +399,7 @@ class UNetSkipConnectBlock(object):
             fn_name= ['downconv', 'downnorm', 'downact', 'upconv', 'upnorm', 'upact']
             fn_name= [name + '_' + n for n in fn_name]
         else:
-            fn_seq = [downconv, downnorm, downact] + submodule + [upconv, upnorm, upact]
+            fn_seq = [downconv, downnorm, downact] + [submodule] + [upconv, upnorm, upact]
             name1 = ['downconv', 'downnorm', 'downact']
             name2 = ['upconv', 'upnorm', 'upact']
             name1 = [name + "_" + n for n in name1]
@@ -413,7 +413,8 @@ class UNetSkipConnectBlock(object):
         Build the graph
         """
         for f, n in zip(self.fn_seq, self.fn_name):
-            if isinstance(f, UNetSkipConnectBlock): x=f(x)
+            if isinstance(f, UNetSkipConnectBlock):
+                x = f(x)
             else:
                 setattr(self.net, n, f(x))
                 x = getattr(self.net, n)
@@ -423,7 +424,7 @@ class UNetSkipConnectBlock(object):
 def vsp_unet(batch_size=128):
     net = caffe.NetSpec()
 
-    net.data = L.Data(batch_size=batch_size, backend="LMDB", source=vsp_lmdb_dir, include=dict(phase=caffe.TRAIN))
+    net.data = L.Data(batch_size=batch_size, backend=caffe.params.Data.LMDB, source=vsp_lmdb_dir, include=dict(phase=caffe.TRAIN))
 
     net.data_A, net.data_B = L.Slice(net.data, ntop=2, slice_param=dict(axis=1, slice_point=1))
 
