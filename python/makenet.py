@@ -7,6 +7,11 @@ from caffe.proto import caffe_pb2
 cifar_lmda_dir = "examples/cifar10/cifar10_train_lmdb"
 vsp_lmdb_dir = "examples/vsp/layer2_2channel256-4590-float_train_lmdb"
 
+def partial(func, **kwargs):
+    def _func(x):
+        return func(x, **kwargs)
+    return _func
+
 def relu(x):
     return L.ReLU(x, in_place=True)
 
@@ -374,7 +379,60 @@ def vsp(batch_size=128):
 
     return net.to_proto()
 
+class UNetSkipConnectBlock(object):
+    def __init__(self, name, net, in_dim, out_dim, submodule=None);
+        self.name = name
+        self.net = net
+        
+        downconv = partial(L.Convolution, num_output=in_dim, kernel_size=4, stride=2,
+                pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+        downnorm = partial(L.BatchNorm, in_place=True)
+        downact = partial(L.ReLU, in_place=True, negative_slope=0.2)
+        
+        upconv = partial(L.Deconvolution, convolution_param=dict(num_output=out_dim, kernel_size=4, stride=2,
+                pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
+        upnorm = partial(L.BatchNorm, in_place=True)
+        upact = partial(L.ReLU, in_place=True)
+
+        if submodule is None:
+            fn_seq = [downconv, downnorm, downact, upconv, upnorm, upact]
+            fn_name= ['downconv', 'downnorm', 'downact', 'upconv', 'upnorm', 'upact']
+            fn_name= [name + '_' + n for n in fn_name]
+        else:
+            fn_seq = [downconv, downnorm, downact] + submodule[0] + [upconv, upnorm, upact]
+            name1 = ['downconv', 'downnorm', 'downact']
+            name2 = ['upconv', 'upnorm', 'upact']
+            name1 = [name + "_" + n for n in name1]
+            name2 = [name + "_" + n for n in name2]
+            fn_name = name1 + submodule[1] + name2
+        self.fn_seq = fn_seq
+        self.fn_name = fn_name
+
+    def __call__(self, x):
+        """
+        Build the graph
+        """
+        for f, n in zip(self.fn_seq, self.fn_name):
+            setattr(self.net, n, f(x))
+            x = getattr(self.net, n)
+        return x
+        #fn_seq += partial(L.Concat, concat_param=dict(axis=1))
+
 def vsp_unet(batch_size=128):
+    net = caffe.NetSpec()
+
+    net.data = L.Data(batch_size=batch_size, backend="LMDB", source=vsp_lmdb_dir, include=dict(phase=caffe.TRAIN))
+
+    net.data_A, net.data_B = L.Slice(net.data, ntop=2, slice_param=dict(axis=1, slice_point=1))
+
+    ch = 64
+    chs = [ch * 8, ch * 4, ch * 2, ch]
+    sub = None
+    for i in range(len(chs)-1):
+        sub = UNetSkipConnectBlock("layer%d" % i, net, chs[i], chs[i+1], sub)
+    
+    x = sub(net.data_A)
+    return net.to_proto()
         
 
 func = sys.argv[1]

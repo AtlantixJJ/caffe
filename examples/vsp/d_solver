@@ -1,4 +1,4 @@
-test_interval: 10
+test_interval: 100
 base_lr: 0.0002
 momentum: 0.0
 momentum2: 0.9
