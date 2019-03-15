@@ -440,10 +440,10 @@ def vsp_unet(batch_size=128):
     ch = 64
     chs = [ch * 8, ch * 4, ch * 2, ch]
     sub = None
-    sub = UNetSkipConnectBlock("layer%d" % 1, net, chs * 8, chs * 4, sub, outer_most=False)
-    sub = UNetSkipConnectBlock("layer%d" % 2, net, chs * 4, chs * 4, sub, outer_most=False)
-    sub = UNetSkipConnectBlock("layer%d" % 3, net, chs * 2, chs * 2, sub, outer_most=False)
-    sub = UNetSkipConnectBlock("layer%d" % 4, net, chs * 1, chs * 1, sub, outer_most=False)
+    sub = UNetSkipConnectBlock("layer%d" % 1, net, ch * 8, ch * 4, sub, outer_most=False)
+    sub = UNetSkipConnectBlock("layer%d" % 2, net, ch * 4, ch * 4, sub, outer_most=False)
+    sub = UNetSkipConnectBlock("layer%d" % 3, net, ch * 2, ch * 2, sub, outer_most=False)
+    sub = UNetSkipConnectBlock("layer%d" % 4, net, ch * 1, ch * 1, sub, outer_most=False)
     
     x = sub(net.data_A)
 
