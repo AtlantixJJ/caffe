@@ -1,0 +1,254 @@
+layer {
+  name: "data"
+  type: "Data"
+  top: "data"
+  include {
+    phase: TRAIN
+  }
+  data_param {
+    source: "examples/vsp/layer2_2channel256-4590-float_train_lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+layer {
+  name: "data_A"
+  type: "Slice"
+  bottom: "data"
+  top: "data_A"
+  top: "data_B"
+  slice_param {
+    slice_point: 1
+    axis: 1
+  }
+}
+layer {
+  name: "layer3_downconv"
+  type: "Convolution"
+  bottom: "data_A"
+  top: "layer3_downconv"
+  convolution_param {
+    num_output: 128
+    pad: 1
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "layer3_downnorm"
+  type: "BatchNorm"
+  bottom: "layer3_downconv"
+  top: "layer3_downconv"
+}
+layer {
+  name: "layer3_downact"
+  type: "ReLU"
+  bottom: "layer3_downconv"
+  top: "layer3_downconv"
+  relu_param {
+    negative_slope: 0.20000000298023224
+  }
+}
+layer {
+  name: "layer2_downconv"
+  type: "Convolution"
+  bottom: "layer3_downconv"
+  top: "layer2_downconv"
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "layer2_downnorm"
+  type: "BatchNorm"
+  bottom: "layer2_downconv"
+  top: "layer2_downconv"
+}
+layer {
+  name: "layer2_downact"
+  type: "ReLU"
+  bottom: "layer2_downconv"
+  top: "layer2_downconv"
+  relu_param {
+    negative_slope: 0.20000000298023224
+  }
+}
+layer {
+  name: "layer1_downconv"
+  type: "Convolution"
+  bottom: "layer2_downconv"
+  top: "layer1_downconv"
+  convolution_param {
+    num_output: 512
+    pad: 1
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "layer1_downnorm"
+  type: "BatchNorm"
+  bottom: "layer1_downconv"
+  top: "layer1_downconv"
+}
+layer {
+  name: "layer1_downact"
+  type: "ReLU"
+  bottom: "layer1_downconv"
+  top: "layer1_downconv"
+  relu_param {
+    negative_slope: 0.20000000298023224
+  }
+}
+layer {
+  name: "layer1_upconv"
+  type: "Deconvolution"
+  bottom: "layer1_downconv"
+  top: "layer1_upconv"
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "layer1_upnorm"
+  type: "BatchNorm"
+  bottom: "layer1_upconv"
+  top: "layer1_upconv"
+}
+layer {
+  name: "layer1_upact"
+  type: "ReLU"
+  bottom: "layer1_upconv"
+  top: "layer1_upconv"
+}
+layer {
+  name: "layer2_concat"
+  type: "Concat"
+  bottom: "layer3_downconv"
+  bottom: "layer1_upconv"
+  top: "layer2_concat"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "layer2_upconv"
+  type: "Deconvolution"
+  bottom: "layer2_concat"
+  top: "layer2_upconv"
+  convolution_param {
+    num_output: 128
+    pad: 1
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "layer2_upnorm"
+  type: "BatchNorm"
+  bottom: "layer2_upconv"
+  top: "layer2_upconv"
+}
+layer {
+  name: "layer3_concat"
+  type: "ReLU"
+  bottom: "layer2_upconv"
+  top: "layer2_upconv"
+}
+layer {
+  name: "layer3_upconv"
+  type: "Deconvolution"
+  bottom: "layer2_upconv"
+  top: "layer3_upconv"
+  convolution_param {
+    num_output: 64
+    pad: 1
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "layer3_upnorm"
+  type: "BatchNorm"
+  bottom: "layer3_upconv"
+  top: "layer3_upconv"
+}
+layer {
+  name: "layer3_upact"
+  type: "TanH"
+  bottom: "layer3_upconv"
+  top: "layer3_upact"
+}
+layer {
+  name: "conv_output"
+  type: "Convolution"
+  bottom: "layer3_upact"
+  top: "conv_output"
+  convolution_param {
+    num_output: 1
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "output"
+  type: "TanH"
+  bottom: "conv_output"
+  top: "output"
+}
+layer {
+  name: "loss"
+  type: "EuclideanLoss"
+  bottom: "output"
+  bottom: "data_B"
+  top: "loss"
+}
