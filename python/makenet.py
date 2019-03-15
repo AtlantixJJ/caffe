@@ -418,17 +418,18 @@ class UNetSkipConnectBlock(object):
         """
         Build the graph
         """
-        X = x
         for f, n in zip(self.fn_seq, self.fn_name):
             if isinstance(f, UNetSkipConnectBlock):
-                X = f(X)
+                X = f(x)
                 if not self.outer_most:
-                    X = L.Concat(x, X, concat_param=dict(axis=1))
-                setattr(self.net, self.name + "_concat", X)
+                    x = L.Concat(x, X, concat_param=dict(axis=1))
+                else:
+                    x = X
+                setattr(self.net, self.name + "_concat", x)
             else:
-                setattr(self.net, n, f(X))
-                X = getattr(self.net, n)
-        return X
+                setattr(self.net, n, f(x))
+                x = getattr(self.net, n)
+        return x
         #fn_seq += partial(L.Concat, concat_param=dict(axis=1))
 
 def vsp_unet(batch_size=128):
@@ -446,7 +447,7 @@ def vsp_unet(batch_size=128):
                 outer_most=(i == len(chs) - 2))
     
     x = sub(net.data_A)
-    
+
     net.conv_output = L.Convolution(x, num_output=1, kernel_size=5, stride=1,
             pad=2, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
     net.output = L.TanH(net.conv_output)
