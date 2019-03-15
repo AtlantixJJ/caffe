@@ -412,13 +412,15 @@ class UNetSkipConnectBlock(object):
         """
         Build the graph
         """
+        X = x
         for f, n in zip(self.fn_seq, self.fn_name):
             if isinstance(f, UNetSkipConnectBlock):
-                x = f(x)
+                X = L.Concat(x, f(X), concat_param=dict(axis=1))
+                setattr(self.net, self.name + "_concat", X)
             else:
-                setattr(self.net, n, f(x))
-                x = getattr(self.net, n)
-        return x
+                setattr(self.net, n, f(X))
+                X = getattr(self.net, n)
+        return X
         #fn_seq += partial(L.Concat, concat_param=dict(axis=1))
 
 def vsp_unet(batch_size=128):
@@ -432,7 +434,7 @@ def vsp_unet(batch_size=128):
     chs = [ch * 8, ch * 4, ch * 2, ch]
     sub = None
     for i in range(len(chs)-1):
-        sub = UNetSkipConnectBlock("layer%d" % i, net, chs[i], chs[i+1], sub)
+        sub = UNetSkipConnectBlock("layer%d" % (i+1), net, chs[i], chs[i+1], sub)
     
     x = sub(net.data_A)
     return net.to_proto()
