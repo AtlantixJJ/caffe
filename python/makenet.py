@@ -442,7 +442,7 @@ def vsp_unet(batch_size=128):
     sub = None
     for i in range(len(chs)-1):
         sub = UNetSkipConnectBlock("layer%d" % (i+1), net, chs[i], chs[i+1], sub,
-                outer_most=(i == len(chs) - 2))
+                outer_most=False)
     
     x = sub(net.data_A)
 
