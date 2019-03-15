@@ -446,6 +446,14 @@ def vsp_unet(batch_size=128):
                 outer_most=(i == len(chs) - 2))
     
     x = sub(net.data_A)
+    
+    net.conv_output = L.Convolution(x, num_output=1, kernel_size=5, stride=1,
+            pad=2, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+    net.output = L.TanH(net.conv_output)
+
+    ## Euclidean Loss
+    net.loss = L.EuclideanLoss(net.output, net.data_B)
+
     return net.to_proto()
         
 
