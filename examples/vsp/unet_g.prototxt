@@ -154,7 +154,7 @@ layer {
 layer {
   name: "layer2_concat"
   type: "Concat"
-  bottom: "layer3_downconv"
+  bottom: "layer2_downconv"
   bottom: "layer1_upconv"
   top: "layer2_concat"
   concat_param {
@@ -246,7 +246,6 @@ layer {
   top: "output"
 }
 layer {
-  loss_weight: 0.000152587890625 # 10/256/256
   name: "loss"
   type: "EuclideanLoss"
   bottom: "output"
