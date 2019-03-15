@@ -419,8 +419,9 @@ class UNetSkipConnectBlock(object):
             if isinstance(f, UNetSkipConnectBlock):
                 X = f(x)
                 if not self.outer_most:
-                    x = L.Concat(x, X, concat_param=dict(axis=1))
-                    setattr(self.net, self.name + "_concat", x)
+                    l = L.Concat(x, X, concat_param=dict(axis=1))
+                    setattr(self.net, self.name + "_concat", l)
+                    x = l
                 else:
                     x = X
             else:
