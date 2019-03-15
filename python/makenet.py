@@ -394,10 +394,7 @@ class UNetSkipConnectBlock(object):
                 pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
         upnorm = partial(L.BatchNorm, in_place=True)
 
-        if self.outer_most:
-            upact = partial(L.TanH)
-        else:
-            upact = partial(L.ReLU, in_place=True)
+        upact = partial(L.ReLU, in_place=True)
 
         if submodule is None:
             fn_seq = [downconv, downnorm, downact, upconv, upnorm, upact]
@@ -423,9 +420,9 @@ class UNetSkipConnectBlock(object):
                 X = f(x)
                 if not self.outer_most:
                     x = L.Concat(x, X, concat_param=dict(axis=1))
+                    setattr(self.net, self.name + "_concat", x)
                 else:
                     x = X
-                setattr(self.net, self.name + "_concat", x)
             else:
                 setattr(self.net, n, f(x))
                 x = getattr(self.net, n)
