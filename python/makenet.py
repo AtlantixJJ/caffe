@@ -399,12 +399,12 @@ class UNetSkipConnectBlock(object):
             fn_name= ['downconv', 'downnorm', 'downact', 'upconv', 'upnorm', 'upact']
             fn_name= [name + '_' + n for n in fn_name]
         else:
-            fn_seq = [downconv, downnorm, downact] + submodule[0] + [upconv, upnorm, upact]
+            fn_seq = [downconv, downnorm, downact] + submodule + [upconv, upnorm, upact]
             name1 = ['downconv', 'downnorm', 'downact']
             name2 = ['upconv', 'upnorm', 'upact']
             name1 = [name + "_" + n for n in name1]
             name2 = [name + "_" + n for n in name2]
-            fn_name = name1 + submodule[1] + name2
+            fn_name = name1 + name2
         self.fn_seq = fn_seq
         self.fn_name = fn_name
 
@@ -413,7 +413,8 @@ class UNetSkipConnectBlock(object):
         Build the graph
         """
         for f, n in zip(self.fn_seq, self.fn_name):
-            setattr(self.net, n, f(x))
+            if isinstance(f, UNetSkipConnectBlock)
+            else: setattr(self.net, n, f(x))
             x = getattr(self.net, n)
         return x
         #fn_seq += partial(L.Concat, concat_param=dict(axis=1))
