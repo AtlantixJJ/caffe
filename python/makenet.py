@@ -380,7 +380,7 @@ def vsp(batch_size=128):
     return net.to_proto()
 
 class UNetSkipConnectBlock(object):
-    def __init__(self, name, net, in_dim, out_dim, submodule=None);
+    def __init__(self, name, net, in_dim, out_dim, submodule=None):
         self.name = name
         self.net = net
         
