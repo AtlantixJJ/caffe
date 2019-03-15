@@ -23,9 +23,42 @@ layer {
   }
 }
 layer {
-  name: "layer3_downconv"
+  name: "layer4_downconv"
   type: "Convolution"
   bottom: "data_A"
+  top: "layer4_downconv"
+  convolution_param {
+    num_output: 64
+    pad: 1
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "layer4_downnorm"
+  type: "BatchNorm"
+  bottom: "layer4_downconv"
+  top: "layer4_downconv"
+}
+layer {
+  name: "layer4_downact"
+  type: "ReLU"
+  bottom: "layer4_downconv"
+  top: "layer4_downconv"
+  relu_param {
+    negative_slope: 0.20000000298023224
+  }
+}
+layer {
+  name: "layer3_downconv"
+  type: "Convolution"
+  bottom: "layer4_downconv"
   top: "layer3_downconv"
   convolution_param {
     num_output: 128
@@ -167,7 +200,7 @@ layer {
   bottom: "layer2_concat"
   top: "layer2_upconv"
   convolution_param {
-    num_output: 128
+    num_output: 256
     pad: 1
     kernel_size: 4
     stride: 2
@@ -186,18 +219,28 @@ layer {
   top: "layer2_upconv"
 }
 layer {
-  name: "layer3_concat"
+  name: "layer2_upact"
   type: "ReLU"
   bottom: "layer2_upconv"
   top: "layer2_upconv"
 }
 layer {
+  name: "layer3_concat"
+  type: "Concat"
+  bottom: "layer3_downconv"
+  bottom: "layer2_upconv"
+  top: "layer3_concat"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
   name: "layer3_upconv"
   type: "Deconvolution"
-  bottom: "layer2_upconv"
+  bottom: "layer3_concat"
   top: "layer3_upconv"
   convolution_param {
-    num_output: 64
+    num_output: 128
     pad: 1
     kernel_size: 4
     stride: 2
@@ -217,14 +260,54 @@ layer {
 }
 layer {
   name: "layer3_upact"
-  type: "TanH"
+  type: "ReLU"
   bottom: "layer3_upconv"
-  top: "layer3_upact"
+  top: "layer3_upconv"
+}
+layer {
+  name: "layer4_concat"
+  type: "Concat"
+  bottom: "layer4_downconv"
+  bottom: "layer3_upconv"
+  top: "layer4_concat"
+  concat_param {
+    axis: 1
+  }
+}
+layer {
+  name: "layer4_upconv"
+  type: "Deconvolution"
+  bottom: "layer4_concat"
+  top: "layer4_upconv"
+  convolution_param {
+    num_output: 64
+    pad: 1
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "layer4_upnorm"
+  type: "BatchNorm"
+  bottom: "layer4_upconv"
+  top: "layer4_upconv"
+}
+layer {
+  name: "layer4_upact"
+  type: "ReLU"
+  bottom: "layer4_upconv"
+  top: "layer4_upconv"
 }
 layer {
   name: "conv_output"
   type: "Convolution"
-  bottom: "layer3_upact"
+  bottom: "layer4_upconv"
   top: "conv_output"
   convolution_param {
     num_output: 1
@@ -246,6 +329,7 @@ layer {
   top: "output"
 }
 layer {
+  loss_weight: 0.000152587890625 # 10/256/256
   name: "loss"
   type: "EuclideanLoss"
   bottom: "output"
