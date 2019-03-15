@@ -404,7 +404,7 @@ class UNetSkipConnectBlock(object):
             name2 = ['upconv', 'upnorm', 'upact']
             name1 = [name + "_" + n for n in name1]
             name2 = [name + "_" + n for n in name2]
-            fn_name = name1 + name2
+            fn_name = name1 + ["sub"] + name2
         self.fn_seq = fn_seq
         self.fn_name = fn_name
 
