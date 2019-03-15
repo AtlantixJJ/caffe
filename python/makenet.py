@@ -413,9 +413,10 @@ class UNetSkipConnectBlock(object):
         Build the graph
         """
         for f, n in zip(self.fn_seq, self.fn_name):
-            if isinstance(f, UNetSkipConnectBlock)
-            else: setattr(self.net, n, f(x))
-            x = getattr(self.net, n)
+            if isinstance(f, UNetSkipConnectBlock): x=f(x)
+            else:
+                setattr(self.net, n, f(x))
+                x = getattr(self.net, n)
         return x
         #fn_seq += partial(L.Concat, concat_param=dict(axis=1))
 
