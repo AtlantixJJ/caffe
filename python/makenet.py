@@ -380,9 +380,10 @@ def vsp(batch_size=128):
     return net.to_proto()
 
 class UNetSkipConnectBlock(object):
-    def __init__(self, name, net, in_dim, out_dim, submodule=None):
+    def __init__(self, name, net, in_dim, out_dim, submodule=None, outer_most=False):
         self.name = name
         self.net = net
+        self.outer_most = outer_most
         
         downconv = partial(L.Convolution, num_output=in_dim, kernel_size=4, stride=2,
                 pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
@@ -392,7 +393,11 @@ class UNetSkipConnectBlock(object):
         upconv = partial(L.Deconvolution, convolution_param=dict(num_output=out_dim, kernel_size=4, stride=2,
                 pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
         upnorm = partial(L.BatchNorm, in_place=True)
-        upact = partial(L.ReLU, in_place=True)
+
+        if self.outer_most:
+            upact = partial(L.TanH)
+        else:
+            upact = partial(L.ReLU, in_place=True)
 
         if submodule is None:
             fn_seq = [downconv, downnorm, downact, upconv, upnorm, upact]
@@ -405,6 +410,7 @@ class UNetSkipConnectBlock(object):
             name1 = [name + "_" + n for n in name1]
             name2 = [name + "_" + n for n in name2]
             fn_name = name1 + ["sub"] + name2
+
         self.fn_seq = fn_seq
         self.fn_name = fn_name
 
@@ -415,7 +421,9 @@ class UNetSkipConnectBlock(object):
         X = x
         for f, n in zip(self.fn_seq, self.fn_name):
             if isinstance(f, UNetSkipConnectBlock):
-                X = L.Concat(x, f(X), concat_param=dict(axis=1))
+                X = f(X)
+                if not self.outer_most:
+                    X = L.Concat(x, X, concat_param=dict(axis=1))
                 setattr(self.net, self.name + "_concat", X)
             else:
                 setattr(self.net, n, f(X))
