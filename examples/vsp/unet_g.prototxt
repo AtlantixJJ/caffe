@@ -12,7 +12,7 @@ layer {
   }
 }
 layer {
-  name: "data_A"
+  name: "data_split"
   type: "Slice"
   bottom: "data"
   top: "data_A"
