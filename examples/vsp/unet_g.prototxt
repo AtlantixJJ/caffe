@@ -7,7 +7,7 @@ layer {
   }
   data_param {
     source: "examples/vsp/layer2_2channel256-4590-float_train_lmdb"
-    batch_size: 32
+    batch_size: 16
     backend: LMDB
   }
 }

@@ -4,7 +4,7 @@ layer {
   type: "Input"
   top: "disc_label"
   # the output map size for 256x256 input
-  input_param { shape: { dim: 32 dim: 1 dim: 32 dim: 32} }
+  input_param { shape: { dim: 16 dim: 1 dim: 32 dim: 32} }
 }
 layer {
   name: "data"
@@ -21,7 +21,7 @@ layer {
 # }
   data_param {
     source: "examples/vsp/layer2_1channel-vz_256-4590-float_train_lmdb"
-    batch_size: 32
+    batch_size: 16
     backend: LMDB
   }
 }
