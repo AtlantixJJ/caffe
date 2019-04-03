@@ -63,16 +63,6 @@ layer {
   top: "fc1_BN"
 }
 layer {
-  name: "deconv3_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "fc1_BN"
-  top: "deconv3_BN"
-  batch_norm_param {
-    use_global_stats: true
-    moving_average_fraction: 0.99
-  }
-}
-layer {
   name: "deconv2"           
   type: "Deconvolution"
   bottom: "fc1_BN"
