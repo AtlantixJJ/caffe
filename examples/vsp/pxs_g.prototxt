@@ -4,7 +4,7 @@ layer {
   type: "RandVec"
   top: "noise"
   randvec_param {
-    batch_size: 64
+    batch_size: 32
     dim: 128
     lower: -1.0
     upper: 1.0

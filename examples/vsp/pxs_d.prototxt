@@ -3,7 +3,7 @@ layer {
   name: "disc_label"
   type: "Input"
   top: "disc_label"
-  input_param { shape: { dim: 64 dim: 1} }
+  input_param { shape: { dim: 32 dim: 1} }
 }
 layer {
   name: "data"

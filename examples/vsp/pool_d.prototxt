@@ -4,7 +4,7 @@ layer {
   type: "Input"
   top: "disc_label"
   # the output map size for 256x256 input
-  input_param { shape: { dim: 64 dim: 1 dim: 32 dim: 32} }
+  input_param { shape: { dim: 32 dim: 1 dim: 32 dim: 32} }
 }
 layer {
   name: "data"
