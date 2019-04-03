@@ -92,12 +92,13 @@ class GANSolver {
   }
 
   void TestAll() {
+    string name;
     // save input if pix2pix
     if (g_solver->net_->layers()[0]->type() != "RandVec") {
       // quite dirty, must be pix2pix here
       int g_input_layer = g_solver->net_->layerid_by_name("data_A");
       cv::Mat *x_input_grid = blob2cvgrid(g_solver->net_->top_vecs()[g_input_layer][0]);
-      string name = d_solver->param_.snapshot_prefix() + "x_input_" + caffe::format_int(iter_) + ".png";
+      name = d_solver->param_.snapshot_prefix() + "x_input_" + caffe::format_int(iter_) + ".png";
       cv::imwrite(name.c_str(), *x_input_grid);
       delete x_input_grid;
 
@@ -112,7 +113,7 @@ class GANSolver {
     // Must be float
     cv::Mat *x_fake_grid = blob2cvgrid(g_solver->net_->top_vecs()[g_output_layer][0]);
     
-    string name = d_solver->param_.snapshot_prefix() + "x_fake_" + caffe::format_int(iter_) + ".png";
+    name = d_solver->param_.snapshot_prefix() + "x_fake_" + caffe::format_int(iter_) + ".png";
     cv::imwrite(name.c_str(), *x_fake_grid);
     delete x_fake_grid;
 
