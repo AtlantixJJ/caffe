@@ -104,7 +104,7 @@ class GANSolver {
       delete x_input_grid;
 
       // data_B
-      cv::Mat *x_target_grid = blob2cvgrid(g_solver->net_->top_vecs()[g_target_layer][1]);
+      cv::Mat *x_target_grid = blob2cvgrid(g_solver->net_->top_vecs()[g_input_layer][1]);
       name = d_solver->param_.snapshot_prefix() + "x_target_" + caffe::format_int(iter_) + ".png";
       cv::imwrite(name.c_str(), *x_target_grid);
       delete x_target_grid;
