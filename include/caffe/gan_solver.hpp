@@ -111,7 +111,7 @@ class GANSolver {
     d_solver->net_->Forward();
     int ind = d_solver->net_->base_layer_index();
 
-    auto vecs = d_solver->net_->bottom_vecs();
+    vector<vector<Blob<Dtype>*>> &vecs = d_solver->net_->bottom_vecs();
 
     cv::Mat *x_real_grid = blob2cvgrid(vecs[ind][0]);
     name = d_solver->param_.snapshot_prefix() + "x_real_" + caffe::format_int(iter_) + ".png";
