@@ -100,6 +100,12 @@ class GANSolver {
       string name = d_solver->param_.snapshot_prefix() + "x_input_" + caffe::format_int(iter_) + ".png";
       cv::imwrite(name.c_str(), *x_input_grid);
       delete x_input_grid;
+
+      int g_target_layer = g_solver->net_->layerid_by_name("data_B");
+      cv::Mat *x_target_grid = blob2cvgrid(g_solver->net_->top_vecs()[g_target_layer][0]);
+      string name = d_solver->param_.snapshot_prefix() + "x_target_" + caffe::format_int(iter_) + ".png";
+      cv::imwrite(name.c_str(), *x_target_grid);
+      delete x_target_grid;
     }
 
     int g_output_layer = g_solver->net_->layerid_by_name("output");
