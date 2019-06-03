@@ -4,10 +4,9 @@ momentum: 0.0
 momentum2: 0.9
 weight_decay: 0.00001
 lr_policy: "multistep"
-gamma: 0.5
 stepvalue: 10000
 max_iter:  20000
 solver_mode: GPU
 solver_type: ADAM
-d_step: 2
+d_step: 1
 g_step: 1
