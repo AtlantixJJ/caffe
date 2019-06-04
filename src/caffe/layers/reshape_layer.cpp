@@ -309,9 +309,12 @@ void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
     for(int n = 0; n < bn; n++){
       example_start_index = n * tc * th * tw;
       for(int c = 0; c < bc; c++){
-        new_c = c / (r * r);
-        dw = (c % (r * r)) % r;
-        dh = (c / r) % r;
+        //new_c = c / (r * r);
+        //dw = c % r;
+        //dh = (c / r) % r;
+        new_c = c % tc;
+        dw = (c / tc) % r;
+        dh = c / tc / r;
         channel_start_index = new_c * th * tw;
         for(int h = 0; h < bh; h++){
           new_h = h * r + dh;
@@ -348,7 +351,7 @@ void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       }
     }
     */
-  } else if (ps < -1) {
+  } /*else if (ps < -1) {
     int test_r1 = tc / bc;
     const int r = bh / th;
     int r2 = r * r;
@@ -373,7 +376,7 @@ void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
         }
       }
     }
-  }
+  }*/
 }
 
 template <typename Dtype>
@@ -407,9 +410,12 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
     for(int n = 0; n < bn; n++){
       example_start_index = n * tc * th * tw;
       for(int c = 0; c < bc; c++){
-        new_c = c / (r * r);
-        dw = (c % (r * r)) % r;
-        dh = (c / r) % r;
+        //new_c = c / (r * r);
+        //dw = (c % (r * r)) % r;
+        //dh = (c / r) % r;
+        new_c = c % tc;
+        dw = (c / tc) % r;
+        dh = c / tc / r;
         channel_start_index = new_c * th * tw;
         for(int h = 0; h < bh; h++){
           new_h = h * r + dh;
