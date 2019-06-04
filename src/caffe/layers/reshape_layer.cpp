@@ -328,7 +328,12 @@ void ReshapeLayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
         }
       }
     }
-
+    for(int h = 0; h < bh; h++){
+      for(int w = 0; w < bw; w++){
+        print("%.5f\t", top_data[h * tw + w]);
+      }
+      print("\n");
+    }
     /*
     top_index = 0;
     bottom_index = 0;
