@@ -39,9 +39,70 @@ layer {
   }
 }
 layer {
-  name: "bn1"
+  name: "fc_bn1"
   type: "BatchNorm"
   bottom: "reshape1"
+  top: "fc_bn1"
+  param {
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "fc_bn1"
+  top: "fc_bn1"
+}
+layer {
+  name: "tile1"
+  type: "Tile"
+  bottom: "fc_bn1"
+  top: "tile1"
+  tile_param {
+    axis: 1
+    tiles: 4
+  }
+}
+layer {
+  name: "pxs1"           
+  type: "Reshape"
+  bottom: "tile1"
+  top: "pxs1"
+  reshape_param {
+    pixelshuffler: 2
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "pxs1"
+  top: "conv1"
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "bn1"
+  type: "BatchNorm"
+  bottom: "conv1"
   top: "bn1"
   param {  
     lr_mult: 0  
@@ -63,29 +124,31 @@ layer {
   top: "bn1"
 }
 layer {
-  name: "upsample2"
-  type: "Deconvolution"
+  name: "tile2"
+  type: "Tile"
   bottom: "bn1"
-  top: "upsample2"
-  convolution_param {
-    num_output: 256
-    bias_term: false
-    pad: 1
-    kernel_size: 4
-    stride: 2
-    weight_filler {
-      type: "bilinear"
-    }
+  top: "tile2"
+  tile_param {
+    axis: 1
+    tiles: 4
   }
-  param {lr_mult: 0 decay_mult: 0}
+}
+layer {
+  name: "pxs2"           
+  type: "Reshape"
+  bottom: "tile2"
+  top: "pxs2"
+  reshape_param {
+    pixelshuffler: 2
+  }
 }
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "upsample2"
+  bottom: "pxs2"
   top: "conv2"
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 1
     kernel_size: 3
     stride: 1
@@ -122,68 +185,9 @@ layer {
   top: "bn2"
 }
 layer {
-  name: "upsample3"
-  type: "Deconvolution"
-  bottom: "bn2"
-  top: "upsample3"
-  convolution_param {
-    num_output: 256
-    bias_term: false
-    pad: 1
-    kernel_size: 4
-    stride: 2
-    weight_filler {
-      type: "bilinear"
-    }
-  }
-  param {lr_mult: 0 decay_mult: 0}
-}
-layer {
-  name: "conv3"
-  type: "Convolution"
-  bottom: "upsample3"
-  top: "conv3"
-  convolution_param {
-    num_output: 128
-    pad: 1
-    kernel_size: 3
-    stride: 1
-    weight_filler {
-      type: "xavier"
-    }
-    bias_filler {
-      type: "constant"
-    }
-  }
-}
-layer {
-  name: "bn3"
-  type: "BatchNorm"
-  bottom: "conv3"
-  top: "bn3"
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }   
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }  
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }
-}
-layer {
-  name: "relu3"
-  type: "ReLU"
-  bottom: "bn3"
-  top: "bn3"
-}
-layer {
   name: "conv_out"
   type: "Convolution"
-  bottom: "bn3"
+  bottom: "bn2"
   top: "conv_out"
   convolution_param {
     num_output: 1
