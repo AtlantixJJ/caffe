@@ -17,7 +17,7 @@ template <typename Dtype>
 GANSolver<Dtype>::GANSolver(const SolverParameter& g_param, const SolverParameter& d_param) {
   g_solver.reset(caffe::SolverRegistry<Dtype>::CreateSolver(g_param));
   d_solver.reset(caffe::SolverRegistry<Dtype>::CreateSolver(d_param));
-  g_solver->net_->set_layer_need_backward(true);
+  //g_solver->net_->set_layer_need_backward(true);
   iter_ = 0;
 }
 

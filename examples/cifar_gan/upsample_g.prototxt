@@ -1,3 +1,4 @@
+force_backward: true
 layer {
   name: "data"
   type: "RandVec"
