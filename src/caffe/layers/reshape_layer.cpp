@@ -228,7 +228,7 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
         }
       }
     }
-
+    /*
     for(int c = 4; c < 6; c++){
       for(int h = 2; h < 6; h++){
         for(int w = 2; w < 6; w++)
@@ -237,6 +237,7 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
       }
       printf("\n");
     }
+    */
   }
 }
 
