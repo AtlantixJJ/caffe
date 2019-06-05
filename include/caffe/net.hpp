@@ -82,7 +82,10 @@ class Net {
   }
   /// Trick
   /// void set_relu_slope(Dtype val);
-  void set_debug(int val) {debug = val;}
+  void set_debug(int val) {
+    debug = val;
+    debug_info_ = val;
+  }
   
   /**
    * @brief Reshape all layers from bottom to top.
