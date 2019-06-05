@@ -47,6 +47,13 @@ class GANSolver {
     d_solver->net_->set_debug(val);
     g_solver->net_->set_debug(val);
   }
+  
+  /// Atlantix: set timing flag
+  void set_timing(int val) {
+    timing = val;
+    d_solver->net_->set_timing(val);
+    g_solver->net_->set_timing(val);
+  }
 
   void tile(const vector<cv::Mat> &src, cv::Mat &dst, int grid_x, int grid_y) {
     // patch size
@@ -135,7 +142,7 @@ class GANSolver {
   virtual void Solve(const char* resume_file = NULL);
 
  private:
-  int debug;
+  int debug, timing;
 
   shared_ptr<caffe::Solver<Dtype> > g_solver, d_solver;
 

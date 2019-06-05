@@ -82,10 +82,8 @@ class Net {
   }
   /// Trick
   /// void set_relu_slope(Dtype val);
-  void set_debug(int val) {
-    debug = val;
-    debug_info_ = val;
-  }
+  void set_debug(int val) {debug = val; debug_info_ = val;}
+  void set_timing(int val) {timing = val;}
   
   /**
    * @brief Reshape all layers from bottom to top.
@@ -312,7 +310,7 @@ class Net {
   void UpdateDebugInfo(const int param_id);
 
   /// debug verbose level
-  int debug;
+  int debug, timing;
 
   /// @brief The network name
   string name_;

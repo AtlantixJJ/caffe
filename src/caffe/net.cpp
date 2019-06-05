@@ -524,8 +524,18 @@ Dtype Net<Dtype>::ForwardFromTo(int start, int end) {
       before_forward_[c]->run(i);
     }
     if (debug > 0) LOG(INFO) << "Forward: On layer " << i << " " << layer_names_[i];
+    if (timing > 0) { 
+      struct timeval ts, te;
+      gettimeofday(&ts, NULL);
+    }
     Dtype layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
-    loss += layer_loss;
+    if (timing > 0) {
+      gettimeofday(&te, NULL);
+      double time = (te.tv_sec - ts.tv_sec) + (te.tv_usec - ts.tv_usec) / 1000000.0;
+      LOG_IF(INFO, Caffe::root_solver()) << "Root: layer"
+        << i << "  " << layer_names_[i]
+        << " Forward cost time: " << time << "s";
+    }
     if (debug_info_) { ForwardDebugInfo(i); }
     for (int c = 0; c < after_forward_.size(); ++c) {
       after_forward_[c]->run(i);
@@ -546,11 +556,30 @@ Dtype Net<Dtype>::ForwardFromBlob(const vector<Blob<Dtype>* > & bottom, int star
     }
 
     if (debug > 0) LOG(INFO) << "Forward: On layer " << i << " " << layer_names_[i];
+    //Dtype layer_loss = 0;
+    //if (i == start) layer_loss = layers_[i]->Forward(bottom, top_vecs_[i]);
+    //else layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
+    //loss += layer_loss;
+
+    if (timing > 0) { 
+      struct timeval ts, te;
+      gettimeofday(&ts, NULL);
+    }
     Dtype layer_loss = 0;
-    if (i == start) layer_loss = layers_[i]->Forward(bottom, top_vecs_[i]);
-    else layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
+    if (i == start) {
+      for (int j = 0; j < bottom_vecs_[i].size(); j++)
+        bottom_vecs_[i][j]->CopyFrom(*bottom[j]);
+    }
+    layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
     loss += layer_loss;
-    
+    if (timing > 0) {
+      gettimeofday(&te, NULL);
+      double time = (te.tv_sec - ts.tv_sec) + (te.tv_usec - ts.tv_usec) / 1000000.0;
+      LOG_IF(INFO, Caffe::root_solver()) << "Root: layer"
+        << i << "  " << layer_names_[i]
+        << " Forward cost time: " << time << "s";
+    }
+
     if (debug_info_) { ForwardDebugInfo(i); }
     for (int c = 0; c < after_forward_.size(); ++c) {
       after_forward_[c]->run(i);
@@ -602,6 +631,20 @@ void Net<Dtype>::BackwardFromTo(int start, int end) {
     }
     if (layer_need_backward_[i]) {
       if (debug > 0) LOG(INFO) << "Backward: On layer " << i << " " << layer_names_[i];
+      if (timing > 0) { 
+        struct timeval ts, te;
+        gettimeofday(&ts, NULL);
+      }
+      layers_[i]->Backward(
+          top_vecs_[i], bottom_need_backward_[i], bottom_vecs_[i]);
+      if (debug_info_) { BackwardDebugInfo(i);}
+      if (timing > 0) {
+        gettimeofday(&te, NULL);
+        double time = (te.tv_sec - ts.tv_sec) + (te.tv_usec - ts.tv_usec) / 1000000.0;
+        LOG_IF(INFO, Caffe::root_solver()) << "Root: layer"
+          << i << "  " << layer_names_[i]
+          << " Backward cost time: " << time << "s";
+      }
       layers_[i]->Backward(
           top_vecs_[i], bottom_need_backward_[i], bottom_vecs_[i]);
       if (debug_info_) { BackwardDebugInfo(i); }
