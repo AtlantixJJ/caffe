@@ -3,8 +3,7 @@ base_lr: 0.0004
 momentum: 0.0
 momentum2: 0.9
 weight_decay: 0.00001
-lr_policy: "multistep"
-stepvalue: 100000
+lr_policy: "fixed"
 max_iter:  200000
 snapshot: 2000
 solver_mode: GPU
