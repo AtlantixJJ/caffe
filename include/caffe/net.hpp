@@ -289,6 +289,11 @@ class Net {
     after_backward_.push_back(value);
   }
 
+  /// debug verbose level
+  int debug, timing;
+  vector<double> forward_time, backward_time;
+  vector<int> forward_count, backward_count;
+  
  protected:
   // Helpers for Init.
   /// @brief Append a new top blob to the net.
@@ -310,11 +315,8 @@ class Net {
   /// @brief Helper for displaying debug info in Update.
   void UpdateDebugInfo(const int param_id);
 
-  /// debug verbose level
-  int debug, timing;
   struct timeval ts, te; // auxiliary timing variable
-  vector<double> forward_time, backward_time;
-  vector<int> forward_count, backward_count;
+
   /// @brief The network name
   string name_;
   /// @brief The phase: TRAIN or TEST
