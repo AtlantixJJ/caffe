@@ -1,21 +1,25 @@
-## import 
+import argparse
 import os, lmdb, zipfile
 import caffe
 import numpy as np
 from PIL import Image
 
-data_path = sys.argv[1]
-npy_path = sys.argv[2]
-lmdb_output = sys.argv[3]
-use_zip = True
+parser = argparse.ArgumentParser()
+parser.add_argument("--data_path", default="", "path to data dir")
+parser.add_argument("--output_path", default="", "path to output lmdb")
+parser.add_argument("--label_npy", default="", "path to label npy file")
+parser.add_argument("--imgsize", default=64, "resize image")
+args = parser.parse_args()
+
+use_zip = (".zip" in args.data_path)
 
 # read from zip
-data_file = zipfile.ZipFile(data_path)
+data_file = zipfile.ZipFile(args.data_path)
 files = data_file.namelist()
 files.sort()
 files = files[1:]
 
-label = np.load(npy_path)
+label = np.load(args.label_npy)
 class_num = label.shape[-1]
 
 def datum_from_image(img, label):
@@ -31,7 +35,7 @@ def datum_from_image(img, label):
 
 # normal celeba
 # open lmdb
-env = lmdb.open(lmdb_output, map_size=map_size)
+env = lmdb.open(args.output_path, map_size=len(files) * args.imgsize * args.imgsize * 3 * 8 * 3)
 with env.begin(write=True) as txn:
     for idx in range(len(files)):
         if use_zip:
@@ -42,6 +46,7 @@ with env.begin(write=True) as txn:
 
         # celeba processing
         img = img[50:50+128, 25:25+128] #uint8 format
+        img = np.asarray(Image.fromarray(img).resize((args.imgsize, args.imgsize))) # resize
         datum = datum_from_image(img, label[idx][0])
         str_id = '{:08}'.format(idx)
         txn.put(str_id.encode('ascii'), datum.SerializeToString())
