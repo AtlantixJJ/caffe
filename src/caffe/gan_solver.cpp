@@ -334,6 +334,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     // Save a snapshot if needed.
     if ((d_solver->param_.snapshot()
          && iter_ % d_solver->param_.snapshot() == 0
+         && iter_ != 0
          && Caffe::root_solver()) ||
          (request == SolverAction::SNAPSHOT)) {
       LOG(INFO) << "Snapshot";
