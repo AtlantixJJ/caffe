@@ -2,15 +2,16 @@ import sys
 sys.path.insert(0, ".")
 import argparse
 import os, lmdb, zipfile
+from io import BytesIO
 import caffe
 import numpy as np
 from PIL import Image
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--data_path", default="", "path to data dir")
-parser.add_argument("--output_path", default="", "path to output lmdb")
-parser.add_argument("--label_npy", default="", "path to label npy file")
-parser.add_argument("--imgsize", default=64, "resize image")
+parser.add_argument("--data_path", default="", help="path to data dir")
+parser.add_argument("--output_path", default="", help="path to output lmdb")
+parser.add_argument("--label_npy", default="", help="path to label npy file")
+parser.add_argument("--imgsize", default=64, type=int, help="resize image")
 args = parser.parse_args()
 
 use_zip = (".zip" in args.data_path)
@@ -43,7 +44,7 @@ with env.begin(write=True) as txn:
         if use_zip:
             img = np.asarray(Image.open(BytesIO(data_file.read(files[idx]))))
         else:
-            img_path = os.path.join(data_path, files[idx])
+            img_path = os.path.join(args.data_path, files[idx])
             img = np.asarray(Image.open(open(img_path, "rb")))
 
         # celeba processing
