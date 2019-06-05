@@ -535,9 +535,9 @@ Dtype Net<Dtype>::ForwardFromTo(int start, int end) {
     if (timing > 0) {
       gettimeofday(&te, NULL);
       double time = (te.tv_sec - ts.tv_sec) + (te.tv_usec - ts.tv_usec) / 1000000.0;
-      LOG_IF(INFO, Caffe::root_solver()) << "Root: layer"
-        << i << "  " << layer_names_[i]
-        << " Forward cost time: " << time << "s";
+      //LOG_IF(INFO, Caffe::root_solver()) << "Root: layer" << i << "  " << layer_names_[i] << " Forward cost time: " << time << "s";
+      forward_time[i] += time;
+      forward_count[i] += 1;
     }
     if (debug_info_) { ForwardDebugInfo(i); }
     for (int c = 0; c < after_forward_.size(); ++c) {
@@ -574,9 +574,9 @@ Dtype Net<Dtype>::ForwardFromBlob(const vector<Blob<Dtype>* > & bottom, int star
     if (timing > 0) {
       gettimeofday(&te, NULL);
       double time = (te.tv_sec - ts.tv_sec) + (te.tv_usec - ts.tv_usec) / 1000000.0;
-      LOG_IF(INFO, Caffe::root_solver()) << "Root: layer"
-        << i << "  " << layer_names_[i]
-        << " Forward cost time: " << time << "s";
+      //LOG_IF(INFO, Caffe::root_solver()) << "Root: layer" << i << "  " << layer_names_[i] << " Forward cost time: " << time << "s";
+      forward_time[i] += time;
+      forward_count[i] += 1;
     }
 
     if (debug_info_) { ForwardDebugInfo(i); }
@@ -637,9 +637,9 @@ void Net<Dtype>::BackwardFromTo(int start, int end) {
       if (timing > 0) {
         gettimeofday(&te, NULL);
         double time = (te.tv_sec - ts.tv_sec) + (te.tv_usec - ts.tv_usec) / 1000000.0;
-        LOG_IF(INFO, Caffe::root_solver()) << "Root: layer"
-          << i << "  " << layer_names_[i]
-          << " Backward cost time: " << time << "s";
+        //LOG_IF(INFO, Caffe::root_solver()) << "Root: layer" << i << "  " << layer_names_[i] << " Backward cost time: " << time << "s";
+        backward_time[i] += time;
+        backward_count[i] += 1;
       }
       layers_[i]->Backward(
           top_vecs_[i], bottom_need_backward_[i], bottom_vecs_[i]);
