@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0, ".")
 import argparse
-import os, lmdb, zipfile
+import os, lmdb, zipfile, tqdm
 from io import BytesIO
 import caffe
 import numpy as np
@@ -40,7 +40,7 @@ def datum_from_image(img, label):
 # open lmdb
 env = lmdb.open(args.output_path, map_size=len(files) * args.imgsize * args.imgsize * 3 * 8 * 3)
 with env.begin(write=True) as txn:
-    for idx in range(len(files)):
+    for idx in tqdm.tqdm(len(files)):
         if use_zip:
             img = np.asarray(Image.open(BytesIO(data_file.read(files[idx]))))
         else:
