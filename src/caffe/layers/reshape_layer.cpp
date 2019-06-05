@@ -200,7 +200,8 @@ void ReshapeLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& top,
   int new_w = 0;
   int dw = 0, dh = 0; // depth to space offset
   int example_start_index = 0, channel_start_index = 0, row_start_index = 0;
-
+  printf("%d\n", ps);
+  
   if(ps == 1){}
   else if (ps > 1){
     const int r = th / bh;
