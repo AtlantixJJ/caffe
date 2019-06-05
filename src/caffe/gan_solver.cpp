@@ -243,24 +243,17 @@ void GANSolver<Dtype>::Step_sw(int iters) {
   
   Dtype disc_real_loss = 0, disc_fake_loss = 0, gen_loss = 0, _tmp = 0, gen_other_loss = 0;
   int d_iter = 0, g_iter = 0;
-  float progress = 0.0;
   while (iter_ < stop_iter) {
-    if (d_solver->param_.test_interval() && iter_ % d_solver->param_.test_interval() == 0) {
-      LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen\t" << "Gen Other";
-      LOG(INFO) << "\t\t" << disc_real_loss / d_iter << "\t" << disc_fake_loss / d_iter << "\t" << gen_loss / g_iter << "\t" << gen_other_loss / g_iter;
-      disc_real_loss = disc_fake_loss = gen_loss = gen_other_loss = 0;
-      d_iter = g_iter = 0;
+    int interval = d_solver->param_.test_interval();
+    if (d_solver->param_.test_interval() && iter_ % interval == 0 && iter_ != 0) {
+      LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen";
+      LOG(INFO) << "\t\t\t" << disc_real_loss / interval << "\t" << disc_fake_loss / interval << "\t" << gen_loss / interval;
+      disc_real_loss = disc_fake_loss = gen_loss = 0;
       if (Caffe::root_solver())
         TestAll();
       if (requested_early_exit_)
         break;
     }
-    progress = iter_ / (float)stop_iter;
-
-    /// Trick
-    float tmp_ = 1 - progress * 2;
-    //g_solver->net_->set_relu_slope(tmp_ < 0 ? 0 : tmp_);
-
     if (debug > 0) LOG(INFO) << "Iter " << iter_;
 
     for (int it_ = 0; it_ < d_solver->param_.d_step(); it_ ++) {
