@@ -24,6 +24,12 @@ namespace caffe {
 template <typename Dtype>
 Net<Dtype>::Net(const NetParameter& param) {
   Init(param);
+  for (int i = 0; i < layers_.size(); i++) {
+    forward_time.push_back(0.0);
+    backward_time.push_back(0.0);
+    forward_count.push_back(0);
+    backward_count.push_back(0);
+  }
 }
 
 template <typename Dtype>

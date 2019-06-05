@@ -313,7 +313,8 @@ class Net {
   /// debug verbose level
   int debug, timing;
   struct timeval ts, te; // auxiliary timing variable
-
+  vector<double> forward_time, backward_time;
+  vector<int> forward_count, backward_count;
   /// @brief The network name
   string name_;
   /// @brief The phase: TRAIN or TEST

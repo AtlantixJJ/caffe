@@ -98,7 +98,42 @@ class GANSolver {
     return grid;
   }
 
+  void summary_time() {
+    LOG(INFO) << "Summary timing:";
+    LOG(INFO) << "Generator";
+    vector<string>& g_names = g_solver->net_->layer_names_;
+    for (int i = 0; i < g_names.size(); i ++) {
+      printf("Forward %s:\t%f\n",
+        g_names[i],
+        g_solver->net_->forward_time[i] / g_solver->net_->forward_count[i]);
+    }
+    for (int i = 0; i < g_names.size(); i ++) {
+      printf("Backward %s:\t%f\n",
+        g_names[i],
+        g_solver->net_->backward_time[i] / g_solver->net_->backward_count[i]);
+    }
+    LOG(INFO) << "Discriminator";
+    vector<int>& d_counts = d_solver->net_->forward_count;
+    vector<string>& d_names = d_solver->net_->layer_names_;
+    for (int i = 0; i < d_names.size(); i ++) {
+      printf("Forward %s:\t%f\n",
+        d_names[i],
+        d_solver->net_->forward_time[i] / d_solver->net_->forward_count[i]);
+    }
+    for (int i = 0; i < d_names.size(); i ++) {
+      printf("Backward %s:\t%f\n",
+        d_names[i],
+        d_solver->net_->backward_time[i] / d_solver->net_->backward_count[i]);
+    }
+  }
+
   void TestAll() {
+    if (timing > 0) {
+      summary_time();
+    }
+
+    LOG(INFO) << "Save image";
+
     string name;
     // save input if pix2pix
     if (g_solver->net_->layers()[0]->type() != "RandVec") {
