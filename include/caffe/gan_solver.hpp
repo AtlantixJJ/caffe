@@ -101,13 +101,12 @@ class GANSolver {
   void summary_time() {
     LOG(INFO) << "Summary timing:";
     LOG(INFO) << "Generator";
-    vector<string>& g_names = g_solver->net_->layer_names();
+    const vector<string>& g_names = g_solver->net_->layer_names();
     for (int i = 0; i < g_names.size(); i ++) {
       LOG(INFO) << g_names[i] << "Forward:\t" << g_solver->net_->forward_time[i] / g_solver->net_->forward_count[i] << "\tBackward:\t" << g_solver->net_->backward_time[i] / g_solver->net_->backward_count[i];
     }
     LOG(INFO) << "Discriminator";
-    vector<int>& d_counts = d_solver->net_->forward_count;
-    vector<string>& d_names = d_solver->net_->layer_names();
+    const vector<string>& d_names = d_solver->net_->layer_names();
     for (int i = 0; i < d_names.size(); i ++) {
       LOG(INFO) << d_names[i] << "Forward:\t" << d_solver->net_->forward_time[i] / d_solver->net_->forward_count[i] << "\tBackward:\t" << d_solver->net_->backward_time[i] / d_solver->net_->backward_count[i];
     }
