@@ -40,7 +40,7 @@ def datum_from_image(img, label):
 # open lmdb
 env = lmdb.open(args.output_path, map_size=len(files) * args.imgsize * args.imgsize * 3 * 8 * 3)
 with env.begin(write=True) as txn:
-    for idx in tqdm.tqdm(len(files)):
+    for idx in tqdm.tqdm(range(len(files))):
         if use_zip:
             img = np.asarray(Image.open(BytesIO(data_file.read(files[idx]))))
         else:
