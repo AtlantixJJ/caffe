@@ -6,6 +6,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <sys/time.h>
 
 #include "caffe/blob.hpp"
 #include "caffe/common.hpp"
