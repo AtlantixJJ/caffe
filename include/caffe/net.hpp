@@ -311,6 +311,7 @@ class Net {
 
   /// debug verbose level
   int debug, timing;
+  struct timeval ts, te; // auxiliary timing variable
 
   /// @brief The network name
   string name_;

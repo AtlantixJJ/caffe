@@ -524,10 +524,7 @@ Dtype Net<Dtype>::ForwardFromTo(int start, int end) {
       before_forward_[c]->run(i);
     }
     if (debug > 0) LOG(INFO) << "Forward: On layer " << i << " " << layer_names_[i];
-    if (timing > 0) { 
-      struct timeval ts, te;
-      gettimeofday(&ts, NULL);
-    }
+    if (timing > 0) gettimeofday(&ts, NULL);
     Dtype layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
     if (timing > 0) {
       gettimeofday(&te, NULL);
@@ -560,11 +557,7 @@ Dtype Net<Dtype>::ForwardFromBlob(const vector<Blob<Dtype>* > & bottom, int star
     //if (i == start) layer_loss = layers_[i]->Forward(bottom, top_vecs_[i]);
     //else layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
     //loss += layer_loss;
-
-    if (timing > 0) { 
-      struct timeval ts, te;
-      gettimeofday(&ts, NULL);
-    }
+    if (timing > 0) gettimeofday(&ts, NULL);
     Dtype layer_loss = 0;
     if (i == start) {
       for (int j = 0; j < bottom_vecs_[i].size(); j++)
@@ -631,10 +624,7 @@ void Net<Dtype>::BackwardFromTo(int start, int end) {
     }
     if (layer_need_backward_[i]) {
       if (debug > 0) LOG(INFO) << "Backward: On layer " << i << " " << layer_names_[i];
-      if (timing > 0) { 
-        struct timeval ts, te;
-        gettimeofday(&ts, NULL);
-      }
+      if (timing > 0) gettimeofday(&ts, NULL);
       layers_[i]->Backward(
           top_vecs_[i], bottom_need_backward_[i], bottom_vecs_[i]);
       if (debug_info_) { BackwardDebugInfo(i);}
