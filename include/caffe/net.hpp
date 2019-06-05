@@ -190,6 +190,10 @@ class Net {
   inline const vector<bool>& layer_need_backward() const {
     return layer_need_backward_;
   }
+  void set_layer_need_backward(bool val) {
+    for(int i = 0; i < layer_need_backward_.size(); i++)
+      layer_need_backward_[i] = val;
+  }
   /// @brief returns the parameters
   inline const vector<shared_ptr<Blob<Dtype> > >& params() const {
     return params_;
