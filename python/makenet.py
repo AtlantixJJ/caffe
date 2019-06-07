@@ -21,8 +21,18 @@ def lrelu(x):
 def add_layers(net, layers, layer_names):
     for n,l in zip(layer_names, layers):
         setattr(net, n, l)
+"""
+def downsample_d(downsample=4, batch_size=256):
+    net = caffe.NetSpec()
+    x = L.Data(batch_size=batch_size, backend=caffe.params.Data.LMDB, source=cifar_lmda_dir, include=dict(phase=caffe.TRAIN), transform_param=dict(scale=1/127.5,mean_value=127.5))
+    net.disc_label = L.Input(input_param=dict(shape={'dim': [batch_size, 1]}))
 
-def cifar10_upsample_g(batch_size=256):
+    x = L.Convolution(net.data, num_output=128, kernel_size=3, stride=1,
+            pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+    net.relu1 = L.ReLU(net.conv1, in_place=True, negative_slope=0.2) # 32x32
+"""
+
+def upsample_g(upsample=4, batch_size=256):
     net = caffe.NetSpec()
 
     x = L.RandVec(randvec_param={
@@ -43,8 +53,9 @@ def cifar10_upsample_g(batch_size=256):
     x = L.ReLU(x, in_place=True)
     layers.append(x); layer_names.append("relu1")
     
-    lower_dim = [1024, 512, 256] # 8x upsample
-    upper_dim = lower_dim[1:] + [128] # from 4x4 to 32x32
+    lower_dim = [1024, 512, 256, 128, 64] # 8x upsample
+    upper_dim = lower_dim[1:][:upsample] # from 4x4 to 32x32
+    lower_dim = lower_dim[:upsample]
     for i in range(len(lower_dim)):
         ind = i + 2
         x = L.Deconvolution(x, convolution_param=dict(bias_term=False, num_output=lower_dim[i], kernel_size=2, stride=2, pad=0, weight_filler=dict(type='bilinear')), param=dict(lr_mult=0, decay_mult=0))

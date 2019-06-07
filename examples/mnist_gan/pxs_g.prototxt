@@ -1,5 +1,5 @@
 force_backward: true
-name: "SimpleGenerator"
+name: "SubpxconvGenerator"
 layer {
   name: "noise"
   type: "RandVec"
@@ -65,10 +65,10 @@ layer {
   top: "fc1_BN"
 }
 layer {
-  name: "deconv2"           
+  name: "conv2"           
   type: "Convolution"
   bottom: "fc1_BN"
-  top: "deconv2"
+  top: "conv2"
   convolution_param {
     num_output: 512 #128
     pad: 1
@@ -86,43 +86,43 @@ layer {
 layer {
   name: "pxs_2"           
   type: "Reshape"
-  bottom: "deconv2"
+  bottom: "conv2"
   top: "pxs_2"
   reshape_param {
     pixelshuffler: 2
   }
 }
 layer {
-  name: "deconv2_BN"
+  name: "conv2_BN"
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_2"
-  top: "deconv2_BN"
+  top: "conv2_BN"
   batch_norm_param {
     use_global_stats: false
     moving_average_fraction: 0.99
   }
 }
 layer {
-  name: "deconv2_BN"
+  name: "conv2_BN"
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_2"
-  top: "deconv2_BN"
+  top: "conv2_BN"
   batch_norm_param {
     use_global_stats: true
     moving_average_fraction: 0.99
   }
 }
 layer {
-  name: "relu_deconv2"
+  name: "relu_conv2"
   type: "ReLU"
-  bottom: "deconv2_BN"
-  top: "deconv2_BN"
+  bottom: "conv2_BN"
+  top: "conv2_BN"
 }
 layer {
-  name: "deconv1"           
+  name: "conv1"           
   type: "Convolution"
-  bottom: "deconv2_BN"
-  top: "deconv1"
+  bottom: "conv2_BN"
+  top: "conv1"
   convolution_param {
     num_output:256#64
     pad: 1
@@ -140,27 +140,27 @@ layer {
 layer {
   name: "pxs_1"           
   type: "Reshape"
-  bottom: "deconv1"
+  bottom: "conv1"
   top: "pxs_1"
   reshape_param {
     pixelshuffler: 2
   }
 }
 layer {
-  name: "deconv1_BN"
+  name: "conv1_BN"
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_1"
-  top: "deconv1_BN"
+  top: "conv1_BN"
   batch_norm_param {
     use_global_stats: false
     moving_average_fraction: 0.99
   }
 }
 layer {
-  name: "deconv1_BN"
+  name: "conv1_BN"
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_1"
-  top: "deconv1_BN"
+  top: "conv1_BN"
   batch_norm_param {
     use_global_stats: true
     moving_average_fraction: 0.99
@@ -168,16 +168,16 @@ layer {
 }
 
 layer {
-  name: "relu_deconv1"
+  name: "relu_conv1"
   type: "ReLU"
-  bottom: "deconv1_BN"
-  top: "deconv1_BN"
+  bottom: "conv1_BN"
+  top: "conv1_BN"
 }
 layer {
-  name: "conv1"           
+  name: "conv_out"           
   type: "Convolution"
-  bottom: "deconv1_BN"
-  top: "conv1"
+  bottom: "conv1_BN"
+  top: "conv_out"
   convolution_param {
     num_output: 1
     pad: 1
@@ -195,6 +195,6 @@ layer {
 layer {
   name: "output"
   type: "TanH"
-  bottom: "conv1"
+  bottom: "conv_out"
   top: "output"
 } 

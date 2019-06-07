@@ -1,5 +1,5 @@
 force_backward: true
-name: "SimpleGenerator"
+name: "SubpxconvGenerator"
 layer {
   name: "noise"
   type: "RandVec"

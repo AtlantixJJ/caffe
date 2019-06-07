@@ -1,3 +1,4 @@
+name: "ResidualDiscriminator"
 layer {
   name: "data"
   type: "Data"

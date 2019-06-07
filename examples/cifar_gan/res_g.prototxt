@@ -1,4 +1,5 @@
 force_backward: true
+name: "ResidualGenerator"
 layer {
   name: "data"
   type: "RandVec"
