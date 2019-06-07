@@ -532,6 +532,7 @@ Dtype Net<Dtype>::ForwardFromTo(int start, int end) {
     if (debug > 0) LOG(INFO) << "Forward: On layer " << i << " " << layer_names_[i];
     if (timing > 0) gettimeofday(&ts, NULL);
     Dtype layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
+    loss += layer_loss;
     if (timing > 0) {
       gettimeofday(&te, NULL);
       double time = (te.tv_sec - ts.tv_sec) + (te.tv_usec - ts.tv_usec) / 1000000.0;

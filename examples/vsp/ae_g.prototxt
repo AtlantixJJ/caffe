@@ -1,3 +1,5 @@
+force_backward: true
+name: "AutoEncoder"
 layer {
   name: "data"
   type: "Data"
