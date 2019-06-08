@@ -58,6 +58,7 @@ DEFINE_string(g_weights, "",
 DEFINE_string(d_weights, "",
     "Optional; the pretrained weights to initialize finetuning, "
     "separated by ','. Cannot be set simultaneously with snapshot.");
+DEFINE_string(output, "", "Output image directory")
 DEFINE_int32(iterations, 50,
     "The number of iterations to run.");
 DEFINE_string(sigint_effect, "stop",
@@ -282,10 +283,10 @@ int train() {
 RegisterBrewFunction(train);
 
 // Test: score a model.
-/*
+
 int test() {
-  CHECK_GT(FLAGS_model.size(), 0) << "Need a model definition to score.";
-  CHECK_GT(FLAGS_weights.size(), 0) << "Need model weights to score.";
+  CHECK_GT(FLAGS_g_model.size(), 0) << "Need a generator model definition to score.";
+  CHECK_GT(FLAGS_g_weights.size(), 0) << "Need a generator model weights to score.";
   vector<string> stages = get_stages_from_flags();
 
   // Set device id and mode
@@ -305,51 +306,26 @@ int test() {
     Caffe::set_mode(Caffe::CPU);
   }
   // Instantiate the caffe net.
-  Net<float> caffe_net(FLAGS_model, caffe::TEST, FLAGS_level, &stages);
-  caffe_net.CopyTrainedLayersFrom(FLAGS_weights);
+  Net<float> caffe_net(FLAGS_g_model, caffe::TEST, FLAGS_level, &stages);
+  caffe_net.CopyTrainedLayersFrom(FLAGS_g_weights);
   LOG(INFO) << "Running for " << FLAGS_iterations << " iterations.";
 
   vector<int> test_score_output_id;
   vector<float> test_score;
   float loss = 0;
+  int gind = 0;
   for (int i = 0; i < FLAGS_iterations; ++i) {
     float iter_loss;
-    const vector<Blob<float>*>& result =
-        caffe_net.Forward(&iter_loss);
+    const vector<Blob<float>*>& result = caffe_net.Forward(&iter_loss);
     loss += iter_loss;
-    int idx = 0;
-    for (int j = 0; j < result.size(); ++j) {
-      const float* result_vec = result[j]->cpu_data();
-      for (int k = 0; k < result[j]->count(); ++k, ++idx) {
-        const float score = result_vec[k];
-        if (i == 0) {
-          test_score.push_back(score);
-          test_score_output_id.push_back(j);
-        } else {
-          test_score[idx] += score;
-        }
-        const std::string& output_name = caffe_net.blob_names()[
-            caffe_net.output_blob_indices()[j]];
-        LOG(INFO) << "Batch " << i << ", " << output_name << " = " << score;
-      }
-    }
+    vector<cv::Mat> *imgs = caffe::blob2cv(result);
+    for (int j = 0; j < imgs->size(); j++)
+      cv::imwrite(FLAGS_output + caffe::format_int(gind + i), (*imgs)[j]);
+    gind += j;
+    delete imgs;
   }
   loss /= FLAGS_iterations;
   LOG(INFO) << "Loss: " << loss;
-  for (int i = 0; i < test_score.size(); ++i) {
-    const std::string& output_name = caffe_net.blob_names()[
-        caffe_net.output_blob_indices()[test_score_output_id[i]]];
-    const float loss_weight = caffe_net.blob_loss_weights()[
-        caffe_net.output_blob_indices()[test_score_output_id[i]]];
-    std::ostringstream loss_msg_stream;
-    const float mean_score = test_score[i] / FLAGS_iterations;
-    if (loss_weight) {
-      loss_msg_stream << " (* " << loss_weight
-                      << " = " << loss_weight * mean_score << " loss)";
-    }
-    LOG(INFO) << output_name << " = " << mean_score << loss_msg_stream.str();
-  }
-
   return 0;
 }
 RegisterBrewFunction(test);

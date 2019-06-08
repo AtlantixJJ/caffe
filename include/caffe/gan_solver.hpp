@@ -16,6 +16,65 @@ namespace caffe {
 
 template <typename Dtype> class Solver;
 
+void tile(const vector<cv::Mat> &src, cv::Mat &dst, int grid_x, int grid_y) {
+  // patch size
+  int width  = dst.cols/grid_x;
+  int height = dst.rows/grid_y;
+  // iterate through grid
+  int k = 0;
+  for(int i = 0; i < grid_y; i++) {
+    for(int j = 0; j < grid_x; j++) {
+      cv::Mat s = src[k++];
+      cv::resize(s,s,cv::Size(width,height));
+      s.copyTo(dst(cv::Rect(j*width,i*height,width,height)));
+    }
+  }
+}
+
+template<Dtype>
+vector<cv::Mat>* blob2cv(Blob<Dtype> *blob) {
+  int num = blob->num();
+  int width = blob->width(), height = blob->height(), channels = blob->channels();
+  Dtype* input_data = blob->mutable_cpu_data();
+  vector<cv::Mat> *src = new vector<cv::Mat>;
+  for (int i = 0; i < num; i ++) {
+    cv::Mat image;
+    vector<cv::Mat> color_channel;
+    for(int i = 0; i < channels; i ++) {
+      cv::Mat _ch(height, width, CV_32FC1, input_data);
+      color_channel.push_back(_ch);
+      input_data += height * width;
+    }
+    cv::merge(color_channel, image);
+    src->push_back(image);
+  }
+  return src;
+}
+
+/// Show 3 channel or 1 channel blob; batch size >= 16; scale between (-1, 1)
+template<Dtype>
+cv::Mat* blob2cvgrid(Blob<Dtype> *blob) {
+  // LOG(INFO) << "Shape " << blob->shape_string();
+  int width = blob->width(), height = blob->height(), channels = blob->channels();
+  Dtype* input_data = blob->mutable_cpu_data();
+  vector<cv::Mat> src;
+  for (int i = 0; i < 16; i ++) {
+    cv::Mat image;
+    vector<cv::Mat> color_channel;
+    for(int i = 0; i < channels; i ++) {
+      cv::Mat _ch(height, width, CV_32FC1, input_data);
+      color_channel.push_back(_ch);
+      input_data += height * width;
+    }
+    cv::merge(color_channel, image);
+    src.push_back(image);
+  }
+  cv::Mat *grid = new cv::Mat(height * 4, width * 4, (channels == 1 ? CV_32FC1: CV_32FC3));
+  tile(src, *grid, 4, 4);
+
+  *grid = (*grid + 1) * 127.5; 
+  return grid;
+}
 
 /**
  * @brief Type of a function that returns a Solver Action enumeration.
@@ -53,49 +112,6 @@ class GANSolver {
     timing = val;
     d_solver->net_->set_timing(val);
     g_solver->net_->set_timing(val);
-  }
-
-  void tile(const vector<cv::Mat> &src, cv::Mat &dst, int grid_x, int grid_y) {
-    // patch size
-    int width  = dst.cols/grid_x;
-    int height = dst.rows/grid_y;
-    // iterate through grid
-    int k = 0;
-    for(int i = 0; i < grid_y; i++) {
-      for(int j = 0; j < grid_x; j++) {
-        cv::Mat s = src[k++];
-        cv::resize(s,s,cv::Size(width,height));
-        s.copyTo(dst(cv::Rect(j*width,i*height,width,height)));
-      }
-    }
-  }
-
-  /// Show 3 channel or 1 channel blob; batch size >= 16; scale between (-1, 1)
-  cv::Mat* blob2cvgrid(Blob<Dtype> *blob) {
-    // LOG(INFO) << "Shape " << blob->shape_string();
-    int width = blob->width(), height = blob->height(), channels = blob->channels();
-    Dtype* input_data = blob->mutable_cpu_data();
-    vector<cv::Mat> src;
-    for (int i = 0; i < 16; i ++) {
-      cv::Mat image;
-      vector<cv::Mat> color_channel;
-      for(int i = 0; i < channels; i ++) {
-        cv::Mat _ch(height, width, CV_32FC1, input_data);
-        color_channel.push_back(_ch);
-        input_data += height * width;
-      }
-      cv::merge(color_channel, image);
-      src.push_back(image);
-    }
-    cv::Mat *grid = new cv::Mat(height * 4, width * 4, (channels == 1 ? CV_32FC1: CV_32FC3));
-    tile(src, *grid, 4, 4);
-
-    //double min, max;
-    //cv::minMaxLoc(*grid, &min, &max);
-    //LOG(INFO) << "Min " <<  min << " Max " << max;
-
-    *grid = (*grid + 1) * 127.5; 
-    return grid;
   }
 
   void summary_time() {
