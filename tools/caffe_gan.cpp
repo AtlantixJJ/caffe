@@ -321,7 +321,7 @@ int test() {
     caffe_net.Forward();
     vector<cv::Mat> *imgs = caffe::blob2cv(output_blob);
     for (int j = 0; j < imgs->size(); j++)
-      cv::imwrite(FLAGS_output + caffe::format_int(gind + j) + ".jpg", (*imgs)[j]);
+      cv::imwrite(FLAGS_output + caffe::format_int(gind + j, 5) + ".jpg", (*imgs)[j]);
     gind += imgs->size();
     delete imgs;
   }
