@@ -320,10 +320,10 @@ int test() {
   for (int i = 0; i < FLAGS_iterations; ++i) {
     caffe_net.Forward();
     vector<cv::Mat> *imgs = caffe::blob2cv(output_blob);
-    cv::Mat img = (*imgs)[j];
-    img = (img + 1) * 127.5;
-    for (int j = 0; j < imgs->size(); j++)
-      cv::imwrite(FLAGS_output + caffe::format_int(gind + j, 5) + ".jpg", );
+    for (int j = 0; j < imgs->size(); j++) {
+      cv::Mat img = (*imgs)[j];
+      img = (img + 1) * 127.5;
+      cv::imwrite(FLAGS_output + caffe::format_int(gind + j, 5) + ".jpg", img);
     gind += imgs->size();
     delete imgs;
   }
