@@ -121,7 +121,7 @@ class GANSolver {
 
     string name;
     // save input if pix2pix
-    if (strcmp(g_solver->net_->layers()[0]->type(), "RandVec")) {
+    if (strcmp(g_solver->net_->layers()[0]->type(), "RandVec") != 0) {
       // quite dirty, must be pix2pix here
       // data_A
       int g_input_layer = g_solver->net_->layerid_by_name("data_split");
