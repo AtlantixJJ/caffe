@@ -1,3 +1,6 @@
+"""
+python makenet.py <定义网络的函数名> <输出prototxt文件名> <网络批大小>
+"""
 import sys
 import caffe
 from caffe import layers as L
