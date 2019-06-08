@@ -324,7 +324,7 @@ int test() {
     loss += iter_loss;
     vector<cv::Mat> *imgs = caffe::blob2cv(output_blob);
     for (int j = 0; j < imgs->size(); j++)
-      cv::imwrite(FLAGS_output + caffe::format_int(gind + i), (*imgs)[j]);
+      cv::imwrite(FLAGS_output + caffe::format_int(gind + i) + ".jpg", (*imgs)[j]);
     gind += imgs->size();
     delete imgs;
   }

@@ -143,16 +143,6 @@ layer {
   }
 }
 layer {
-  name: "deconv2_BN"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "deconv2"
-  top: "deconv2_BN"
-  batch_norm_param {
-    use_global_stats: true
-    moving_average_fraction: 0.99
-  }
-}
-layer {
   name: "relu_deconv2"
   type: "ReLU"
   bottom: "deconv2_BN"
