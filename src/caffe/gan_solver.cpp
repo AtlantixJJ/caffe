@@ -129,17 +129,6 @@ void GANSolver<Dtype>::Step(int iters) {
   
   Dtype disc_real_loss = 0, disc_fake_loss = 0, gen_loss = 0, _tmp;
   while (iter_ < stop_iter) {
-    int interval = d_solver->param_.test_interval();
-    if (d_solver->param_.test_interval() && iter_ % interval == 0 && iter_ != 0) {
-      LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen";
-      LOG(INFO) << "\t\t\t" << disc_real_loss / interval << "\t" << disc_fake_loss / interval << "\t" << gen_loss / interval;
-      disc_real_loss = disc_fake_loss = gen_loss = 0;
-      if (Caffe::root_solver())
-        TestAll();
-      if (requested_early_exit_)
-        break;
-    }
-
     /// Train D
     auto x_fake = g_solver->net_->Forward(); // G(z)
 
@@ -177,7 +166,17 @@ void GANSolver<Dtype>::Step(int iters) {
     d_solver->net_->ClearParamDiffs();
 
     SolverAction::Enum request = GetRequestedAction();
-
+    iter_ ++;
+    int interval = d_solver->param_.test_interval();
+    if (d_solver->param_.test_interval() && iter_ % interval == 0 && iter_ != 0) {
+      LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen";
+      LOG(INFO) << "\t\t\t" << disc_real_loss / interval << "\t" << disc_fake_loss / interval << "\t" << gen_loss / interval;
+      disc_real_loss = disc_fake_loss = gen_loss = 0;
+      if (Caffe::root_solver())
+        TestAll();
+      if (requested_early_exit_)
+        break;
+    }
     // Save a snapshot if needed.
     if ((d_solver->param_.snapshot()
          && iter_ % d_solver->param_.snapshot() == 0
@@ -192,7 +191,6 @@ void GANSolver<Dtype>::Step(int iters) {
       requested_early_exit_ = true;
       break;
     }
-    iter_ ++;
   }
 }
 
