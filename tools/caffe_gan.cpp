@@ -316,8 +316,8 @@ int test() {
   vector<float> test_score;
   float loss = 0;
   int gind = 0;
-  int g_output_layer = caffe_net->layerid_by_name("output");
-  Blob<float> *output_blob = caffe_net->top_vecs()[g_output_layer][0];
+  int g_output_layer = caffe_net.layerid_by_name("output");
+  Blob<float> *output_blob = caffe_net.top_vecs()[g_output_layer][0];
   for (int i = 0; i < FLAGS_iterations; ++i) {
     float iter_loss;
     caffe_net.Forward(&iter_loss);
