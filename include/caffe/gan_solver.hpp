@@ -31,7 +31,7 @@ void tile(const vector<cv::Mat> &src, cv::Mat &dst, int grid_x, int grid_y) {
   }
 }
 
-template<Dtype>
+template<typename Dtype>
 vector<cv::Mat>* blob2cv(Blob<Dtype> *blob) {
   int num = blob->num();
   int width = blob->width(), height = blob->height(), channels = blob->channels();
@@ -52,7 +52,7 @@ vector<cv::Mat>* blob2cv(Blob<Dtype> *blob) {
 }
 
 /// Show 3 channel or 1 channel blob; batch size >= 16; scale between (-1, 1)
-template<Dtype>
+template<typename Dtype>
 cv::Mat* blob2cvgrid(Blob<Dtype> *blob) {
   // LOG(INFO) << "Shape " << blob->shape_string();
   int width = blob->width(), height = blob->height(), channels = blob->channels();
