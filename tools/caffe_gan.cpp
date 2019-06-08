@@ -314,22 +314,17 @@ int test() {
 
   vector<int> test_score_output_id;
   vector<float> test_score;
-  float loss = 0;
   int gind = 0;
   int g_output_layer = caffe_net.layerid_by_name("output");
   Blob<float> *output_blob = caffe_net.top_vecs()[g_output_layer][0];
   for (int i = 0; i < FLAGS_iterations; ++i) {
-    float iter_loss;
-    caffe_net.Forward(&iter_loss);
-    loss += iter_loss;
+    caffe_net.Forward();
     vector<cv::Mat> *imgs = caffe::blob2cv(output_blob);
     for (int j = 0; j < imgs->size(); j++)
       cv::imwrite(FLAGS_output + caffe::format_int(gind + i) + ".jpg", (*imgs)[j]);
     gind += imgs->size();
     delete imgs;
   }
-  loss /= FLAGS_iterations;
-  LOG(INFO) << "Loss: " << loss;
   return 0;
 }
 RegisterBrewFunction(test);
