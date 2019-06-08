@@ -39,6 +39,8 @@ DEFINE_string(d_solver, "",
     "The solver definition protocol buffer text file.");
 DEFINE_string(d_model, "",
     "The model definition protocol buffer text file.");
+DEFINE_string(model, "",
+    "The model definition protocol buffer text file.");
 DEFINE_string(phase, "",
     "Optional; network phase (TRAIN or TEST). Only used for 'time'.");
 DEFINE_int32(level, 0,
@@ -58,7 +60,7 @@ DEFINE_string(g_weights, "",
 DEFINE_string(d_weights, "",
     "Optional; the pretrained weights to initialize finetuning, "
     "separated by ','. Cannot be set simultaneously with snapshot.");
-DEFINE_string(output, "", "Output image directory")
+DEFINE_string(output, "", "Output image directory");
 DEFINE_int32(iterations, 50,
     "The number of iterations to run.");
 DEFINE_string(sigint_effect, "stop",
@@ -421,7 +423,7 @@ int time() {
   return 0;
 }
 RegisterBrewFunction(time);
-*/
+
 
 int main(int argc, char** argv) {
   // Print output to stderr (while still logging).
