@@ -324,6 +324,7 @@ int test() {
       cv::Mat img = (*imgs)[j];
       img = (img + 1) * 127.5;
       cv::imwrite(FLAGS_output + caffe::format_int(gind + j, 5) + ".jpg", img);
+    }
     gind += imgs->size();
     delete imgs;
   }
