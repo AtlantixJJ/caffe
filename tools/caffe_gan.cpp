@@ -316,11 +316,13 @@ int test() {
   vector<float> test_score;
   float loss = 0;
   int gind = 0;
+  int g_output_layer = g_solver->net_->layerid_by_name("output");
+  Blob<float> *output_blob = g_solver->net_->top_vecs()[g_output_layer][0];
   for (int i = 0; i < FLAGS_iterations; ++i) {
     float iter_loss;
-    const vector<Blob<float>*>& result = caffe_net.Forward(&iter_loss);
+    caffe_net.Forward(&iter_loss);
     loss += iter_loss;
-    vector<cv::Mat> *imgs = caffe::blob2cv(&result[0]);
+    vector<cv::Mat> *imgs = caffe::blob2cv(output_blob);
     for (int j = 0; j < imgs->size(); j++)
       cv::imwrite(FLAGS_output + caffe::format_int(gind + i), (*imgs)[j]);
     gind += imgs->size();
