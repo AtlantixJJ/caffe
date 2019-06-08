@@ -24,12 +24,6 @@ namespace caffe {
 template <typename Dtype>
 Net<Dtype>::Net(const NetParameter& param) {
   Init(param);
-  for (int i = 0; i < layers_.size(); i++) {
-    forward_time.push_back(0.0);
-    backward_time.push_back(0.0);
-    forward_count.push_back(0);
-    backward_count.push_back(0);
-  }
 }
 
 template <typename Dtype>
@@ -243,6 +237,13 @@ void Net<Dtype>::Init(const NetParameter& in_param) {
         layers_[layer_id]->set_param_propagate_down(param_id, true);
       }
     }
+    for (int i = 0; i < layers_.size(); i++) {
+      forward_time.push_back(0.0);
+      backward_time.push_back(0.0);
+      forward_count.push_back(0);
+      backward_count.push_back(0);
+    }
+    debug = timing = 0;
   }
   // In the end, all remaining blobs are considered output blobs.
   for (set<string>::iterator it = available_blobs.begin();
