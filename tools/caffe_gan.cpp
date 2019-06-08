@@ -320,7 +320,7 @@ int test() {
     float iter_loss;
     const vector<Blob<float>*>& result = caffe_net.Forward(&iter_loss);
     loss += iter_loss;
-    vector<cv::Mat> *imgs = caffe::blob2cv(result);
+    vector<cv::Mat> *imgs = caffe::blob2cv(&result);
     for (int j = 0; j < imgs->size(); j++)
       cv::imwrite(FLAGS_output + caffe::format_int(gind + i), (*imgs)[j]);
     gind += j;
