@@ -561,10 +561,6 @@ Dtype Net<Dtype>::ForwardFromBlob(const vector<Blob<Dtype>* > & bottom, int star
     }
 
     if (debug > 0) LOG(INFO) << "Forward: On layer " << i << " " << layer_names_[i];
-    //Dtype layer_loss = 0;
-    //if (i == start) layer_loss = layers_[i]->Forward(bottom, top_vecs_[i]);
-    //else layer_loss = layers_[i]->Forward(bottom_vecs_[i], top_vecs_[i]);
-    //loss += layer_loss;
     if (timing > 0) gettimeofday(&ts, NULL);
     Dtype layer_loss = 0;
     if (i == start) {
@@ -576,7 +572,6 @@ Dtype Net<Dtype>::ForwardFromBlob(const vector<Blob<Dtype>* > & bottom, int star
     if (timing > 0) {
       gettimeofday(&te, NULL);
       double time = (te.tv_sec - ts.tv_sec) + (te.tv_usec - ts.tv_usec) / 1000000.0;
-      //LOG_IF(INFO, Caffe::root_solver()) << "Root: layer" << i << "  " << layer_names_[i] << " Forward cost time: " << time << "s";
       forward_time[i] += time;
       forward_count[i] += 1;
     }

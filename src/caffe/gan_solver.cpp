@@ -317,6 +317,8 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     }
     d_solver->net_->set_param_propagate_down(true);
 
+    iter_++;
+
     int interval = d_solver->param_.test_interval();
     if (d_solver->param_.test_interval() && iter_ % interval == 0 && iter_ != 0) {
       LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen";
@@ -344,7 +346,6 @@ void GANSolver<Dtype>::Step_sw(int iters) {
       requested_early_exit_ = true;
       break;
     }
-    iter_++;
   }
 }
 
