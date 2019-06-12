@@ -123,8 +123,7 @@ def mnist_upsample_g(batch_size=256):
     return net.to_proto()
 
 def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
-    conv1 = L.Convolution(x, num_output=dim, kernel_size=3, stride=1, pad=1,
-        weight_filler=dict(type="gaussian", std=0.02))
+    conv1 = L.Convolution(x, num_output=dim, kernel_size=3, stride=1, pad=1, weight_filler=dict(type="gaussian", std=0.02))
     if use_bn:
         bn1 = L.BatchNorm(conv1)
         relu1 = activation_fn(bn1)
@@ -162,9 +161,10 @@ def sr_g(upsample=2, B_number=5, batch_size=128):
     layers.append(x); layer_names.append("fc_reshape")
     base = x = L.ReLU(x)
     layers.append(x); layer_names.append("fc_relu")
+    print(x)
 
     for i in range(1, 1 + B_number):
-        x = simple_residual_block("res%d" % i, net, x, 64, relu, True)
+        x = simple_residual_block("res%d" % i, net, x, 64, L.ReLU, True)
 
     x = L.Convolution(x, num_output=64,
             kernel_size=3, stride=1,
