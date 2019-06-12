@@ -142,7 +142,7 @@ def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
         layers = [conv1, relu1, conv2, add]
 
     names = [name + i_ for i_ in names]
-    add_layers(net, layers, names)
+    return add, layers, names
 
 def sr_g(upsample=2, B_number=5, batch_size=128):
     net = caffe.NetSpec()
@@ -161,10 +161,11 @@ def sr_g(upsample=2, B_number=5, batch_size=128):
     layers.append(x); layer_names.append("fc_reshape")
     base = x = L.ReLU(x)
     layers.append(x); layer_names.append("fc_relu")
-    print(x)
 
     for i in range(1, 1 + B_number):
-        x = simple_residual_block("res%d" % i, net, x, 64, L.ReLU, True)
+        x, l_, n_ = simple_residual_block("res%d" % i, net, x, 64, L.ReLU, True)
+        layers.extend(l_)
+        layer_names.extend(n_)
 
     x = L.Convolution(x, num_output=64,
             kernel_size=3, stride=1,
@@ -189,7 +190,7 @@ def sr_g(upsample=2, B_number=5, batch_size=128):
     layers.append(x); layer_names.append("conv_out")
     x = L.TanH(x)
     layers.append(x); layer_names.append("conv_out_tanh")
-
+    add_layers(net, layers, layer_names)
     return net.to_proto()
 
 def cifar10_res_d(batch_size=128):
