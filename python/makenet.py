@@ -135,56 +135,60 @@ def simple_residual_block(name, net, x, dim, activation_fn, use_bn=True):
     if use_bn:
         bn2 = L.BatchNorm(conv2)
         add = L.Eltwise(x, bn2)
-        names = ['conv1', 'bn1', 'act1', 'conv2', 'bn2', 'add']
+        names = ['conv1', 'bn1', 'relu1', 'conv2', 'bn2', 'add']
         layers = [conv1, bn1, relu1, conv2, bn2, add]
     else:
         add = L.Eltwise(x, conv2)
-        names = ['conv1', 'act1', 'conv2', 'add']
+        names = ['conv1', 'relu1', 'conv2', 'add']
         layers = [conv1, relu1, conv2, add]
 
     names = [name + i_ for i_ in names]
     add_layers(net, layers, names)
 
-def cifar10_res_g(batch_size=128):
+def sr_g(upsample=2, B_number=5, batch_size=128):
     net = caffe.NetSpec()
 
-    net.data = L.RandVec(randvec_param={
+    x = L.RandVec(randvec_param={
         'batch_size': batch_size,
         'dim': 128,
         'lower': -1.0,
         'upper': 1.0})
+    layers = [x]
+    layer_names = ['noise']
 
-    net.fc = L.InnerProduct(net.data, num_output=4*4*1024, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
-    net.reshape = L.Reshape(net.fc, reshape_param=dict(shape={'dim': [batch_size, 1024, 4, 4]}))
-    net.bn = L.BatchNorm(net.reshape)
-    net.relu = L.ReLU(net.bn, in_place=True)
+    x = L.InnerProduct(x, num_output=8*8*64, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+    layers.append(x); layer_names.append("fc")
+    x = L.Reshape(x, reshape_param=dict(shape={'dim': [batch_size, 64, 8, 8]}))
+    layers.append(x); layer_names.append("fc_reshape")
+    base = x = L.ReLU(x)
+    layers.append(x); layer_names.append("fc_relu")
 
-    net.deconv1 = L.Deconvolution(net.relu, convolution_param=dict(num_output=512, kernel_size=4, stride=2,
-            pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
-    net.bn1 = L.BatchNorm(net.deconv1)
-    net.relu1 = L.ReLU(net.bn1, in_place=True) # 8x8
+    for i in range(1, 1 + B_number):
+        x = simple_residual_block("res%d" % i, net, x, 64, relu, True)
 
-    net.deconv2 = L.Deconvolution(net.relu1, convolution_param=dict(num_output=256, kernel_size=4, stride=2,
-            pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
-    net.bn2 = L.BatchNorm(net.deconv2)
-    net.relu2 = L.ReLU(net.bn2, in_place=True) # 16x16
-
-    net.res1_out = simple_residual_block("res1", net, net.relu2, 256, relu)
-    net.bn3 = L.BatchNorm(net.res1_out)
-    net.relu3 = L.ReLU(net.bn3, in_place=True)
-
-    net.res2_out = simple_residual_block("res2", net, net.relu3, 256, relu)
-    net.bn4 = L.BatchNorm(net.res2_out)
-    net.relu4 = L.ReLU(net.bn4, in_place=True)
-
-    net.deconv3 = L.Deconvolution(net.relu4, convolution_param=dict(num_output=128, kernel_size=4, stride=2,
-            pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant')))
-    net.bn5 = L.BatchNorm(net.deconv3)
-    net.relu5 = L.ReLU(net.bn5, in_place=True) # 32x32
-
-    net.conv_output = L.Convolution(net.relu5, num_output=3, kernel_size=3, stride=1,
+    x = L.Convolution(x, num_output=64,
+            kernel_size=3, stride=1,
             pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
-    net.output = L.TanH(net.conv_output)
+    layers.append(x); layer_names.append("conv")
+    x = L.BatchNorm(x)
+    layers.append(x); layer_names.append("bn")
+    x = L.Eltwise(x, base)
+    layers.append(x); layer_names.append("add")
+
+    for i in range(1, upsample + 1):
+        x = L.Convolution(x, num_output=256, kernel_size=3, stride=1, pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+        layers.append(x); layer_names.append("subpxconv%d" % i)
+        x = L.reshape(x, reshape_param=dict(pixelshuffler=2))
+        layers.append(x); layer_names.append("pxs%d" % i)
+        x = L.ReLU(x)
+        layers.append(x); layer_names.append("relu%d" % i)
+
+    x = L.Convolution(x,
+            num_output=3, kernel_size=3, stride=1,
+            pad=1, weight_filler=dict(type='xavier') , bias_filler=dict(type='constant'))
+    layers.append(x); layer_names.append("conv_out")
+    x = L.TanH(x)
+    layers.append(x); layer_names.append("conv_out_tanh")
 
     return net.to_proto()
 
