@@ -20,7 +20,6 @@ layer {
     num_output: 8192
     weight_filler {
       type: "msra"
-      
     }
   }
 }
@@ -59,7 +58,8 @@ layer {
     use_global_stats: false
     moving_average_fraction: 0.9
   }
-}layer {
+}
+layer {
   name: "fc1_BN"
   type: "BatchNorm" include {phase: TEST}
   bottom: "reshape_fc1"
@@ -105,104 +105,36 @@ layer {
   top: "relu_fc1"
 }
 layer {
-  name: "deconv3"           
-  type: "Deconvolution"
+  name: "tile1"
+  type: "Tile"
   bottom: "relu_fc1"
-  top: "deconv3"
-  convolution_param {
-    num_output: 512 
-    pad: 1
-    kernel_size: 4
-    stride: 2
-    weight_filler {
-      type: "msra"
-      
-    }
-    bias_filler {
-      type: "constant"
-    }
+  top: "tile1"
+  tile_param {
+    axis: 1
+    tiles: 4
   }
 }
 layer {
-  name: "deconv3_BN"
-  type: "BatchNorm" include {phase: TRAIN}
-  bottom: "deconv3"
-  top: "deconv3_BN"
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }   
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }  
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }
-  batch_norm_param {
-    use_global_stats: false
-    moving_average_fraction: 0.9
+  name: "pxs1"           
+  type: "Reshape"
+  bottom: "tile1"
+  top: "pxs1"
+  reshape_param {
+    pixelshuffler: 2
   }
 }
 layer {
-  name: "deconv3_BN"
-  type: "BatchNorm" include {phase: TEST}
-  bottom: "deconv3"
-  top: "deconv3_BN"
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }   
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }  
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }
-  batch_norm_param {
-    use_global_stats: true
-    moving_average_fraction: 0.9
-  }
-}
-layer {
-    name: "scale3"
-    type: "Scale"
-    bottom: "deconv3_BN"
-    top: "scale3"
-    param {
-        lr_mult: 1
-        decay_mult: 1
-    }
-    param {
-        lr_mult: 1
-        decay_mult: 1
-    }
-    scale_param {
-      bias_term: true
-    }
-}
-layer {
-  name: "relu_deconv3"
-  type: "ReLU"
-  bottom: "scale3"
-  top: "relu_deconv3"
-}
-layer {
-  name: "deconv2"           
-  type: "Deconvolution"
-  bottom: "relu_deconv3"
-  top: "deconv2"
+  name: "conv1"           
+  type: "Convolution"
+  bottom: "pxs1"
+  top: "conv1"
   convolution_param {
     num_output: 256 
     pad: 1
-    kernel_size: 4
-    stride: 2
+    kernel_size: 3
+    stride: 1
     weight_filler {
       type: "msra"
-      
     }
     bias_filler {
       type: "constant"
@@ -210,10 +142,10 @@ layer {
   }
 }
 layer {
-  name: "deconv2_BN"
+  name: "conv1_BN"
   type: "BatchNorm" include {phase: TRAIN}
-  bottom: "deconv2"
-  top: "deconv2_BN"
+  bottom: "conv1"
+  top: "conv1_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -232,96 +164,10 @@ layer {
   }
 }
 layer {
-  name: "deconv2_BN"
+  name: "conv1_BN"
   type: "BatchNorm" include {phase: TEST}
-  bottom: "deconv2"
-  top: "deconv2_BN"
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }   
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }  
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }
-  batch_norm_param {
-    use_global_stats: true
-    moving_average_fraction: 0.9
-  }
-}
-layer {
-    name: "scale2"
-    type: "Scale"
-    bottom: "deconv2_BN"
-    top: "scale2"
-    param {
-        lr_mult: 1
-        decay_mult: 1
-    }
-    param {
-        lr_mult: 1
-        decay_mult: 1
-    }
-    scale_param {
-      bias_term: true
-    }
-}
-layer {
-  name: "relu_deconv2"
-  type: "ReLU"
-  bottom: "scale2"
-  top: "relu_deconv2"
-}
-layer {
-  name: "deconv1"           
-  type: "Deconvolution"
-  bottom: "relu_deconv2"
-  top: "deconv1"
-  convolution_param {
-    num_output: 128
-    pad: 1
-    kernel_size: 4
-    stride: 2
-    weight_filler {
-      type: "msra"
-      
-    }
-    bias_filler {
-      type: "constant"
-    }
-  }
-}
-layer {
-  name: "deconv1_BN"
-  type: "BatchNorm" include {phase: TRAIN}
-  bottom: "deconv1"
-  top: "deconv1_BN"
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }   
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }  
-  param {  
-    lr_mult: 0  
-    decay_mult: 0  
-  }
-  batch_norm_param {
-    use_global_stats: false
-    moving_average_fraction: 0.9
-  }
-}
-layer {
-  name: "deconv1_BN"
-  type: "BatchNorm" include {phase: TEST}
-  bottom: "deconv1"
-  top: "deconv1_BN"
+  bottom: "conv1"
+  top: "conv1_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -342,7 +188,7 @@ layer {
 layer {
     name: "scale1"
     type: "Scale"
-    bottom: "deconv1_BN"
+    bottom: "conv1_BN"
     top: "scale1"
     param {
         lr_mult: 1
@@ -357,16 +203,243 @@ layer {
     }
 }
 layer {
-  name: "relu_deconv1"
+  name: "relu_conv1"
   type: "ReLU"
   bottom: "scale1"
-  top: "relu_deconv1"
+  top: "relu_conv1"
 }
 layer {
-  name: "conv1"           
+  name: "tile2"
+  type: "Tile"
+  bottom: "relu_conv1"
+  top: "tile2"
+  tile_param {
+    axis: 1
+    tiles: 4
+  }
+}
+layer {
+  name: "pxs2"           
+  type: "Reshape"
+  bottom: "tile2"
+  top: "pxs2"
+  reshape_param {
+    pixelshuffler: 2
+  }
+}
+layer {
+  name: "conv2"           
   type: "Convolution"
-  bottom: "relu_deconv1"
-  top: "conv1"
+  bottom: "pxs2"
+  top: "conv2"
+  convolution_param {
+    num_output: 128 
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv2_BN"
+  type: "BatchNorm" include {phase: TRAIN}
+  bottom: "conv2"
+  top: "conv2_BN"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.9
+  }
+}
+layer {
+  name: "conv2_BN"
+  type: "BatchNorm" include {phase: TEST}
+  bottom: "conv2"
+  top: "conv2_BN"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: true
+    moving_average_fraction: 0.9
+  }
+}
+layer {
+    name: "scale2"
+    type: "Scale"
+    bottom: "conv2_BN"
+    top: "scale2"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
+  name: "relu_conv2"
+  type: "ReLU"
+  bottom: "scale2"
+  top: "relu_conv2"
+}
+layer {
+  name: "tile3"
+  type: "Tile"
+  bottom: "relu_conv2"
+  top: "tile3"
+  tile_param {
+    axis: 1
+    tiles: 4
+  }
+}
+layer {
+  name: "pxs3"           
+  type: "Reshape"
+  bottom: "tile3"
+  top: "pxs3"
+  reshape_param {
+    pixelshuffler: 2
+  }
+}
+layer {
+  name: "conv3"           
+  type: "Convolution"
+  bottom: "pxs3"
+  top: "conv3"
+  convolution_param {
+    num_output: 64
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layer {
+  name: "conv3_BN"
+  type: "BatchNorm" include {phase: TRAIN}
+  bottom: "conv3"
+  top: "conv3_BN"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.9
+  }
+}
+layer {
+  name: "conv3_BN"
+  type: "BatchNorm" include {phase: TEST}
+  bottom: "conv3"
+  top: "conv3_BN"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: true
+    moving_average_fraction: 0.9
+  }
+}
+layer {
+    name: "scale3"
+    type: "Scale"
+    bottom: "conv3_BN"
+    top: "scale3"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
+  name: "relu_conv3"
+  type: "ReLU"
+  bottom: "scale3"
+  top: "relu_conv3"
+}
+layer {
+  name: "tile4"
+  type: "Tile"
+  bottom: "relu_conv3"
+  top: "tile4"
+  tile_param {
+    axis: 1
+    tiles: 4
+  }
+}
+layer {
+  name: "pxs4"           
+  type: "Reshape"
+  bottom: "tile4"
+  top: "pxs4"
+  reshape_param {
+    pixelshuffler: 2
+  }
+}
+layer {
+  name: "conv_out"           
+  type: "Convolution"
+  bottom: "pxs4"
+  top: "conv_out"
   convolution_param {
     num_output: 3
     pad: 1
@@ -374,7 +447,6 @@ layer {
     stride: 1
     weight_filler {
       type: "msra"
-      
     }
     bias_filler {
       type: "constant"
@@ -384,6 +456,6 @@ layer {
 layer {
   name: "output"
   type: "TanH"
-  bottom: "conv1"
+  bottom: "conv_out"
   top: "output"
 }

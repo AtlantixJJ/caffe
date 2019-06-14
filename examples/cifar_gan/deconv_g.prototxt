@@ -93,7 +93,7 @@ layer {
   bottom: "relu_fc1"
   top: "deconv3"
   convolution_param {
-    num_output: 512 
+    num_output: 256 
     pad: 1
     kernel_size: 4
     stride: 2
@@ -161,7 +161,7 @@ layer {
   bottom: "relu_deconv3"
   top: "deconv2"
   convolution_param {
-    num_output: 256 
+    num_output: 128 
     pad: 1
     kernel_size: 4
     stride: 2
@@ -230,7 +230,7 @@ layer {
   bottom: "relu_deconv2"
   top: "deconv1"
   convolution_param {
-    num_output: 128
+    num_output: 64
     pad: 1
     kernel_size: 4
     stride: 2
@@ -294,7 +294,7 @@ layer {
   top: "relu_deconv1"
 }
 layer {
-  name: "conv1"           
+  name: "conv_out"           
   type: "Convolution"
   bottom: "relu_deconv1"
   top: "conv1"
@@ -315,6 +315,6 @@ layer {
 layer {
   name: "output"
   type: "TanH"
-  bottom: "conv1"
+  bottom: "conv_out"
   top: "output"
 }

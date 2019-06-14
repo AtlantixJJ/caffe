@@ -60,13 +60,13 @@ layer {
   name: "relu_fc1"
   type: "ReLU"
   bottom: "fc1_BN"
-  top: "fc1_BN"
+  top: "relu_fc1"
 }
 layer {
-  name: "deconv3"           
+  name: "conv1"           
   type: "Convolution"
-  bottom: "fc1_BN"
-  top: "deconv3"
+  bottom: "relu_fc1"
+  top: "conv1"
   convolution_param {
     num_output: 1024#256 
     pad: 1
@@ -82,19 +82,19 @@ layer {
   }
 }
 layer {
-  name: "pxs_3"           
+  name: "pxs1"           
   type: "Reshape"
-  bottom: "deconv3"
-  top: "pxs_3"
+  bottom: "conv1"
+  top: "pxs1"
   reshape_param {
     pixelshuffler: 2
   }
 } # 8x8
 layer {
-  name: "deconv3_BN"
+  name: "conv1_BN"
   type: "BatchNorm" include { phase: TRAIN}
-  bottom: "pxs_3"
-  top: "deconv3_BN"
+  bottom: "pxs1"
+  top: "conv1_BN"
   param {
     lr_mult: 0  
     decay_mult: 0  
@@ -113,10 +113,10 @@ layer {
   }
 }
 layer {
-  name: "deconv3_BN"
+  name: "conv1_BN"
   type: "BatchNorm" include { phase: TEST}
-  bottom: "pxs_3"
-  top: "deconv3_BN"
+  bottom: "pxs1"
+  top: "conv1_BN"
   param {
     lr_mult: 0  
     decay_mult: 0  
@@ -135,16 +135,16 @@ layer {
   }
 }
 layer {
-  name: "relu_deconv3"
+  name: "relu_conv1"
   type: "ReLU"
-  bottom: "deconv3_BN"
-  top: "deconv3_BN"
+  bottom: "conv1_BN"
+  top: "relu_conv1"
 }
 layer {
-  name: "deconv2"           
+  name: "conv2"           
   type: "Convolution"
-  bottom: "deconv3_BN"
-  top: "deconv2"
+  bottom: "relu_conv1"
+  top: "conv2"
   convolution_param {
     num_output: 512#128 
     pad: 1
@@ -162,17 +162,17 @@ layer {
 layer {
   name: "pxs_2"           
   type: "Reshape"
-  bottom: "deconv2"
+  bottom: "conv2"
   top: "pxs_2"
   reshape_param {
     pixelshuffler: 2
   }
 }
 layer {
-  name: "deconv2_BN"
+  name: "conv2_BN"
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_2"
-  top: "deconv2_BN"
+  top: "conv2_BN"
   param {
     lr_mult: 0  
     decay_mult: 0  
@@ -191,10 +191,10 @@ layer {
   }
 }
 layer {
-  name: "deconv2_BN"
+  name: "conv2_BN"
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_2"
-  top: "deconv2_BN"
+  top: "conv2_BN"
   param {
     lr_mult: 0  
     decay_mult: 0  
@@ -213,16 +213,16 @@ layer {
   }
 }
 layer {
-  name: "relu_deconv2"
+  name: "relu_conv2"
   type: "ReLU"
-  bottom: "deconv2_BN"
-  top: "deconv2_BN"
+  bottom: "conv2_BN"
+  top: "relu_conv2"
 }
 layer {
-  name: "deconv1"           
+  name: "conv3"           
   type: "Convolution"
-  bottom: "deconv2_BN"
-  top: "deconv1"
+  bottom: "relu_conv2"
+  top: "conv3"
   convolution_param {
     num_output: 256#64
     pad: 1
@@ -238,19 +238,19 @@ layer {
   }
 }
 layer {
-  name: "pxs_1"           
+  name: "pxs3"           
   type: "Reshape"
-  bottom: "deconv1"
-  top: "pxs_1"
+  bottom: "conv3"
+  top: "pxs3"
   reshape_param {
     pixelshuffler: 2
   }
 }
 layer {
-  name: "deconv1_BN"
+  name: "conv3_BN"
   type: "BatchNorm" include { phase: TRAIN}
-  bottom: "pxs_1"
-  top: "deconv1_BN"
+  bottom: "pxs3"
+  top: "conv3_BN"
   param {
     lr_mult: 0  
     decay_mult: 0  
@@ -269,10 +269,10 @@ layer {
   }
 }
 layer {
-  name: "deconv1_BN"
+  name: "conv3_BN"
   type: "BatchNorm" include { phase: TEST}
-  bottom: "pxs_1"
-  top: "deconv1_BN"
+  bottom: "pxs3"
+  top: "conv3_BN"
   param {
     lr_mult: 0  
     decay_mult: 0  
@@ -291,16 +291,16 @@ layer {
   }
 }
 layer {
-  name: "relu_deconv1"
+  name: "relu_conv3"
   type: "ReLU"
-  bottom: "deconv1_BN"
-  top: "deconv1_BN"
+  bottom: "conv3_BN"
+  top: "relu_conv3"
 }
 layer {
-  name: "conv1"           
+  name: "conv_out"           
   type: "Convolution"
-  bottom: "deconv1_BN"
-  top: "conv1"
+  bottom: "relu_conv3"
+  top: "conv_out"
   convolution_param {
     num_output: 3
     pad: 1
@@ -318,6 +318,6 @@ layer {
 layer {
   name: "output"
   type: "TanH"
-  bottom: "conv1"
+  bottom: "conv_out"
   top: "output"
 }

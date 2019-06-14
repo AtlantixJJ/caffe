@@ -29,7 +29,6 @@ layer {
   top: "data"
   top: "cls_label"
   transform_param {
-    mirror: true
     scale: 0.00784313
     mean_value: 127.5
   }
