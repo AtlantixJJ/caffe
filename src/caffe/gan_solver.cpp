@@ -309,6 +309,8 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     d_solver->net_->set_param_propagate_down(true);
 
     iter_++;
+    d_solver->iter_ = iter_;
+    g_solver->iter_ = iter_;
 
     int disp_inter = d_solver->param_.display();
     if (disp_inter != 0 && iter_ % disp_inter == 0) {
@@ -337,8 +339,6 @@ void GANSolver<Dtype>::Step_sw(int iters) {
          && Caffe::root_solver()) ||
          (request == SolverAction::SNAPSHOT)) {
       LOG(INFO) << "Snapshot";
-      d_solver->iter_ = iter_;
-      g_solver->iter_ = iter_;
       d_solver->Snapshot();
       g_solver->Snapshot();
     }

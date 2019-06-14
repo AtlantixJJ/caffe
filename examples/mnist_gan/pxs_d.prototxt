@@ -34,8 +34,8 @@ layer {
     stride: 1
     pad: 1
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
   }
 }
@@ -68,8 +68,8 @@ layer {
     stride: 1
     pad: 0
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
   }
 }
@@ -102,8 +102,8 @@ layer {
     stride: 1
     pad: 0
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
   }
 } #6x6
@@ -136,8 +136,8 @@ layer {
     stride: 1
     pad: 0
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
   }
   # for 28x28, here is 1x1

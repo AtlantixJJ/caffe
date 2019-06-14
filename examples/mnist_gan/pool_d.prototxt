@@ -54,8 +54,8 @@ layer {
     stride: 1
     pad: 1
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
   }
 }
@@ -90,8 +90,8 @@ layer {
     stride: 1
     pad: 1
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
   }
 }
@@ -126,8 +126,8 @@ layer {
     stride: 1
     pad: 1
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
   }
 }

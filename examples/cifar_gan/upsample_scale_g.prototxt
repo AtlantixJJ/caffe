@@ -19,8 +19,8 @@ layer {
   inner_product_param {
     num_output: 8192
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
   }
 }
@@ -115,8 +115,8 @@ layer {
     kernel_size: 4
     stride: 2
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
     bias_filler {
       type: "constant"
@@ -201,8 +201,8 @@ layer {
     kernel_size: 4
     stride: 2
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
     bias_filler {
       type: "constant"
@@ -287,8 +287,8 @@ layer {
     kernel_size: 4
     stride: 2
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
     bias_filler {
       type: "constant"
@@ -373,8 +373,8 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "gaussian"
-      std: 0.02
+      type: "msra"
+      
     }
     bias_filler {
       type: "constant"
