@@ -43,15 +43,15 @@ layer {
   type: "BatchNorm"
   bottom: "reshape_fc1"
   top: "fc1_BN"
-  param {  
+  param {
     lr_mult: 0  
     decay_mult: 0  
   }   
-  param {  
+  param {
     lr_mult: 0  
     decay_mult: 0  
   }  
-  param {  
+  param {
     lr_mult: 0  
     decay_mult: 0  
   }
@@ -95,9 +95,21 @@ layer {
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_3"
   top: "deconv3_BN"
+  param {
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
   batch_norm_param {
     use_global_stats: false
-    moving_average_fraction: 0.99
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -105,9 +117,21 @@ layer {
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_3"
   top: "deconv3_BN"
+  param {
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
   batch_norm_param {
     use_global_stats: true
-    moving_average_fraction: 0.99
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -149,9 +173,21 @@ layer {
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_2"
   top: "deconv2_BN"
+  param {
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
   batch_norm_param {
     use_global_stats: false
-    moving_average_fraction: 0.99
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -159,9 +195,21 @@ layer {
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_2"
   top: "deconv2_BN"
+  param {
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
   batch_norm_param {
     use_global_stats: true
-    moving_average_fraction: 0.99
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -203,9 +251,21 @@ layer {
   type: "BatchNorm" include { phase: TRAIN}
   bottom: "pxs_1"
   top: "deconv1_BN"
+  param {
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
   batch_norm_param {
     use_global_stats: false
-    moving_average_fraction: 0.99
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -213,9 +273,21 @@ layer {
   type: "BatchNorm" include { phase: TEST}
   bottom: "pxs_1"
   top: "deconv1_BN"
+  param {
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
   batch_norm_param {
     use_global_stats: true
-    moving_average_fraction: 0.99
+    moving_average_fraction: 0.9
   }
 }
 layer {

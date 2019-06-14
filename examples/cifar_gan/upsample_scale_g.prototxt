@@ -1,5 +1,5 @@
+name: "UpsampleScaleGenerator"
 force_backward: true
-name: "DeconvolutionGenerator"
 layer {
   name: "noise"
   type: "RandVec"
@@ -40,7 +40,7 @@ layer {
 }
 layer {
   name: "fc1_BN"
-  type: "BatchNorm"
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "reshape_fc1"
   top: "fc1_BN"
   param {  
@@ -54,6 +54,31 @@ layer {
   param {  
     lr_mult: 0  
     decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.9
+  }
+}layer {
+  name: "fc1_BN"
+  type: "BatchNorm" include {phase: TEST}
+  bottom: "reshape_fc1"
+  top: "fc1_BN"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: true
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -77,12 +102,12 @@ layer {
   name: "relu_fc1"
   type: "ReLU"
   bottom: "scale_fc"
-  top: "scale_fc"
+  top: "relu_fc1"
 }
 layer {
   name: "deconv3"           
   type: "Deconvolution"
-  bottom: "scale_fc"
+  bottom: "relu_fc1"
   top: "deconv3"
   convolution_param {
     num_output: 512 
@@ -100,7 +125,7 @@ layer {
 }
 layer {
   name: "deconv3_BN"
-  type: "BatchNorm"
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "deconv3"
   top: "deconv3_BN"
   param {  
@@ -114,6 +139,32 @@ layer {
   param {  
     lr_mult: 0  
     decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.9
+  }
+}
+layer {
+  name: "deconv3_BN"
+  type: "BatchNorm" include {phase: TEST}
+  bottom: "deconv3"
+  top: "deconv3_BN"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: true
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -137,12 +188,12 @@ layer {
   name: "relu_deconv3"
   type: "ReLU"
   bottom: "scale3"
-  top: "scale3"
+  top: "relu_deconv3"
 }
 layer {
   name: "deconv2"           
   type: "Deconvolution"
-  bottom: "scale3"
+  bottom: "relu_deconv3"
   top: "deconv2"
   convolution_param {
     num_output: 256 
@@ -160,7 +211,7 @@ layer {
 }
 layer {
   name: "deconv2_BN"
-  type: "BatchNorm"
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "deconv2"
   top: "deconv2_BN"
   param {  
@@ -174,6 +225,32 @@ layer {
   param {  
     lr_mult: 0  
     decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.9
+  }
+}
+layer {
+  name: "deconv2_BN"
+  type: "BatchNorm" include {phase: TEST}
+  bottom: "deconv2"
+  top: "deconv2_BN"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: true
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -197,12 +274,12 @@ layer {
   name: "relu_deconv2"
   type: "ReLU"
   bottom: "scale2"
-  top: "scale2"
+  top: "relu_deconv2"
 }
 layer {
   name: "deconv1"           
   type: "Deconvolution"
-  bottom: "scale2"
+  bottom: "relu_deconv2"
   top: "deconv1"
   convolution_param {
     num_output: 128
@@ -220,7 +297,7 @@ layer {
 }
 layer {
   name: "deconv1_BN"
-  type: "BatchNorm"
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "deconv1"
   top: "deconv1_BN"
   param {  
@@ -234,6 +311,32 @@ layer {
   param {  
     lr_mult: 0  
     decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: false
+    moving_average_fraction: 0.9
+  }
+}
+layer {
+  name: "deconv1_BN"
+  type: "BatchNorm" include {phase: TEST}
+  bottom: "deconv1"
+  top: "deconv1_BN"
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }   
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }  
+  param {  
+    lr_mult: 0  
+    decay_mult: 0  
+  }
+  batch_norm_param {
+    use_global_stats: true
+    moving_average_fraction: 0.9
   }
 }
 layer {
@@ -257,12 +360,12 @@ layer {
   name: "relu_deconv1"
   type: "ReLU"
   bottom: "scale1"
-  top: "scale1"
+  top: "relu_deconv1"
 }
 layer {
   name: "conv1"           
   type: "Convolution"
-  bottom: "scale1"
+  bottom: "relu_deconv1"
   top: "conv1"
   convolution_param {
     num_output: 3
