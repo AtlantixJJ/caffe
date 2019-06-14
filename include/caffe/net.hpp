@@ -246,7 +246,7 @@ class Net {
   // Get the index of the first computational layer (e.g. conv1)
   int base_layer_index() const {
     for(int i = 0; i < layers_.size(); i ++)
-      if (layers_[i]->layer_param().type() != "Input" && layers_[i]->layer_param().type() != "Data")
+      if (layers_[i]->layer_param().type() != "Input" && layers_[i]->layer_param().type() != "Data" && layers_[i]->layer_param().type() != "ImageData")
         return i;
     return 0;
   }
