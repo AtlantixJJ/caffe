@@ -316,6 +316,7 @@ void GANSolver<Dtype>::Step_sw(int iters) {
     if (disp_inter != 0 && iter_ % disp_inter == 0) {
       float lapse = iteration_timer_.Seconds();
       float per_s = (iter_ - iterations_last_) / (lapse ? lapse : 1);
+      iterations_last_ = iter_;
       LOG_IF(INFO, Caffe::root_solver()) << "Iter=" << iter_
           << "\t" << per_s << " iter/s";
       LOG(INFO) << "Loss\tDisc Real\t" << "Disc Fake\t" << "Gen";
