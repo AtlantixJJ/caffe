@@ -49,7 +49,7 @@ layer {
   bottom: "data"
   top: "conv1"
   convolution_param {
-    num_output: 128
+    num_output: 64
     kernel_size: 3
     stride: 1
     pad: 1
@@ -85,7 +85,7 @@ layer {
   bottom: "pool1"
   top: "conv2"
   convolution_param {
-    num_output: 256
+    num_output: 128
     kernel_size: 3
     stride: 1
     pad: 1
@@ -121,16 +121,16 @@ layer {
   bottom: "pool2"
   top: "conv3"
   convolution_param {
-    num_output: 512
-    kernel_size: 2
+    num_output: 256
+    kernel_size: 3
     stride: 1
-    pad: 0
+    pad: 1
     weight_filler {
       type: "gaussian"
       std: 0.02
     }
   }
-} #6x6
+} #3x3
 layer {
   name: "pool3"
   type: "Pooling"
@@ -159,7 +159,7 @@ layer {
   reshape_param {
     shape {
       dim: -1
-      dim: 4608 #3x3x512
+      dim: 2304 #3x3x256
     }
   }
 }
