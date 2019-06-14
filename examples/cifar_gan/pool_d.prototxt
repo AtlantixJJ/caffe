@@ -5,6 +5,7 @@ layer {
   top: "disc_label"
   input_param { shape: { dim: 256 dim: 1} }
 }
+"""
 layer {
   name: "data"
   type: "Data"
@@ -21,6 +22,26 @@ layer {
     source: "examples/cifar10/cifar10_train_lmdb"
     batch_size: 256
     backend: LMDB
+  }
+}
+"""
+layer {
+  name: "data"
+  type: "ImageData" include {phase: TRAIN}
+  top: "data"
+  top: "cls_label"
+  transform_param {
+    scale: 0.00784313
+    mean_value: 127.5
+  }
+  data_param {
+    source: "/home/atlantix/data/cifar10/train.txt"
+    batch_size: 256
+    rand_skip: 34933
+    shuffle: true
+    new_height: 32
+    new_width: 32
+    is_color: true
   }
 }
 layer {
