@@ -417,28 +417,9 @@ layer {
   top: "relu_conv3"
 }
 layer {
-  name: "tile4"
-  type: "Tile"
-  bottom: "relu_conv3"
-  top: "tile4"
-  tile_param {
-    axis: 1
-    tiles: 4
-  }
-}
-layer {
-  name: "pxs4"           
-  type: "Reshape"
-  bottom: "tile4"
-  top: "pxs4"
-  reshape_param {
-    pixelshuffler: 2
-  }
-}
-layer {
   name: "conv_out"           
   type: "Convolution"
-  bottom: "pxs4"
+  bottom: "relu_conv3"
   top: "conv_out"
   convolution_param {
     num_output: 3
