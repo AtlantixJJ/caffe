@@ -149,7 +149,7 @@ layer {
   relu_param {
     negative_slope: 0.2
   }
-}
+} #4x4
 layer {
   name: "reshape"
   type: "Reshape"
