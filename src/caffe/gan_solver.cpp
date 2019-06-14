@@ -168,10 +168,16 @@ void GANSolver<Dtype>::Step(int iters) {
     SolverAction::Enum request = GetRequestedAction();
     iter_ ++;
     
-    if (param_.display() && iter_ % param_.display() == 0) {
-      LOG(INFO) << "Iter=" << iter_ << "\tDisc Real\t" << "Disc Fake\t" << "Gen";
-      LOG(INFO) << "\t\t\t" << disc_real_loss / param_.display() << "\t" << disc_fake_loss / param_.display() << "\t" << gen_loss / param_.display();
+    const int disp_inter = d_solver->param_.display();
+    if (disp_inter != 0 && iter_ % disp_inter == 0) {
+      float lapse = iteration_timer_.Seconds();
+      float per_s = (iter_ - iterations_last_) / (lapse ? lapse : 1);
+      LOG_IF(INFO, Caffe::root_solver()) << "Iter=" << iter_
+          << "\t" << per_s << " iter/s";
+      LOG(INFO) << "Loss\tDisc Real\t" << "Disc Fake\t" << "Gen";
+      LOG(INFO) << "\t\t" << disc_real_loss / disp_inter << "\t" << disc_fake_loss / disp_inter << "\t" << gen_loss / disp_inter;
       disc_real_loss = disc_fake_loss = gen_loss = 0;
+      iteration_timer_.Start();
     }
     if (d_solver->param_.test_interval() &&
         iter_ % d_solver->param_.test_interval() == 0 &&
