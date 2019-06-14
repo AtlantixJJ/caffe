@@ -49,7 +49,7 @@ layer {
   bottom: "data"
   top: "conv1"
   convolution_param {
-    num_output: 128
+    num_output: 64
     kernel_size: 3
     stride: 1
     pad: 1
@@ -85,7 +85,7 @@ layer {
   bottom: "pool1"
   top: "conv2"
   convolution_param {
-    num_output: 256
+    num_output: 128
     kernel_size: 3
     stride: 1
     pad: 1
@@ -121,7 +121,7 @@ layer {
   bottom: "pool2"
   top: "conv3"
   convolution_param {
-    num_output: 512
+    num_output: 256
     kernel_size: 3
     stride: 1
     pad: 1
@@ -158,7 +158,7 @@ layer {
   reshape_param {
     shape {
       dim: -1
-      dim: 8192
+      dim: 4096
     }
   }
 }
