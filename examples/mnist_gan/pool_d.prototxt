@@ -130,7 +130,7 @@ layer {
       std: 0.02
     }
   }
-} #3x3
+}
 layer {
   name: "pool3"
   type: "Pooling"
@@ -141,7 +141,7 @@ layer {
     kernel_size: 2
     stride: 2
   }
-} #3x3
+} #4x4
 layer {
   name: "lrelu3"
   type: "ReLU"
@@ -159,7 +159,7 @@ layer {
   reshape_param {
     shape {
       dim: -1
-      dim: 2304 #3x3x256
+      dim: 4096 #4x4x256
     }
   }
 }
