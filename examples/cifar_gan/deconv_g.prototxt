@@ -297,7 +297,7 @@ layer {
   name: "conv_out"           
   type: "Convolution"
   bottom: "relu_deconv1"
-  top: "conv1"
+  top: "conv_out"
   convolution_param {
     num_output: 3
     pad: 1
