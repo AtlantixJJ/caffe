@@ -18,7 +18,7 @@ layer {
   inner_product_param {
     num_output: 8192
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
   }
@@ -74,7 +74,7 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
     bias_filler {
@@ -129,7 +129,7 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
     bias_filler {
@@ -174,7 +174,7 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
     bias_filler {
@@ -229,7 +229,7 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
     bias_filler {
@@ -283,7 +283,7 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
     bias_filler {
@@ -328,7 +328,7 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
     bias_filler {
@@ -383,7 +383,7 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
     bias_filler {
@@ -437,7 +437,7 @@ layer {
     kernel_size: 3
     stride: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
       
     }
     bias_filler {

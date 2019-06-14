@@ -36,7 +36,7 @@ layer {
     stride: 1
     pad: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
     }
   }
 }
@@ -71,7 +71,7 @@ layer {
     stride: 1
     pad: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
     }
   }
 }
@@ -106,7 +106,7 @@ layer {
     stride: 1
     pad: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
     }
   }
 }
@@ -141,7 +141,7 @@ layer {
     stride: 1
     pad: 1
     weight_filler {
-      type: "xavier"
+      type: "msra"
     }
   }
 }
