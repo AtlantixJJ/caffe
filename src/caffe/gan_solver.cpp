@@ -319,9 +319,9 @@ void GANSolver<Dtype>::Step_sw(int iters) {
       iterations_last_ = iter_;
       LOG_IF(INFO, Caffe::root_solver()) << "Iter=" << iter_
           << "\t" << per_s << " iter/s";
-      LOG(INFO) << "Loss\tDisc Real\t" << "Disc Fake\t" << "Gen";
-      LOG(INFO) << "\t\t" << disc_real_loss / disp_inter << "\t" << disc_fake_loss / disp_inter << "\t" << gen_loss / disp_inter;
-      disc_real_loss = disc_fake_loss = gen_loss = 0;
+      LOG(INFO) << "Loss\tDiscReal\t" << "DiscFake\t" << "Gen\t" << "GenOther";
+      LOG(INFO) << "\t\t" << disc_real_loss / disp_inter << "\t" << disc_fake_loss / disp_inter << "\t" << gen_loss / disp_inter << "\t" << gen_other_loss / disp_inter;
+      disc_real_loss = disc_fake_loss = gen_loss = gen_other_loss = 0;
       iteration_timer_.Start();
     }
     if (d_solver->param_.test_interval() &&

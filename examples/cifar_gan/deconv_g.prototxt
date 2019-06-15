@@ -82,9 +82,26 @@ layer {
   }
 }
 layer {
+    name: "scale_fc"
+    type: "Scale"
+    bottom: "fc1_BN"
+    top: "scale_fc"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
   name: "relu_fc1"
   type: "ReLU"
-  bottom: "fc1_BN"
+  bottom: "scale_fc"
   top: "relu_fc1"
 }
 layer {
@@ -150,9 +167,26 @@ layer {
   }
 }
 layer {
+    name: "scale1"
+    type: "Scale"
+    bottom: "deconv3_BN"
+    top: "scale1"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
   name: "relu_deconv3"
   type: "ReLU"
-  bottom: "deconv3_BN"
+  bottom: "scale1"
   top: "relu_deconv3"
 }
 layer {
@@ -196,6 +230,7 @@ layer {
     moving_average_fraction: 0.9
   }
 }
+
 layer {
   name: "deconv2_BN"
   type: "BatchNorm" include { phase: TEST}
@@ -219,9 +254,26 @@ layer {
   }
 }
 layer {
+    name: "scale2"
+    type: "Scale"
+    bottom: "deconv2_BN"
+    top: "scale2"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
   name: "relu_deconv2"
   type: "ReLU"
-  bottom: "deconv2_BN"
+  bottom: "scale2"
   top: "relu_deconv2"
 }
 layer {
@@ -288,9 +340,26 @@ layer {
   }
 }
 layer {
+    name: "scale3"
+    type: "Scale"
+    bottom: "deconv1_BN"
+    top: "scale3"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
   name: "relu_deconv1"
   type: "ReLU"
-  bottom: "deconv1_BN"
+  bottom: "scale3"
   top: "relu_deconv1"
 }
 layer {

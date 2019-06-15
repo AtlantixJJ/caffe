@@ -1,4 +1,4 @@
-name: "UpsampleGenerator"
+name: "UpsampleScaleGenerator"
 force_backward: true
 layer {
   name: "data"
@@ -85,9 +85,26 @@ layer {
   }
 }
 layer {
+    name: "fc_scale"
+    type: "Scale"
+    bottom: "fc_bn1"
+    top: "fc_scale"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
   name: "fc_relu"
   type: "ReLU"
-  bottom: "fc_bn1"
+  bottom: "fc_scale"
   top: "fc_relu"
 }
 layer {
@@ -115,7 +132,7 @@ layer {
   bottom: "pxs1"
   top: "conv1"
   convolution_param {
-    num_output: 256
+    num_output: 128
     pad: 1
     kernel_size: 3
     stride: 1
@@ -129,7 +146,7 @@ layer {
 }
 layer {
   name: "bn1"
-  type: "BatchNorm" include { phase: TRAIN}
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "conv1"
   top: "bn1"
   param {  
@@ -151,7 +168,7 @@ layer {
 }
 layer {
   name: "bn1"
-  type: "BatchNorm" include { phase: TEST}
+  type: "BatchNorm" include {phase: TEST}
   bottom: "conv1"
   top: "bn1"
   param {  
@@ -172,9 +189,26 @@ layer {
   }
 }
 layer {
+    name: "scale1"
+    type: "Scale"
+    bottom: "bn1"
+    top: "scale1"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
   name: "relu1"
   type: "ReLU"
-  bottom: "bn1"
+  bottom: "scale1"
   top: "relu1"
 }
 layer {
@@ -202,7 +236,7 @@ layer {
   bottom: "pxs2"
   top: "conv2"
   convolution_param {
-    num_output: 128
+    num_output: 64
     pad: 1
     kernel_size: 3
     stride: 1
@@ -216,7 +250,7 @@ layer {
 }
 layer {
   name: "bn2"
-  type: "BatchNorm" include { phase: TRAIN}
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "conv2"
   top: "bn2"
   param {  
@@ -238,7 +272,7 @@ layer {
 }
 layer {
   name: "bn2"
-  type: "BatchNorm" include { phase: TEST}
+  type: "BatchNorm" include {phase: TEST}
   bottom: "conv2"
   top: "bn2"
   param {  
@@ -259,9 +293,26 @@ layer {
   }
 }
 layer {
+    name: "scale2"
+    type: "Scale"
+    bottom: "bn2"
+    top: "scale2"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
   name: "relu2"
   type: "ReLU"
-  bottom: "bn2"
+  bottom: "scale2"
   top: "relu2"
 }
 layer {

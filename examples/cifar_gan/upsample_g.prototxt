@@ -1,9 +1,9 @@
-name: "UpsampleGenerator"
+name: "NNUpsampleScaleGenerator"
 force_backward: true
 layer {
-  name: "data"
+  name: "noise"
   type: "RandVec"
-  top: "data"
+  top: "noise"
   randvec_param {
     batch_size: 256
     dim: 128
@@ -14,23 +14,20 @@ layer {
 layer {
   name: "fc1"
   type: "InnerProduct"
-  bottom: "data"
+  bottom: "noise"
   top: "fc1"
   inner_product_param {
     num_output: 8192
     weight_filler {
       type: "msra"
     }
-    bias_filler {
-      type: "constant"
-    }
   }
 }
 layer {
-  name: "reshape1"
+  name: "reshape"
   type: "Reshape"
   bottom: "fc1"
-  top: "reshape1"
+  top: "reshape_fc1"
   reshape_param {
     shape {
       dim: -1
@@ -41,10 +38,10 @@ layer {
   }
 }
 layer {
-  name: "bn1"
-  type: "BatchNorm" include { phase: TRAIN}
-  bottom: "reshape1"
-  top: "bn1"
+  name: "fc1_BN"
+  type: "BatchNorm" include {phase: TRAIN}
+  bottom: "reshape_fc1"
+  top: "fc1_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -63,10 +60,10 @@ layer {
   }
 }
 layer {
-  name: "bn1"
-  type: "BatchNorm" include { phase: TEST}
-  bottom: "reshape1"
-  top: "bn1"
+  name: "fc1_BN"
+  type: "BatchNorm" include {phase: TEST}
+  bottom: "reshape_fc1"
+  top: "fc1_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -85,15 +82,32 @@ layer {
   }
 }
 layer {
-  name: "relu1"
+    name: "scale_fc"
+    type: "Scale"
+    bottom: "fc1_BN"
+    top: "scale_fc"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
+  name: "relu_fc1"
   type: "ReLU"
-  bottom: "bn1"
-  top: "relu1"
+  bottom: "scale_fc"
+  top: "relu_fc1"
 }
 layer {
   name: "tile1"
   type: "Tile"
-  bottom: "relu1"
+  bottom: "relu_fc1"
   top: "tile1"
   tile_param {
     axis: 1
@@ -110,12 +124,12 @@ layer {
   }
 }
 layer {
-  name: "conv1"
+  name: "conv1"           
   type: "Convolution"
   bottom: "pxs1"
   top: "conv1"
   convolution_param {
-    num_output: 256
+    num_output: 256 
     pad: 1
     kernel_size: 3
     stride: 1
@@ -128,10 +142,10 @@ layer {
   }
 }
 layer {
-  name: "bn2"
-  type: "BatchNorm" include { phase: TRAIN}
+  name: "conv1_BN"
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "conv1"
-  top: "bn2"
+  top: "conv1_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -148,11 +162,12 @@ layer {
     use_global_stats: false
     moving_average_fraction: 0.9
   }
-}layer {
-  name: "bn2"
-  type: "BatchNorm" include { phase: TEST}
+}
+layer {
+  name: "conv1_BN"
+  type: "BatchNorm" include {phase: TEST}
   bottom: "conv1"
-  top: "bn2"
+  top: "conv1_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -171,15 +186,32 @@ layer {
   }
 }
 layer {
-  name: "relu2"
+    name: "scale1"
+    type: "Scale"
+    bottom: "conv1_BN"
+    top: "scale1"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
+  name: "relu_conv1"
   type: "ReLU"
-  bottom: "bn2"
-  top: "relu2"
+  bottom: "scale1"
+  top: "relu_conv1"
 }
 layer {
   name: "tile2"
   type: "Tile"
-  bottom: "relu2"
+  bottom: "relu_conv1"
   top: "tile2"
   tile_param {
     axis: 1
@@ -196,12 +228,12 @@ layer {
   }
 }
 layer {
-  name: "conv2"
+  name: "conv2"           
   type: "Convolution"
   bottom: "pxs2"
   top: "conv2"
   convolution_param {
-    num_output: 128
+    num_output: 128 
     pad: 1
     kernel_size: 3
     stride: 1
@@ -214,10 +246,10 @@ layer {
   }
 }
 layer {
-  name: "bn3"
-  type: "BatchNorm" include { phase: TRAIN}
+  name: "conv2_BN"
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "conv2"
-  top: "bn3"
+  top: "conv2_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -234,11 +266,12 @@ layer {
     use_global_stats: false
     moving_average_fraction: 0.9
   }
-}layer {
-  name: "bn3"
-  type: "BatchNorm" include { phase: TEST}
+}
+layer {
+  name: "conv2_BN"
+  type: "BatchNorm" include {phase: TEST}
   bottom: "conv2"
-  top: "bn3"
+  top: "conv2_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -257,15 +290,32 @@ layer {
   }
 }
 layer {
-  name: "relu3"
+    name: "scale2"
+    type: "Scale"
+    bottom: "conv2_BN"
+    top: "scale2"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
+}
+layer {
+  name: "relu_conv2"
   type: "ReLU"
-  bottom: "bn3"
-  top: "relu3"
+  bottom: "scale2"
+  top: "relu_conv2"
 }
 layer {
   name: "tile3"
   type: "Tile"
-  bottom: "relu3"
+  bottom: "relu_conv2"
   top: "tile3"
   tile_param {
     axis: 1
@@ -282,7 +332,7 @@ layer {
   }
 }
 layer {
-  name: "conv3"
+  name: "conv3"           
   type: "Convolution"
   bottom: "pxs3"
   top: "conv3"
@@ -300,10 +350,10 @@ layer {
   }
 }
 layer {
-  name: "bn4"
-  type: "BatchNorm" include { phase: TRAIN}
+  name: "conv3_BN"
+  type: "BatchNorm" include {phase: TRAIN}
   bottom: "conv3"
-  top: "bn4"
+  top: "conv3_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -320,11 +370,12 @@ layer {
     use_global_stats: false
     moving_average_fraction: 0.9
   }
-}layer {
-  name: "bn4"
-  type: "BatchNorm" include { phase: TEST}
+}
+layer {
+  name: "conv3_BN"
+  type: "BatchNorm" include {phase: TEST}
   bottom: "conv3"
-  top: "bn4"
+  top: "conv3_BN"
   param {  
     lr_mult: 0  
     decay_mult: 0  
@@ -343,15 +394,32 @@ layer {
   }
 }
 layer {
-  name: "relu4"
-  type: "ReLU"
-  bottom: "bn4"
-  top: "relu4"
+    name: "scale3"
+    type: "Scale"
+    bottom: "conv3_BN"
+    top: "scale3"
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    param {
+        lr_mult: 1
+        decay_mult: 1
+    }
+    scale_param {
+      bias_term: true
+    }
 }
 layer {
-  name: "conv_out"
+  name: "relu_conv3"
+  type: "ReLU"
+  bottom: "scale3"
+  top: "relu_conv3"
+}
+layer {
+  name: "conv_out"           
   type: "Convolution"
-  bottom: "relu4"
+  bottom: "relu_conv3"
   top: "conv_out"
   convolution_param {
     num_output: 3
