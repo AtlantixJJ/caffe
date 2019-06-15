@@ -119,12 +119,12 @@ class GANSolver {
     LOG(INFO) << "Generator";
     const vector<string>& g_names = g_solver->net_->layer_names();
     for (int i = 0; i < g_names.size(); i ++) {
-      LOG(INFO) << g_names[i] << " Forward:" << g_solver->net_->forward_time[i] / g_solver->net_->forward_count[i] << " Backward: " << g_solver->net_->backward_time[i] / g_solver->net_->backward_count[i];
+      LOG(INFO) << g_names[i] << " Forward:" << g_solver->net_->forward_time[i] / g_solver->net_->forward_count[i] << " Backward:" << g_solver->net_->backward_time[i] / g_solver->net_->backward_count[i];
     }
     LOG(INFO) << "Discriminator";
     const vector<string>& d_names = d_solver->net_->layer_names();
     for (int i = 0; i < d_names.size(); i ++) {
-      LOG(INFO) << d_names[i] << " Forward: " << d_solver->net_->forward_time[i] / d_solver->net_->forward_count[i] << " Backward: " << d_solver->net_->backward_time[i] / d_solver->net_->backward_count[i];
+      LOG(INFO) << d_names[i] << " Forward:" << d_solver->net_->forward_time[i] / d_solver->net_->forward_count[i] << " Backward:" << d_solver->net_->backward_time[i] / d_solver->net_->backward_count[i];
     }
   }
 
