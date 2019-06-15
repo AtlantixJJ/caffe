@@ -1,0 +1,1 @@
+scp -P 8081 "atlantix@166.111.17.31:disk6/caffe/python/a" ./
