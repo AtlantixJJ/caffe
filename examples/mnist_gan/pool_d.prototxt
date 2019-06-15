@@ -18,7 +18,7 @@ layer {
 #    mean_value: 127.5
 #  }
 #  data_param {
-#    source: "examples/mnist/mnist_train_lmdb"
+#    source: "/home/export/online1/swyf/swdnn/atlantix/#SWCaffev2.0/models/mnist/mnist_train_lmdb"
 #    batch_size: 256
 #    backend: LMDB
 #  }
@@ -33,8 +33,8 @@ layer {
     mean_value: 127.5
   }
   image_data_param {
-    source: "/home/atlantix/data/mnist/train.txt"
-    root_folder: "/home/atlantix/data/mnist/"
+    source: "/home/export/online1/swyf/swdnn/atlantix/mnist/train.txt"
+    root_folder: "/home/export/online1/swyf/swdnn/atlantix/mnist/"
     batch_size: 256
     shuffle: true
     new_height: 28
@@ -48,7 +48,7 @@ layer {
   bottom: "data"
   top: "conv1"
   convolution_param {
-    num_output: 64
+    num_output: 128
     kernel_size: 3
     stride: 1
     pad: 1
@@ -73,18 +73,18 @@ layer {
   name: "lrelu1"
   type: "ReLU"
   bottom: "pool1"
-  top: "pool1"
-  relu_param {
-    negative_slope: 0.2
-  }
+  top: "lrelu1"
+  #relu_param {
+  #  negative_slope: 0.2
+  #}
 } # 14x14
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "pool1"
+  bottom: "lrelu1"
   top: "conv2"
   convolution_param {
-    num_output: 128
+    num_output: 256
     kernel_size: 3
     stride: 1
     pad: 1
@@ -109,7 +109,7 @@ layer {
   name: "lrelu2"
   type: "ReLU"
   bottom: "pool2"
-  top: "pool2"
+  top: "lrelu2"
   relu_param {
     negative_slope: 0.2
   }
@@ -117,19 +117,19 @@ layer {
 layer {
   name: "conv3"
   type: "Convolution"
-  bottom: "pool2"
+  bottom: "lrelu2"
   top: "conv3"
   convolution_param {
-    num_output: 256
-    kernel_size: 3
+    num_output: 512
+    kernel_size: 2
     stride: 1
-    pad: 1
+    pad: 0
     weight_filler {
       type: "msra"
       
     }
   }
-}
+} #6x6
 layer {
   name: "pool3"
   type: "Pooling"
@@ -140,12 +140,12 @@ layer {
     kernel_size: 2
     stride: 2
   }
-} #4x4
+} #3x3
 layer {
   name: "lrelu3"
   type: "ReLU"
   bottom: "pool3"
-  top: "pool3"
+  top: "lrelu3"
   relu_param {
     negative_slope: 0.2
   }
@@ -153,12 +153,12 @@ layer {
 layer {
   name: "reshape"
   type: "Reshape"
-  bottom: "pool3"
+  bottom: "lrelu3"
   top: "reshape"
   reshape_param {
     shape {
       dim: -1
-      dim: 4096 #4x4x256
+      dim: 4608 #3x3x512
     }
   }
 }

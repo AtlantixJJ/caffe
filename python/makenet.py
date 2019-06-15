@@ -336,7 +336,7 @@ def cifar10_ae256x256(batch_size=128):
 
     return net.to_proto()
 
-def vsp(batch_size=128):
+def vsp_ae(batch_size=128):
     net = caffe.NetSpec()
 
     net.data = L.Data(batch_size=batch_size, backend=caffe.params.Data.LMDB, source=vsp_lmdb_dir, include=dict(phase=caffe.TRAIN))

@@ -1,4 +1,4 @@
-name: "SimpleDiscriminator"
+name: "PoolDiscriminator"
 layer {
   name: "disc_label"
   type: "Input"
@@ -31,7 +31,7 @@ layer {
   bottom: "data"
   top: "conv1"
   convolution_param {
-    num_output: 128
+    num_output: 64
     kernel_size: 3
     stride: 1
     pad: 1
@@ -50,12 +50,12 @@ layer {
     kernel_size: 2
     stride: 2
   }
-}
+} 
 layer {
   name: "lrelu1"
   type: "ReLU"
   bottom: "pool1"
-  top: "pool1"
+  top: "lrelu1"
   relu_param {
     negative_slope: 0.2
   }
@@ -63,10 +63,10 @@ layer {
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "pool1"
+  bottom: "lrelu1"
   top: "conv2"
   convolution_param {
-    num_output: 256
+    num_output: 128
     kernel_size: 3
     stride: 1
     pad: 1
@@ -90,7 +90,7 @@ layer {
   name: "lrelu2"
   type: "ReLU"
   bottom: "pool2"
-  top: "pool2"
+  top: "lrelu2"
   relu_param {
     negative_slope: 0.2
   }
@@ -98,10 +98,10 @@ layer {
 layer {
   name: "conv3"
   type: "Convolution"
-  bottom: "pool2"
+  bottom: "lrelu2"
   top: "conv3"
   convolution_param {
-    num_output: 512
+    num_output: 256
     kernel_size: 3
     stride: 1
     pad: 1
@@ -125,31 +125,39 @@ layer {
   name: "lrelu3"
   type: "ReLU"
   bottom: "pool3"
-  top: "pool3"
+  top: "lrelu3"
   relu_param {
     negative_slope: 0.2
   }
 }
 layer {
-  name: "disc"
-  type: "Convolution"
-  bottom: "pool3"
-  top: "disc"
-  convolution_param {
+  name: "reshape"
+  type: "Reshape"
+  bottom: "lrelu3"
+  top: "reshape"
+  reshape_param {
+    shape {
+      dim: -1
+      dim: 4096 #4x4x512
+    }
+  }
+}
+layer {
+  name: "fc"
+  type: "InnerProduct"
+  bottom: "reshape"
+  top: "fc"
+  inner_product_param {
     num_output: 1
-    kernel_size: 3
-    stride: 1
-    pad: 1
     weight_filler {
       type: "msra"
     }
   }
 }
 layer {
-  loss_weight: 0.0009765625 # 1/(32*32), average on feature map
   name: "disc_loss"
   type: "SigmoidCrossEntropyLoss"
-  bottom: "disc"
+  bottom: "fc"
   bottom: "disc_label"
   top: "discr_loss"
 }
