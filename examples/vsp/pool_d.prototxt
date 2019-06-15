@@ -131,33 +131,25 @@ layer {
   }
 }
 layer {
-  name: "reshape"
-  type: "Reshape"
-  bottom: "lrelu3"
-  top: "reshape"
-  reshape_param {
-    shape {
-      dim: -1
-      dim: 4096 #4x4x512
-    }
-  }
-}
-layer {
-  name: "fc"
-  type: "InnerProduct"
-  bottom: "reshape"
-  top: "fc"
-  inner_product_param {
+  name: "disc"
+  type: "Convolution"
+  bottom: "pool3"
+  top: "disc"
+  convolution_param {
     num_output: 1
+    kernel_size: 3
+    stride: 1
+    pad: 1
     weight_filler {
       type: "msra"
     }
   }
 }
 layer {
+  loss_weight: 0.0009765625 # 1/(32*32), average on feature map
   name: "disc_loss"
   type: "SigmoidCrossEntropyLoss"
-  bottom: "fc"
+  bottom: "disc"
   bottom: "disc_label"
   top: "discr_loss"
 }
