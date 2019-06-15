@@ -18,7 +18,7 @@ layer {
 #    mean_value: 127.5
 #  }
 #  data_param {
-#    source: "/home/export/online1/swyf/swdnn/atlantix/cifar10_train_lmdb"
+#    source: "examples/cifar10/cifar10_train_lmdb"
 #    batch_size: 256
 #    backend: LMDB
 #  }
@@ -34,8 +34,8 @@ layer {
     mean_value: 127.5
   }
   image_data_param {
-    source: "/home/export/online1/swyf/swdnn/atlantix/cifar10/train.txt"
-    root_folder: "/home/export/online1/swyf/swdnn/atlantix/cifar10/"
+    source: "/home/atlantix/data/cifar10/train.txt"
+    root_folder: "/home/atlantix/data/cifar10/"
     batch_size: 256
     shuffle: true
     new_height: 32
